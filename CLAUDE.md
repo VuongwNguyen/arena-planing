@@ -2,7 +2,7 @@
 
 ## Quy tắc bất biến
 
-- **Chỉ sửa `data.json`** — KHÔNG bao giờ sửa `index.html` hoặc `app.js`
+- **Chỉ sửa `data.json`** — KHÔNG sửa `index.html` hoặc `app.js` trừ khi user yêu cầu rõ ràng
 - Luôn dùng **tiếng Việt có dấu** trong mọi nội dung: chat, data.json, comments
 - Sau mỗi thay đổi: `git add data.json && git commit -m "..." && git push origin main`
 - **Luôn xuất link** sau khi xong: `https://vuongwnguyen.github.io/arena-planing/?id=<ID>`
@@ -72,7 +72,19 @@ Mỗi item trong array `data.json` theo đúng cấu trúc sau:
         ]
       }
     ]
-  }
+  },
+
+  "testcases": [
+    {
+      "ma_testcase": "TC_001",
+      "ten_testcase": "Tên ngắn mô tả mục đích test",
+      "nhom": "Arena App",
+      "dieu_kien_tien_quyet": "- Điều kiện 1\n- Điều kiện 2",
+      "buoc_thuc_hien": "1. Bước 1\n2. Bước 2\n3. Bước 3",
+      "ket_qua_mong_doi": "- Kết quả 1\n- Kết quả 2",
+      "loai": "Happy Path"
+    }
+  ]
 }
 ```
 
@@ -83,6 +95,30 @@ Mỗi item trong array `data.json` theo đúng cấu trúc sau:
 **sprintPlan.days[].color:** `purple` (Thứ 2) | `teal` (Thứ 3) | `blue` (Thứ 4–5) | `amber` (Thứ 6) | `green` (Thứ 7)
 
 **tasks[].tags:** `Dev` | `Claude` | `Team` | `Git` | `Khẩn cấp`
+
+**testcases[].loai:** `Happy Path` | `Edge Case` | `Error Case`
+
+**testcases[].nhom:** `Arena App` | `Backend` | `WebAdmin` | `End-to-end` | tên module khác phù hợp
+
+## Quy tắc sinh testcase (BẮT BUỘC)
+
+Mỗi US **phải có** field `testcases[]` với đầy đủ các nhóm:
+
+| Nhóm | Bắt buộc cover |
+|------|---------------|
+| **Happy Path** | Luồng thành công chính + biến thể thành công |
+| **Edge Case** | Dữ liệu biên, trùng lặp, timeout, mạng chậm, thiết bị khác |
+| **Error Case** | Thiếu quyền, sai dữ liệu, lỗi hệ thống, mất kết nối |
+| **End-to-end** | 1 case test toàn bộ flow từ đầu đến cuối, xếp **cuối cùng** |
+
+**Schema testcase phải dùng đúng tên field:**
+- `ma_testcase` (không phải `id`)
+- `ten_testcase` (không phải `title`)
+- `nhom` (bắt buộc)
+- `dieu_kien_tien_quyet` (không phải `dieu_kien`)
+- `buoc_thuc_hien` (không phải `buoc`)
+- `ket_qua_mong_doi` (không phải `ket_qua`)
+- `loai`
 
 ## Sprint workflow chuẩn (6 ngày)
 
@@ -103,6 +139,7 @@ Có thể bỏ qua nếu không cần: `example`, `dbChanges`, `edgeCases`, `spr
 
 1. Đọc `data.json` hiện tại, giữ nguyên các item cũ
 2. Thêm object mới, ID tăng dần: US-002, US-003...
-3. Verify: `node -e "JSON.parse(require('fs').readFileSync('data.json','utf8')); console.log('OK')"`
-4. Commit + push
-5. Xuất link: `https://vuongwnguyen.github.io/arena-planing/?id=<ID>`
+3. Thêm `testcases[]` đầy đủ theo schema và quy tắc trên — KHÔNG cần người dùng nhắc
+4. Verify: `node -e "JSON.parse(require('fs').readFileSync('data.json','utf8')); console.log('OK')"`
+5. Commit + push toàn bộ
+6. Xuất link: `https://vuongwnguyen.github.io/arena-planing/?id=<ID>`
