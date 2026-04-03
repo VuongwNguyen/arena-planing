@@ -9,8 +9,11 @@
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; }
 
 /* NAV TABS */
-.nav { display: flex; background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0 32px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.nav-tab { padding: 14px 20px; font-size: 13px; font-weight: 600; color: #94a3b8; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
+.nav { display: flex; align-items: center; background: #fff; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.nav-logo { padding: 0 20px 0 24px; font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; border-right: 1px solid #e2e8f0; height: 49px; display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.nav-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: #2563eb; }
+.nav-tabs { display: flex; padding: 0 16px; overflow-x: auto; }
+.nav-tab { padding: 14px 16px; font-size: 13px; font-weight: 600; color: #94a3b8; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
 .nav-tab:hover { color: #1e293b; }
 .nav-tab.active { color: #2563eb; border-bottom-color: #2563eb; }
 
@@ -31,8 +34,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 /* CONTENT */
 .content { padding: 28px 40px; max-width: 900px; }
-.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #94a3b8; margin-bottom: 12px; margin-top: 24px; }
+.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-bottom: 12px; margin-top: 32px; display: flex; align-items: center; gap: 6px; }
 .section-title:first-child { margin-top: 0; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; margin-left: 6px; }
 
 /* Context */
 .context-box { background: #fff; border: 1px solid #e2e8f0; border-left: 3px solid #2563eb; border-radius: 8px; padding: 16px 18px; font-size: 14px; color: #334155; line-height: 1.7; }
@@ -52,16 +56,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .discount-note { margin-top: 8px; font-size: 12px; color: #64748b; }
 
 /* AC cards */
-.ac-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
-.ac-id { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; }
-.ac-title { font-size: 14px; font-weight: 600; color: #0f172a; margin: 4px 0 10px; }
-.ac-row { display: flex; gap: 10px; margin-bottom: 6px; font-size: 13px; }
-.ac-row:last-child { margin-bottom: 0; }
-.ac-label { font-weight: 700; min-width: 52px; flex-shrink: 0; }
-.ac-label.given { color: #7c3aed; }
-.ac-label.when  { color: #0369a1; }
-.ac-label.then  { color: #15803d; }
-.ac-text { color: #334155; line-height: 1.6; }
+.ac-card { background: #fff; border: 1px solid #e2e8f0; border-left: 3px solid #6366f1; border-radius: 8px; padding: 16px 18px; margin-bottom: 12px; }
+.ac-id { font-size: 10px; font-weight: 700; color: #6366f1; text-transform: uppercase; letter-spacing: 0.8px; }
+.ac-title { font-size: 14px; font-weight: 600; color: #0f172a; margin: 4px 0 12px; }
+.ac-rows { display: flex; flex-direction: column; gap: 0; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; }
+.ac-row { display: flex; gap: 0; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
+.ac-row:last-child { border-bottom: none; }
+.ac-label { font-weight: 700; min-width: 64px; flex-shrink: 0; padding: 8px 12px; display: flex; align-items: flex-start; }
+.ac-label.given { background: #f5f3ff; color: #7c3aed; border-right: 1px solid #e2e8f0; }
+.ac-label.when  { background: #eff6ff; color: #0369a1; border-right: 1px solid #e2e8f0; }
+.ac-label.then  { background: #f0fdf4; color: #15803d; border-right: 1px solid #e2e8f0; }
+.ac-text { color: #334155; line-height: 1.6; padding: 8px 12px; }
 
 /* Flow */
 .flow-pre { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 18px; font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12px; color: #334155; line-height: 1.8; white-space: pre; overflow-x: auto; }
@@ -92,7 +97,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 </style>
 </head>
 <body>
-<div class="nav" id="nav"></div>
+<div class="nav" id="nav">
+  <div class="nav-logo"><div class="nav-logo-dot"></div>Arena Planning</div>
+  <div class="nav-tabs" id="nav-tabs"></div>
+</div>
 <div id="app"></div>
 <script src="app.js"></script>
 </body>
