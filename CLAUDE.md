@@ -3,8 +3,9 @@
 ## Quy tắc bất biến
 
 - **Chỉ sửa `data.json`** — KHÔNG bao giờ sửa `index.html` hoặc `app.js`
+- Luôn dùng **tiếng Việt có dấu** trong mọi nội dung: chat, data.json, comments
 - Sau mỗi thay đổi: `git add data.json && git commit -m "..." && git push origin main`
-- URL xem kết quả: `https://vuongwnguyen.github.io/arena-planing/?id=<ID>`
+- **Luôn xuất link** sau khi xong: `https://vuongwnguyen.github.io/arena-planing/?id=<ID>`
 
 ## data.json Schema
 
@@ -13,61 +14,61 @@ Mỗi item trong array `data.json` theo đúng cấu trúc sau:
 ```json
 {
   "id": "US-XXX",
-  "title": "Ten tinh nang (khong dau)",
-  "module": "Ten module",
+  "title": "Tên tính năng có dấu",
+  "module": "Tên module",
   "author": "Product Team",
   "date": "DD/MM/YYYY",
-  "status": "Cho phat trien",
+  "status": "Chờ phát triển",
 
-  "context": "Mo ta boi canh business.",
+  "context": "Mô tả bối cảnh business, tại sao cần làm tính năng này.",
 
   "userStory": {
-    "as": "Vai tro nguoi dung",
-    "iWant": "He thong can lam gi",
-    "soThat": "Ket qua mong muon"
+    "as": "Vai trò người dùng",
+    "iWant": "Hệ thống cần làm gì",
+    "soThat": "Kết quả mong muốn"
   },
 
   "example": {
-    "description": "Mo ta vi du",
+    "description": "Mô tả ngắn ví dụ minh hoạ",
     "discount": 0,
     "total": 0,
     "items": [
-      { "code": "SP000001", "name": "Ten hang", "qty": 1, "price": 0 }
+      { "code": "SP000001", "name": "Tên hàng", "qty": 1, "price": 0 }
     ]
   },
 
   "acceptanceCriteria": [
     {
       "id": "AC-01",
-      "title": "Ten tieu chi",
-      "given": "Dieu kien",
-      "when": "Hanh dong",
-      "then": "Ket qua"
+      "title": "Tên tiêu chí",
+      "given": "Điều kiện đầu vào",
+      "when": "Hành động xảy ra",
+      "then": "Kết quả mong đợi"
     }
   ],
 
-  "flow": "ASCII text mo ta flow.\n[ACTOR]\n    |\n    v\nBuoc 1",
+  "flow": "ASCII text mô tả flow.\n[ACTOR]\n    |\n    ▼\nBước 1\n    |\n    ▼\nBước 2",
 
-  "dbChanges": "ALTER TABLE ... ADD COLUMN ...;",
+  "dbChanges": "ALTER TABLE ... ADD COLUMN ...;\n-- Giải thích cột",
 
   "edgeCases": [
-    { "case": "Truong hop dac biet", "handle": "Cach xu ly" }
+    { "case": "Trường hợp đặc biệt", "handle": "Cách xử lý" }
   ],
 
-  "notes": ["Ghi chu cho dev"],
+  "notes": ["Ghi chú quan trọng cho dev"],
 
   "sprintPlan": {
     "startDate": "DD/MM/YYYY",
     "endDate": "DD/MM/YYYY",
     "days": [
       {
-        "day": "Thu 2",
+        "day": "Thứ 2",
         "date": "DD/MM/YYYY",
-        "theme": "Chu de ngay",
+        "theme": "Chuẩn bị & Thống nhất",
         "color": "purple",
-        "result": "Ket qua cuoi ngay",
+        "result": "Mô tả kết quả cuối ngày",
         "tasks": [
-          { "text": "Mo ta cong viec", "tags": ["Dev", "Claude"] }
+          { "text": "Mô tả công việc cụ thể có dấu", "tags": ["Dev", "Claude"] }
         ]
       }
     ]
@@ -77,11 +78,11 @@ Mỗi item trong array `data.json` theo đúng cấu trúc sau:
 
 ## Giá trị hợp lệ
 
-**status:** `Cho phat trien` | `Dang phat trien` | `Hoan thanh`
+**status:** `Chờ phát triển` | `Đang phát triển` | `Hoàn thành`
 
-**sprintPlan.days[].color:** `purple` (T2) | `teal` (T3) | `blue` (T4-T5) | `amber` (T6) | `green` (T7)
+**sprintPlan.days[].color:** `purple` (Thứ 2) | `teal` (Thứ 3) | `blue` (Thứ 4–5) | `amber` (Thứ 6) | `green` (Thứ 7)
 
-**tasks[].tags:** `Dev` | `Claude` | `Team` | `Git` | `Kham cap`
+**tasks[].tags:** `Dev` | `Claude` | `Team` | `Git` | `Khẩn cấp`
 
 ## Sprint workflow chuẩn (6 ngày)
 
@@ -90,17 +91,18 @@ Mỗi item trong array `data.json` theo đúng cấu trúc sau:
 | Thứ 2 | Chuẩn bị | Tạo US, AC, test case; team duyệt |
 | Thứ 3 | Phân rã | Break down tasks, tạo nhánh feature |
 | Thứ 4 | Code (1) | Code core logic, unit tests |
-| Thứ 5 | Code (2) + QA | Hoàn thiện, chạy test |
-| Thứ 6 | Review | Impact analysis, code review |
+| Thứ 5 | Code (2) + QA | Hoàn thiện, chạy toàn bộ test |
+| Thứ 6 | Review | Impact analysis, code review chéo |
 | Thứ 7 | Merge | Pull final, merge develop, deploy beta |
 
-## Optional fields
+## Các field tuỳ chọn
 
 Có thể bỏ qua nếu không cần: `example`, `dbChanges`, `edgeCases`, `sprintPlan`
 
-## Thêm planning item mới
+## Quy trình thêm planning item mới
 
-1. Đọc `data.json`, giữ nguyên các item cũ
-2. Thêm object mới, id tăng dần (US-002, US-003...)
+1. Đọc `data.json` hiện tại, giữ nguyên các item cũ
+2. Thêm object mới, ID tăng dần: US-002, US-003...
 3. Verify: `node -e "JSON.parse(require('fs').readFileSync('data.json','utf8')); console.log('OK')"`
 4. Commit + push
+5. Xuất link: `https://vuongwnguyen.github.io/arena-planing/?id=<ID>`
