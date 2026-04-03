@@ -5,7 +5,7 @@
     "module": "Đặt hàng & Thanh toán",
     "author": "Product Team",
     "date": "03/04/2026",
-    "status": "Chờ phát triển",
+    "status": "Đang phát triển",
 
     "context": "Khách hàng tại Arena Billiard hiện tại phải gọi nhân viên để đặt đồ ăn/thức uống trong khi đang chơi bida. Luồng này chậm và dễ nhầm lẫn đơn hàng. Cần xây dựng tính năng giỏ hàng tự phục vụ trên app/web để khách tự chọn món, thanh toán trực tuyến (MoMo, VNPay, thẻ ngân hàng) mà không cần gián đoạn trận đấu.",
 
@@ -200,7 +200,7 @@
     "module": "Báo cáo bán hàng theo hàng hoá",
     "author": "Product Team",
     "date": "02/04/2026",
-    "status": "Chờ phát triển",
+    "status": "Đang phát triển",
     "context": "Khi thu ngân giảm giá tay trên toàn bộ hoá đơn (ví dụ: hoá đơn 500.000đ → giảm 100.000đ), hệ thống cần phân bổ khoản giảm này xuống từng dòng hàng hoá theo tỷ lệ giá trị.",
     "userStory": {
       "as": "Thu ngân / Kế toán",
