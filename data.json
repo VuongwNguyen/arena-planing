@@ -1,156 +1,155 @@
 [
   {
     "id": "US-001",
-    "title": "Phan Bo Giam Gia Hoa Don Vao Tung Hang Hoa",
-    "module": "Bao cao ban hang theo hang hoa",
+    "title": "Phân Bổ Giảm Giá Hoá Đơn Vào Từng Hàng Hoá",
+    "module": "Báo cáo bán hàng theo hàng hoá",
     "author": "Product Team",
     "date": "02/04/2026",
-    "status": "Cho phat trien",
-    "context": "Khi thu ngan giam gia tay tren toan bo hoa don (vi du: hoa don 500,000d -> giam 100,000d), he thong can phan bo khoan giam nay xuong tung dong hang hoa theo ty le gia tri.",
+    "status": "Chờ phát triển",
+    "context": "Khi thu ngân giảm giá tay trên toàn bộ hoá đơn (ví dụ: hoá đơn 500.000đ → giảm 100.000đ), hệ thống cần phân bổ khoản giảm này xuống từng dòng hàng hoá theo tỷ lệ giá trị.",
     "userStory": {
-      "as": "Thu ngan / Ke toan",
-      "iWant": "He thong tu dong phan bo khoan giam gia tay tren hoa don xuong tung dong hang hoa theo ty le gia tri cua moi item",
-      "soThat": "Bao cao hang hoa hien thi dung Doanh thu thuan va Chenh lech cho tung san pham"
+      "as": "Thu ngân / Kế toán",
+      "iWant": "Hệ thống tự động phân bổ khoản giảm giá tay trên hoá đơn xuống từng dòng hàng hoá theo tỷ lệ giá trị của mỗi item",
+      "soThat": "Báo cáo hàng hoá hiển thị đúng Doanh thu thuần và Chênh lệch cho từng sản phẩm"
     },
     "example": {
-      "description": "Hoa don goc: 3 items, tong 500,000d, thu ngan giam tay 100,000d",
+      "description": "Hoá đơn gốc: 3 items, tổng 500.000đ, thu ngân giảm tay 100.000đ",
       "discount": 100000,
       "total": 500000,
       "items": [
         { "code": "SP000001", "name": "Sting", "qty": 2, "price": 30000 },
         { "code": "SP000002", "name": "Bia",   "qty": 3, "price": 30000 },
-        { "code": "SP000003", "name": "Thuoc la", "qty": 1, "price": 350000 }
+        { "code": "SP000003", "name": "Thuốc lá", "qty": 1, "price": 350000 }
       ]
     },
     "acceptanceCriteria": [
       {
         "id": "AC-01",
-        "title": "Phan bo dung theo ty le",
-        "given": "Mot hoa don co N items, tong gia tri T, thu ngan giam tay D",
-        "when": "Hoa don duoc hoan thanh (trang thai: Hoan thanh)",
-        "then": "Moi item[i] duoc gan discount_allocated[i] = D x (line_total[i] / T). Dung Largest Remainder Method de lam tron. SUM(discount_allocated) = D"
+        "title": "Phân bổ đúng theo tỷ lệ",
+        "given": "Một hoá đơn có N items, tổng giá trị T, thu ngân giảm tay D",
+        "when": "Hoá đơn được hoàn thành (trạng thái: Hoàn thành)",
+        "then": "Mỗi item[i] được gán discount_allocated[i] = D × (line_total[i] / T). Dùng Largest Remainder Method để làm tròn. SUM(discount_allocated) = D"
       },
       {
         "id": "AC-02",
-        "title": "Hien thi tren Bao cao hang hoa",
-        "given": "Bao cao Ban hang theo hang hoa duoc mo",
-        "when": "Co hoa don giam gia tay trong ky",
-        "then": "Moi dong giao dich hien thi: Gia tri niem yet, Doanh thu thuan, Chenh lech (mau do neu am)"
+        "title": "Hiển thị trên Báo cáo hàng hoá",
+        "given": "Báo cáo Bán hàng theo hàng hoá được mở",
+        "when": "Có hoá đơn giảm giá tay trong kỳ",
+        "then": "Mỗi dòng giao dịch hiển thị: Giá trị niêm yết, Doanh thu thuần, Chênh lệch (màu đỏ nếu âm)"
       },
       {
         "id": "AC-03",
-        "title": "Ghi chu nguon giam",
-        "given": "Hoa don co giam gia tay",
-        "when": "Bao cao hien thi",
-        "then": "Footer ghi ro: (Da phan bo giam gia hoa don, giam gia phieu tra)"
+        "title": "Ghi chú nguồn giảm",
+        "given": "Hoá đơn có giảm giá tay",
+        "when": "Báo cáo hiển thị",
+        "then": "Footer ghi rõ: (Đã phân bổ giảm giá hoá đơn, giảm giá phiếu trả)"
       }
     ],
-    "flow": "[THU NGAN]\n    |\n    v\nTao order -> Them items vao hoa don\n    |\n    v\nAp dung giam gia tay\n    |\n    v\nHoan thanh thanh toan\n    |\n    v\n--- TRIGGER: On Invoice Complete ---\n    |\n    v\n[BACKEND - Discount Allocation Service]\n    |- Lay invoice.discount_amount (D)\n    |- Lay danh sach line_items[]\n    |- Tinh total = SUM(line_total[i])\n    |- FOR each item[i]: allocated[i] = FLOOR(D x line_total[i] / total)\n    |- Largest Remainder cho phan du\n    L- SUM CHECK: SUM(allocated) == D",
-    "dbChanges": "ALTER TABLE order_items ADD COLUMN discount_allocated BIGINT DEFAULT 0;\n-- Gia tri giam duoc phan bo tu invoice discount (don vi: dong)\n\nALTER TABLE order_items ADD COLUMN net_revenue BIGINT;\n-- = (quantity x unit_price) - discount_direct - discount_allocated",
+    "flow": "[THU NGÂN]\n    |\n    ▼\nTạo order → Thêm items vào hoá đơn\n    |\n    ▼\nÁp dụng giảm giá tay\n    |\n    ▼\nHoàn thành thanh toán\n    |\n    ▼\n─── TRIGGER: On Invoice Complete ───\n    |\n    ▼\n[BACKEND — Discount Allocation Service]\n    ├─ Lấy invoice.discount_amount (D)\n    ├─ Lấy danh sách line_items[]\n    ├─ Tính total = SUM(line_total[i])\n    ├─ FOR each item[i]: allocated[i] = FLOOR(D × line_total[i] / total)\n    ├─ Largest Remainder cho phần dư\n    └─ SUM CHECK: SUM(allocated) == D",
+    "dbChanges": "ALTER TABLE order_items ADD COLUMN discount_allocated BIGINT DEFAULT 0;\n-- Giá trị giảm được phân bổ từ invoice discount (đơn vị: đồng)\n\nALTER TABLE order_items ADD COLUMN net_revenue BIGINT;\n-- = (quantity × unit_price) − discount_direct − discount_allocated",
     "edgeCases": [
-      { "case": "Hoa don co 1 item", "handle": "Toan bo giam gia ve item do" },
-      { "case": "Giam gia > tong hoa don", "handle": "Validate: khong cho giam vuot tong" },
-      { "case": "Item co SL = 0", "handle": "Bo qua item do trong phan bo" },
-      { "case": "Lam tron le (7d / 3 items)", "handle": "Largest Remainder -> [3, 2, 2]" }
+      { "case": "Hoá đơn có 1 item", "handle": "Toàn bộ giảm giá về item đó" },
+      { "case": "Giảm giá > tổng hoá đơn", "handle": "Validate: không cho giảm vượt tổng" },
+      { "case": "Item có SL = 0", "handle": "Bỏ qua item đó trong phân bổ" },
+      { "case": "Làm tròn lẻ (7đ / 3 items)", "handle": "Largest Remainder → [3, 2, 2]" }
     ],
     "notes": [
-      "Khong tinh lai discount_allocated khi chi xem bao cao",
-      "Neu hoa don bi sua lai sau hoan thanh -> trigger tinh lai phan bo",
-      "Log moi truong hop SUM(allocated) != D de debug",
-      "Don vi tinh: VND nguyen (integer), khong dung float"
+      "Không tính lại discount_allocated khi chỉ xem báo cáo",
+      "Nếu hoá đơn bị sửa lại sau hoàn thành → trigger tính lại phân bổ",
+      "Log mọi trường hợp SUM(allocated) ≠ D để debug",
+      "Đơn vị tính: VNĐ nguyên (integer), không dùng float"
     ],
     "sprintPlan": {
       "startDate": "07/04/2026",
       "endDate": "12/04/2026",
       "days": [
         {
-          "day": "Thu 2",
+          "day": "Thứ 2",
           "date": "07/04/2026",
-          "theme": "Chuan bi & Thong nhat",
+          "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
-          "result": "Flow HTML + Test case + AC da duoc team thong nhat",
+          "result": "Flow HTML + Test case + AC đã được team thống nhất",
           "tasks": [
-            { "text": "Tao user story US-001 voi mo ta day du context va business logic", "tags": ["Dev", "Claude"] },
-            { "text": "Claude sinh acceptance criteria cho 6 truong hop (AC-01 den AC-06)", "tags": ["Claude"] },
-            { "text": "Claude sinh danh sach test case bao gom happy path, edge cases, rounding", "tags": ["Claude"] },
-            { "text": "Hop team: PO duyet business logic phan bo giam gia, Tech Lead duyet thuat toan Largest Remainder", "tags": ["Team"] },
-            { "text": "Neu chua dat -> chinh sua AC va flow theo gop y, duyet lai trong ngay", "tags": ["Claude"] }
+            { "text": "Tạo user story US-001 với mô tả đầy đủ context và business logic", "tags": ["Dev", "Claude"] },
+            { "text": "Claude sinh acceptance criteria cho 3 trường hợp (AC-01 đến AC-03)", "tags": ["Claude"] },
+            { "text": "Claude sinh danh sách test case bao gồm happy path, edge cases, rounding", "tags": ["Claude"] },
+            { "text": "Họp team: PO duyệt business logic phân bổ giảm giá, Tech Lead duyệt thuật toán Largest Remainder", "tags": ["Team"] },
+            { "text": "Nếu chưa đạt → chỉnh sửa AC và flow theo góp ý, duyệt lại trong ngày", "tags": ["Claude"] }
           ]
         },
         {
-          "day": "Thu 3",
+          "day": "Thứ 3",
           "date": "08/04/2026",
-          "theme": "Phan ra task & Bat dau code",
+          "theme": "Phân rã task & Bắt đầu code",
           "color": "teal",
-          "result": "Nhanh feature da tao. Migration DB da chay. Skeleton Discount Allocation Service da co.",
+          "result": "Nhánh feature đã tạo. Migration DB đã chạy. Skeleton Discount Allocation Service đã có.",
           "tasks": [
-            { "text": "git pull origin develop ve nhanh feature/discount-allocation", "tags": ["Git"] },
-            { "text": "Tao nhanh: feature/invoice-discount-allocation", "tags": ["Git"] },
-            { "text": "Viet migration: ALTER TABLE order_items ADD COLUMN discount_allocated, net_revenue", "tags": ["Dev", "Claude"] },
-            { "text": "Tao DiscountAllocationService skeleton voi interface ro rang", "tags": ["Dev", "Claude"] },
-            { "text": "Viet unit test cho ham tinh ty le (exact ratio) truoc khi code", "tags": ["Dev", "Claude"] }
+            { "text": "git pull origin develop về nhánh feature/discount-allocation", "tags": ["Git"] },
+            { "text": "Tạo nhánh: feature/invoice-discount-allocation", "tags": ["Git"] },
+            { "text": "Viết migration: ALTER TABLE order_items ADD COLUMN discount_allocated, net_revenue", "tags": ["Dev", "Claude"] },
+            { "text": "Tạo DiscountAllocationService skeleton với interface rõ ràng", "tags": ["Dev", "Claude"] },
+            { "text": "Viết unit test cho hàm tính tỷ lệ (exact ratio) trước khi code", "tags": ["Dev", "Claude"] }
           ]
         },
         {
-          "day": "Thu 4",
+          "day": "Thứ 4",
           "date": "09/04/2026",
-          "theme": "Code chinh - Thuat toan phan bo",
+          "theme": "Code chính — Thuật toán phân bổ",
           "color": "blue",
-          "result": "Hoan thanh 60% logic chinh. Thuat toan Largest Remainder da co unit test xanh.",
+          "result": "Hoàn thành 60% logic chính. Thuật toán Largest Remainder đã có unit test xanh.",
           "tasks": [
-            { "text": "git pull origin develop - kiem tra conflict", "tags": ["Git"] },
-            { "text": "Code ham allocateDiscount(invoiceDiscount, lineItems): allocated[]", "tags": ["Dev", "Claude"] },
-            { "text": "Code Largest Remainder: FLOOR tung item, phan chia phan du cho top items theo fractional DESC", "tags": ["Dev", "Claude"] },
-            { "text": "Claude test tung ham: kiem tra SUM(allocated) == D voi nhieu bo du lieu", "tags": ["Claude"] },
-            { "text": "Code trigger On Invoice Complete: goi allocateDiscount va luu vao DB", "tags": ["Dev", "Claude"] },
-            { "text": "Cuoi ngay: commit va push len nhanh feature", "tags": ["Git"] }
+            { "text": "git pull origin develop — kiểm tra conflict", "tags": ["Git"] },
+            { "text": "Code hàm allocateDiscount(invoiceDiscount, lineItems): allocated[]", "tags": ["Dev", "Claude"] },
+            { "text": "Code Largest Remainder: FLOOR từng item, phân chia phần dư cho top items theo fractional DESC", "tags": ["Dev", "Claude"] },
+            { "text": "Claude test từng hàm: kiểm tra SUM(allocated) == D với nhiều bộ dữ liệu", "tags": ["Claude"] },
+            { "text": "Code trigger On Invoice Complete: gọi allocateDiscount và lưu vào DB", "tags": ["Dev", "Claude"] },
+            { "text": "Cuối ngày: commit và push lên nhánh feature", "tags": ["Git"] }
           ]
         },
         {
-          "day": "Thu 5",
+          "day": "Thứ 5",
           "date": "10/04/2026",
-          "theme": "Code chinh (phan 2) + Tu QA toan bo",
+          "theme": "Code chính (phần 2) + Tự QA toàn bộ",
           "color": "blue",
-          "result": "Feature hoan thanh 100%. Toan bo test case da dat. Bao cao QA da xuat.",
+          "result": "Feature hoàn thành 100%. Toàn bộ test case đã đạt. Báo cáo QA đã xuất.",
           "tasks": [
-            { "text": "git pull origin develop - cap nhat code moi tu develop", "tags": ["Git"] },
-            { "text": "Code query bao cao: JOIN order_items + orders, GROUP BY product_id", "tags": ["Dev", "Claude"] },
-            { "text": "Hien thi 3 cot bao cao: Gia tri niem yet / Doanh thu thuan / Chenh lech (do neu am)", "tags": ["Dev", "Claude"] },
-            { "text": "Xu ly AC-04: giam gia phan bo tinh tren gia sau khi da giam truc tiep", "tags": ["Dev", "Claude"] },
-            { "text": "Xu ly AC-05: khong an cot Chenh lech khi D=0", "tags": ["Dev", "Claude"] },
-            { "text": "Claude chay toan bo test case (AC-01 den AC-06 + 4 edge cases) - xuat bao cao ket qua", "tags": ["Dev", "Claude"] },
-            { "text": "Neu co loi -> sua ngay, chay lai test den khi xanh het", "tags": ["Dev", "Claude"] }
+            { "text": "git pull origin develop — cập nhật code mới từ develop", "tags": ["Git"] },
+            { "text": "Code query báo cáo: JOIN order_items + orders, GROUP BY product_id", "tags": ["Dev", "Claude"] },
+            { "text": "Hiển thị 3 cột báo cáo: Giá trị niêm yết / Doanh thu thuần / Chênh lệch (đỏ nếu âm)", "tags": ["Dev", "Claude"] },
+            { "text": "Xử lý AC-03: footer ghi rõ nguồn giảm giá", "tags": ["Dev", "Claude"] },
+            { "text": "Claude chạy toàn bộ test case (AC-01 đến AC-03 + 4 edge cases) — xuất báo cáo kết quả", "tags": ["Dev", "Claude"] },
+            { "text": "Nếu có lỗi → sửa ngay, chạy lại test đến khi xanh hết", "tags": ["Dev", "Claude"] }
           ]
         },
         {
-          "day": "Thu 6",
+          "day": "Thứ 6",
           "date": "11/04/2026",
-          "theme": "Phan tich anh huong + Code review",
+          "theme": "Phân tích ảnh hưởng + Code review",
           "color": "amber",
-          "result": "Code da review xong. Bao cao anh huong da co. San sang merge.",
+          "result": "Code đã review xong. Báo cáo ảnh hưởng đã có. Sẵn sàng merge.",
           "tasks": [
-            { "text": "git pull origin develop - lan cuoi truoc khi review", "tags": ["Git"] },
-            { "text": "Claude phan tich anh huong: feature nay anh huong Bao cao doanh thu, Bao cao doi soat, API xuat bao cao?", "tags": ["Dev", "Claude"] },
-            { "text": "Claude xuat bao cao anh huong + danh sach regression test cu the cho tung module bi anh huong", "tags": ["Claude"] },
-            { "text": "Dev chay regression test theo de xuat: Bao cao doanh thu, Hoa don co giam gia item-level", "tags": ["Dev", "Claude"] },
-            { "text": "Tech Lead review code: kiem tra thuat toan Largest Remainder, DB migration, query bao cao", "tags": ["Team"] },
-            { "text": "Neu co gop y -> sua trong ngay, chay lai test", "tags": ["Dev"] }
+            { "text": "git pull origin develop — lần cuối trước khi review", "tags": ["Git"] },
+            { "text": "Claude phân tích ảnh hưởng: feature này ảnh hưởng Báo cáo doanh thu, Báo cáo đối soát, API xuất báo cáo?", "tags": ["Dev", "Claude"] },
+            { "text": "Claude xuất báo cáo ảnh hưởng + danh sách regression test cụ thể cho từng module", "tags": ["Claude"] },
+            { "text": "Dev chạy regression test theo đề xuất: Báo cáo doanh thu, Hoá đơn có giảm giá item-level", "tags": ["Dev", "Claude"] },
+            { "text": "Tech Lead review code: kiểm tra thuật toán Largest Remainder, DB migration, query báo cáo", "tags": ["Team"] },
+            { "text": "Nếu có góp ý → sửa trong ngày, chạy lại test", "tags": ["Dev"] }
           ]
         },
         {
-          "day": "Thu 7",
+          "day": "Thứ 7",
           "date": "12/04/2026",
-          "theme": "Merge & Release Beta",
+          "theme": "Merge & Release Beta 🚀",
           "color": "green",
-          "result": "Release beta thanh cong. Migration DB da chay. Tai lieu da cap nhat. Sprint hoan thanh!",
+          "result": "Release beta thành công. Migration DB đã chạy. Tài liệu đã cập nhật. Sprint hoàn thành!",
           "tasks": [
-            { "text": "Pull code moi nhat tu develop -> giai quyet conflict cuoi cung", "tags": ["Git"] },
-            { "text": "Chay lai toan bo test case lan cuoi sau khi merge develop vao feature", "tags": ["Dev", "Claude"] },
-            { "text": "Neu dat het -> merge feature/invoice-discount-allocation vao develop", "tags": ["Git"] },
-            { "text": "Chay DB migration tren moi truong beta", "tags": ["Dev"] },
-            { "text": "Claude tao release note: mo ta tinh nang, cach tinh phan bo, edge cases da xu ly", "tags": ["Claude"] },
-            { "text": "Deploy ban beta tu nhanh develop", "tags": ["Team"] },
-            { "text": "Neu co loi sau deploy -> hotfix ngay tren develop", "tags": ["Kham cap"] }
+            { "text": "Pull code mới nhất từ develop → giải quyết conflict cuối cùng", "tags": ["Git"] },
+            { "text": "Chạy lại toàn bộ test case lần cuối sau khi merge develop vào feature", "tags": ["Dev", "Claude"] },
+            { "text": "Nếu đạt hết → merge feature/invoice-discount-allocation vào develop", "tags": ["Git"] },
+            { "text": "Chạy DB migration trên môi trường beta", "tags": ["Dev"] },
+            { "text": "Claude tạo release note: mô tả tính năng, cách tính phân bổ, edge cases đã xử lý", "tags": ["Claude"] },
+            { "text": "Deploy bản beta từ nhánh develop", "tags": ["Team"] },
+            { "text": "Nếu có lỗi sau deploy → hotfix ngay trên develop", "tags": ["Khẩn cấp"] }
           ]
         }
       ]

@@ -3,9 +3,9 @@ function fmt(n) {
 }
 
 const STATUS_BADGE = {
-  'Cho phat trien':  'badge-blue',
-  'Dang phat trien': 'badge-orange',
-  'Hoan thanh':      'badge-green',
+  'Chờ phát triển':  'badge-blue',
+  'Đang phát triển': 'badge-orange',
+  'Hoàn thành':      'badge-green',
 };
 
 const TABS = [
