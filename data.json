@@ -1,0 +1,63 @@
+[
+  {
+    "id": "US-001",
+    "title": "Phan Bo Giam Gia Hoa Don Vao Tung Hang Hoa",
+    "module": "Bao cao ban hang theo hang hoa",
+    "author": "Product Team",
+    "date": "02/04/2026",
+    "status": "Cho phat trien",
+    "context": "Khi thu ngan giam gia tay tren toan bo hoa don (vi du: hoa don 500,000d -> giam 100,000d), he thong can phan bo khoan giam nay xuong tung dong hang hoa theo ty le gia tri.",
+    "userStory": {
+      "as": "Thu ngan / Ke toan",
+      "iWant": "He thong tu dong phan bo khoan giam gia tay tren hoa don xuong tung dong hang hoa theo ty le gia tri cua moi item",
+      "soThat": "Bao cao hang hoa hien thi dung Doanh thu thuan va Chenh lech cho tung san pham"
+    },
+    "example": {
+      "description": "Hoa don goc: 3 items, tong 500,000d, thu ngan giam tay 100,000d",
+      "discount": 100000,
+      "total": 500000,
+      "items": [
+        { "code": "SP000001", "name": "Sting", "qty": 2, "price": 30000 },
+        { "code": "SP000002", "name": "Bia",   "qty": 3, "price": 30000 },
+        { "code": "SP000003", "name": "Thuoc la", "qty": 1, "price": 350000 }
+      ]
+    },
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Phan bo dung theo ty le",
+        "given": "Mot hoa don co N items, tong gia tri T, thu ngan giam tay D",
+        "when": "Hoa don duoc hoan thanh (trang thai: Hoan thanh)",
+        "then": "Moi item[i] duoc gan discount_allocated[i] = D x (line_total[i] / T). Dung Largest Remainder Method de lam tron. SUM(discount_allocated) = D"
+      },
+      {
+        "id": "AC-02",
+        "title": "Hien thi tren Bao cao hang hoa",
+        "given": "Bao cao Ban hang theo hang hoa duoc mo",
+        "when": "Co hoa don giam gia tay trong ky",
+        "then": "Moi dong giao dich hien thi: Gia tri niem yet, Doanh thu thuan, Chenh lech (mau do neu am)"
+      },
+      {
+        "id": "AC-03",
+        "title": "Ghi chu nguon giam",
+        "given": "Hoa don co giam gia tay",
+        "when": "Bao cao hien thi",
+        "then": "Footer ghi ro: (Da phan bo giam gia hoa don, giam gia phieu tra)"
+      }
+    ],
+    "flow": "[THU NGAN]\n    |\n    v\nTao order -> Them items vao hoa don\n    |\n    v\nAp dung giam gia tay\n    |\n    v\nHoan thanh thanh toan\n    |\n    v\n--- TRIGGER: On Invoice Complete ---\n    |\n    v\n[BACKEND - Discount Allocation Service]\n    |- Lay invoice.discount_amount (D)\n    |- Lay danh sach line_items[]\n    |- Tinh total = SUM(line_total[i])\n    |- FOR each item[i]: allocated[i] = FLOOR(D x line_total[i] / total)\n    |- Largest Remainder cho phan du\n    L- SUM CHECK: SUM(allocated) == D",
+    "dbChanges": "ALTER TABLE order_items ADD COLUMN discount_allocated BIGINT DEFAULT 0;\n-- Gia tri giam duoc phan bo tu invoice discount (don vi: dong)\n\nALTER TABLE order_items ADD COLUMN net_revenue BIGINT;\n-- = (quantity x unit_price) - discount_direct - discount_allocated",
+    "edgeCases": [
+      { "case": "Hoa don co 1 item", "handle": "Toan bo giam gia ve item do" },
+      { "case": "Giam gia > tong hoa don", "handle": "Validate: khong cho giam vuot tong" },
+      { "case": "Item co SL = 0", "handle": "Bo qua item do trong phan bo" },
+      { "case": "Lam tron le (7d / 3 items)", "handle": "Largest Remainder -> [3, 2, 2]" }
+    ],
+    "notes": [
+      "Khong tinh lai discount_allocated khi chi xem bao cao",
+      "Neu hoa don bi sua lai sau hoan thanh -> trigger tinh lai phan bo",
+      "Log moi truong hop SUM(allocated) != D de debug",
+      "Don vi tinh: VND nguyen (integer), khong dung float"
+    ]
+  }
+]
