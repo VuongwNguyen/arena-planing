@@ -1,5 +1,200 @@
 [
   {
+    "id": "US-MD-123",
+    "title": "Giỏ Hàng Người Dùng Tích Hợp Thanh Toán",
+    "module": "Đặt hàng & Thanh toán",
+    "author": "Product Team",
+    "date": "03/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Khách hàng tại Arena Billiard hiện tại phải gọi nhân viên để đặt đồ ăn/thức uống trong khi đang chơi bida. Luồng này chậm và dễ nhầm lẫn đơn hàng. Cần xây dựng tính năng giỏ hàng tự phục vụ trên app/web để khách tự chọn món, thanh toán trực tuyến (MoMo, VNPay, thẻ ngân hàng) mà không cần gián đoạn trận đấu.",
+
+    "userStory": {
+      "as": "Khách hàng đang chơi bida tại Arena",
+      "iWant": "Tự thêm món vào giỏ hàng và thanh toán trực tuyến ngay trên điện thoại",
+      "soThat": "Không cần gọi nhân viên, đơn hàng được xử lý nhanh và chính xác, thanh toán tiện lợi"
+    },
+
+    "example": {
+      "description": "Khách tại bàn số 5 đặt 2 Sting + 1 Bia Heineken, tổng 150.000đ, thanh toán MoMo",
+      "discount": 0,
+      "total": 150000,
+      "items": [
+        { "code": "DU001", "name": "Sting", "qty": 2, "price": 30000 },
+        { "code": "DU002", "name": "Bia Heineken", "qty": 1, "price": 90000 }
+      ]
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Thêm / bớt / xoá sản phẩm khỏi giỏ hàng",
+        "given": "Khách đang xem danh sách sản phẩm",
+        "when": "Khách nhấn thêm, giảm số lượng hoặc xoá sản phẩm",
+        "then": "Giỏ hàng cập nhật ngay lập tức: số lượng, tổng tiền hiển thị đúng; sản phẩm có SL = 0 tự xoá khỏi giỏ"
+      },
+      {
+        "id": "AC-02",
+        "title": "Xem tóm tắt giỏ hàng trước khi thanh toán",
+        "given": "Khách vào trang giỏ hàng",
+        "when": "Giỏ có ít nhất 1 sản phẩm",
+        "then": "Hiển thị: danh sách món, số lượng, đơn giá, thành tiền từng dòng, tổng cộng, phí dịch vụ (nếu có), nút Thanh toán"
+      },
+      {
+        "id": "AC-03",
+        "title": "Chọn phương thức thanh toán",
+        "given": "Khách nhấn Thanh toán",
+        "when": "Hệ thống hiển thị màn hình chọn phương thức",
+        "then": "Có ít nhất 3 lựa chọn: MoMo, VNPay, Thẻ ngân hàng (ATM/Visa/Master). Khách chọn 1 và xác nhận"
+      },
+      {
+        "id": "AC-04",
+        "title": "Thanh toán thành công",
+        "given": "Khách hoàn tất thanh toán trên cổng",
+        "when": "Cổng thanh toán callback trạng thái SUCCESS",
+        "then": "Đơn hàng chuyển sang Đã thanh toán; nhà bếp/quầy bar nhận notification; khách thấy màn hình xác nhận với mã đơn hàng"
+      },
+      {
+        "id": "AC-05",
+        "title": "Thanh toán thất bại hoặc huỷ",
+        "given": "Khách huỷ hoặc thanh toán lỗi trên cổng",
+        "when": "Cổng callback FAILED hoặc CANCELLED",
+        "then": "Đơn hàng giữ trạng thái Chờ thanh toán; giỏ hàng vẫn còn nguyên; hiển thị thông báo lỗi rõ ràng và nút Thử lại"
+      },
+      {
+        "id": "AC-06",
+        "title": "Giỏ hàng trống",
+        "given": "Khách vào trang giỏ hàng khi chưa chọn món nào",
+        "when": "Hiển thị trang giỏ hàng",
+        "then": "Hiển thị trạng thái rỗng với nút Xem thực đơn, không hiện nút Thanh toán"
+      },
+      {
+        "id": "AC-07",
+        "title": "Timeout phiên thanh toán",
+        "given": "Khách bắt đầu thanh toán nhưng không hoàn tất trong 15 phút",
+        "when": "Hết thời gian chờ",
+        "then": "Đơn hàng huỷ tự động; giỏ hàng giữ lại để khách có thể đặt lại; hiển thị thông báo hết hạn"
+      }
+    ],
+
+    "flow": "[KHÁCH HÀNG]\n    |\n    ▼\nXem thực đơn → Chọn món → Thêm vào giỏ\n    |\n    ▼\nXem giỏ hàng (danh sách, tổng tiền)\n    |\n    ▼\nNhấn Thanh toán\n    |\n    ▼\nChọn phương thức: MoMo / VNPay / Thẻ\n    |\n    ▼\n─── Chuyển sang cổng thanh toán ───\n    |\n    ├── THÀNH CÔNG ──────────────────────────────┐\n    │                                             ▼\n    │                              Tạo Order (trạng thái: Đã thanh toán)\n    │                              Gửi notification cho bếp/bar\n    │                              Hiển thị màn hình xác nhận + mã đơn\n    │\n    └── THẤT BẠI / HUỶ ──────────────────────────┐\n                                                  ▼\n                               Giữ nguyên giỏ hàng\n                               Hiển thị lỗi + nút Thử lại\n\n─── WEBHOOK từ cổng thanh toán ───\n    |\n    ▼\n[BACKEND — Payment Service]\n    ├─ Xác thực chữ ký (signature) từ MoMo/VNPay\n    ├─ Kiểm tra idempotency (tránh xử lý 2 lần)\n    ├─ Cập nhật trạng thái đơn hàng\n    └─ Gửi realtime notification tới kitchen display",
+
+    "dbChanges": "-- Bảng giỏ hàng\nCREATE TABLE carts (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  user_id UUID NOT NULL REFERENCES users(id),\n  table_number VARCHAR(10),\n  status VARCHAR(20) DEFAULT 'active', -- active | checked_out\n  created_at TIMESTAMPTZ DEFAULT NOW(),\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n-- Chi tiết giỏ hàng\nCREATE TABLE cart_items (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  cart_id UUID NOT NULL REFERENCES carts(id) ON DELETE CASCADE,\n  product_id UUID NOT NULL REFERENCES products(id),\n  quantity INT NOT NULL CHECK (quantity > 0),\n  unit_price BIGINT NOT NULL, -- snapshot giá lúc thêm vào giỏ\n  note TEXT\n);\n\n-- Đơn hàng (tạo khi thanh toán thành công)\nCREATE TABLE orders (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  cart_id UUID REFERENCES carts(id),\n  user_id UUID NOT NULL REFERENCES users(id),\n  total_amount BIGINT NOT NULL,\n  payment_method VARCHAR(20), -- momo | vnpay | card\n  payment_status VARCHAR(20) DEFAULT 'pending', -- pending | paid | failed | cancelled\n  payment_ref VARCHAR(100), -- mã giao dịch từ cổng\n  paid_at TIMESTAMPTZ,\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);",
+
+    "edgeCases": [
+      { "case": "Sản phẩm hết hàng sau khi đã thêm vào giỏ", "handle": "Khi checkout, kiểm tra lại tồn kho; nếu hết → thông báo và xoá khỏi giỏ trước khi thanh toán" },
+      { "case": "Giá sản phẩm thay đổi trong lúc khách đang giỏ hàng", "handle": "Snapshot giá lúc thêm vào giỏ (unit_price trong cart_items); không áp giá mới cho đơn đang chờ" },
+      { "case": "Webhook thanh toán đến 2 lần (duplicate callback)", "handle": "Dùng payment_ref làm unique key; lần 2 trở đi bỏ qua (idempotent)" },
+      { "case": "Mạng khách đứt giữa chừng khi đang thanh toán", "handle": "Khách quay lại app → kiểm tra trạng thái đơn qua API; nếu đã thanh toán → hiện xác nhận; nếu chưa → cho thử lại" },
+      { "case": "Khách mở nhiều tab và thanh toán cùng lúc", "handle": "Khoá đơn bằng distributed lock khi bắt đầu tạo payment session; tab thứ 2 nhận lỗi 409 Conflict" },
+      { "case": "Tổng tiền = 0đ (áp dụng khuyến mãi 100%)", "handle": "Bỏ qua bước cổng thanh toán; tạo đơn trực tiếp với payment_status = paid" }
+    ],
+
+    "notes": [
+      "Xác thực chữ ký webhook bắt buộc — không tin tuyệt đối payload từ cổng thanh toán",
+      "Lưu toàn bộ raw webhook payload vào bảng payment_logs để debug",
+      "Không lưu thông tin thẻ ngân hàng — chỉ lưu payment_ref từ cổng",
+      "Thời gian timeout phiên thanh toán: 15 phút (config qua env, không hardcode)",
+      "Test môi trường sandbox của MoMo và VNPay trước khi go-live"
+    ],
+
+    "sprintPlan": {
+      "startDate": "07/04/2026",
+      "endDate": "12/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "07/04/2026",
+          "theme": "Chuẩn bị & Thống nhất",
+          "color": "purple",
+          "result": "User story, AC và flow đã được PO + Tech Lead duyệt. Sandbox credentials MoMo/VNPay đã có.",
+          "tasks": [
+            { "text": "Tạo user story US-MD-123 với đầy đủ context và AC (AC-01 đến AC-07)", "tags": ["Dev", "Claude"] },
+            { "text": "Họp team: PO duyệt luồng giỏ hàng, Tech Lead chọn cổng thanh toán ưu tiên (MoMo trước)", "tags": ["Team"] },
+            { "text": "Xin sandbox credentials từ MoMo và VNPay (partner portal)", "tags": ["Dev"] },
+            { "text": "Claude vẽ flow webhook và idempotency pattern để team review", "tags": ["Claude"] },
+            { "text": "Thống nhất schema DB: carts, cart_items, orders, payment_logs", "tags": ["Team"] }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "08/04/2026",
+          "theme": "Phân rã task & Tạo nhánh",
+          "color": "teal",
+          "result": "Nhánh feature tạo xong. Migration DB đã chạy trên dev. API skeleton giỏ hàng đã có.",
+          "tasks": [
+            { "text": "git pull origin develop → tạo nhánh feature/cart-payment", "tags": ["Git"] },
+            { "text": "Viết và chạy migration: tạo bảng carts, cart_items, orders, payment_logs", "tags": ["Dev", "Claude"] },
+            { "text": "Tạo Cart API skeleton: POST /cart/items, PUT /cart/items/:id, DELETE /cart/items/:id, GET /cart", "tags": ["Dev", "Claude"] },
+            { "text": "Viết unit test cho CartService: thêm/bớt/xoá item, tính tổng tiền", "tags": ["Dev", "Claude"] },
+            { "text": "Cài đặt SDK MoMo sandbox, test kết nối cơ bản", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "09/04/2026",
+          "theme": "Code giỏ hàng + Tích hợp MoMo",
+          "color": "blue",
+          "result": "Luồng giỏ hàng hoàn chỉnh. Thanh toán MoMo sandbox hoạt động end-to-end.",
+          "tasks": [
+            { "text": "git pull origin develop — kiểm tra conflict", "tags": ["Git"] },
+            { "text": "Hoàn thiện CartService: xử lý snapshot giá, kiểm tra tồn kho khi checkout", "tags": ["Dev", "Claude"] },
+            { "text": "Tích hợp MoMo: tạo payment URL, xử lý return URL, xử lý webhook với xác thực chữ ký", "tags": ["Dev", "Claude"] },
+            { "text": "Implement idempotency: kiểm tra payment_ref trước khi xử lý webhook", "tags": ["Dev", "Claude"] },
+            { "text": "Claude test các kịch bản MoMo sandbox: thành công, thất bại, huỷ", "tags": ["Claude"] },
+            { "text": "Commit và push cuối ngày", "tags": ["Git"] }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "10/04/2026",
+          "theme": "Tích hợp VNPay + QA toàn bộ",
+          "color": "blue",
+          "result": "Cả MoMo và VNPay hoạt động. Toàn bộ AC-01 đến AC-07 đã pass.",
+          "tasks": [
+            { "text": "git pull origin develop — cập nhật code mới", "tags": ["Git"] },
+            { "text": "Tích hợp VNPay sandbox: tạo payment URL, xử lý IPN webhook, xác thực secure hash", "tags": ["Dev", "Claude"] },
+            { "text": "Xử lý edge case: timeout 15 phút (cron job huỷ đơn pending quá hạn)", "tags": ["Dev", "Claude"] },
+            { "text": "Xử lý edge case: duplicate webhook, giá thay đổi, sản phẩm hết hàng", "tags": ["Dev", "Claude"] },
+            { "text": "Claude chạy toàn bộ test case AC-01 → AC-07 + 6 edge cases, xuất báo cáo", "tags": ["Dev", "Claude"] },
+            { "text": "Sửa lỗi phát sinh, chạy lại test đến khi xanh hết", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "11/04/2026",
+          "theme": "Phân tích ảnh hưởng + Code review",
+          "color": "amber",
+          "result": "Code đã review sạch. Báo cáo ảnh hưởng đã có. Sẵn sàng merge.",
+          "tasks": [
+            { "text": "git pull origin develop — lần cuối trước khi review", "tags": ["Git"] },
+            { "text": "Claude phân tích ảnh hưởng: tính năng này ảnh hưởng module Báo cáo doanh thu, Quản lý kho, Kitchen Display không?", "tags": ["Dev", "Claude"] },
+            { "text": "Chạy regression test: luồng đặt hàng cũ (nhân viên đặt hộ), báo cáo cuối ngày", "tags": ["Dev", "Claude"] },
+            { "text": "Tech Lead review: xác thực webhook, idempotency, bảo mật payment_ref, không lưu thông tin thẻ", "tags": ["Team"] },
+            { "text": "Kiểm tra rate limit và error handling với cổng thanh toán khi sandbox bị chậm", "tags": ["Dev"] },
+            { "text": "Sửa theo góp ý, chạy lại test", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "12/04/2026",
+          "theme": "Merge & Release Beta 🚀",
+          "color": "green",
+          "result": "Release beta thành công. Luồng giỏ hàng + thanh toán MoMo/VNPay hoạt động trên môi trường beta.",
+          "tasks": [
+            { "text": "Pull code mới nhất từ develop → giải quyết conflict cuối cùng", "tags": ["Git"] },
+            { "text": "Chạy toàn bộ test lần cuối sau khi merge develop vào feature", "tags": ["Dev", "Claude"] },
+            { "text": "Đạt hết → merge feature/cart-payment vào develop", "tags": ["Git"] },
+            { "text": "Chạy migration DB trên môi trường beta", "tags": ["Dev"] },
+            { "text": "Test smoke: thêm món → giỏ hàng → thanh toán MoMo sandbox → xác nhận đơn", "tags": ["Dev"] },
+            { "text": "Claude tạo release note: mô tả tính năng, phương thức hỗ trợ, edge cases đã xử lý", "tags": ["Claude"] },
+            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+          ]
+        }
+      ]
+    }
+  },
+  {
     "id": "US-001",
     "title": "Phân Bổ Giảm Giá Hoá Đơn Vào Từng Hàng Hoá",
     "module": "Báo cáo bán hàng theo hàng hoá",
