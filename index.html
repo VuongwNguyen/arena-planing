@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arena Planning</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; }
+
+/* NAV TABS */
+.nav { display: flex; background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0 32px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.nav-tab { padding: 14px 20px; font-size: 13px; font-weight: 600; color: #94a3b8; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
+.nav-tab:hover { color: #1e293b; }
+.nav-tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+
+/* PAGES */
+.page { display: none; min-height: calc(100vh - 49px); }
+.page.active { display: block; }
+
+/* HEADER */
+.page-header { background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%); border-bottom: 1px solid #e2e8f0; padding: 24px 40px; }
+.page-header h1 { font-size: 20px; font-weight: 700; color: #0f172a; }
+.header-meta { font-size: 12px; color: #64748b; margin-top: 4px; }
+.badges { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-blue   { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.badge-green  { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.badge-orange { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+.badge-gray   { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+/* CONTENT */
+.content { padding: 28px 40px; max-width: 900px; }
+.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #94a3b8; margin-bottom: 12px; margin-top: 24px; }
+.section-title:first-child { margin-top: 0; }
+
+/* Context */
+.context-box { background: #fff; border: 1px solid #e2e8f0; border-left: 3px solid #2563eb; border-radius: 8px; padding: 16px 18px; font-size: 14px; color: #334155; line-height: 1.7; }
+
+/* User Story */
+.us-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 18px; margin-top: 12px; }
+.us-row { display: flex; gap: 10px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+.us-row:last-child { margin-bottom: 0; }
+.us-label { font-weight: 700; color: #2563eb; min-width: 72px; flex-shrink: 0; }
+.us-value { color: #334155; }
+
+/* Example table */
+.ex-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+.ex-table th { background: #f1f5f9; color: #64748b; font-weight: 600; text-align: left; padding: 8px 12px; border: 1px solid #e2e8f0; }
+.ex-table td { padding: 8px 12px; border: 1px solid #e2e8f0; color: #334155; }
+.ex-table tr.total-row td { font-weight: 700; background: #f8fafc; }
+.discount-note { margin-top: 8px; font-size: 12px; color: #64748b; }
+
+/* AC cards */
+.ac-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
+.ac-id { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; }
+.ac-title { font-size: 14px; font-weight: 600; color: #0f172a; margin: 4px 0 10px; }
+.ac-row { display: flex; gap: 10px; margin-bottom: 6px; font-size: 13px; }
+.ac-row:last-child { margin-bottom: 0; }
+.ac-label { font-weight: 700; min-width: 52px; flex-shrink: 0; }
+.ac-label.given { color: #7c3aed; }
+.ac-label.when  { color: #0369a1; }
+.ac-label.then  { color: #15803d; }
+.ac-text { color: #334155; line-height: 1.6; }
+
+/* Flow */
+.flow-pre { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 18px; font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12px; color: #334155; line-height: 1.8; white-space: pre; overflow-x: auto; }
+
+/* Edge cases */
+.edge-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.edge-table th { background: #f1f5f9; color: #64748b; font-weight: 600; text-align: left; padding: 8px 12px; border: 1px solid #e2e8f0; }
+.edge-table td { padding: 8px 12px; border: 1px solid #e2e8f0; color: #334155; }
+.edge-table tr:hover td { background: #f8fafc; }
+
+/* DB */
+.db-pre { background: #0f172a; border-radius: 8px; padding: 16px 18px; font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12px; color: #94a3b8; line-height: 1.8; white-space: pre; overflow-x: auto; }
+
+/* Notes */
+.note-list { list-style: none; }
+.note-item { display: flex; gap: 10px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; font-size: 13px; color: #334155; line-height: 1.6; }
+.note-dot { width: 6px; height: 6px; border-radius: 50%; background: #2563eb; margin-top: 6px; flex-shrink: 0; }
+
+/* 404 */
+.not-found { text-align: center; padding: 80px 40px; }
+.not-found h2 { font-size: 18px; color: #0f172a; margin-bottom: 8px; }
+.not-found p { font-size: 14px; color: #64748b; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="nav" id="nav"></div>
+<div id="app"></div>
+<script src="app.js"></script>
+</body>
+</html>
