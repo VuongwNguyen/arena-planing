@@ -313,23 +313,74 @@ function buildSprint(item) {
   return page;
 }
 
-function exportTestcaseCSV(item) {
-  const headers = ['ID', 'Tên testcase', 'Loại', 'Điều kiện tiên quyết', 'Bước thực hiện', 'Kết quả mong đợi'];
-  const rows = item.testcases.map(function(tc) {
-    return [tc.id, tc.title, tc.loai, tc.dieu_kien, tc.buoc, tc.ket_qua].map(function(v) {
-      return '"' + String(v || '').replace(/"/g, '""') + '"';
-    }).join(',');
+function exportTestcaseExcel(item) {
+  var wb = XLSX.utils.book_new();
+
+  // Cột header row 1 (merged)
+  var headerRow1 = [
+    'THÔNG TIN TESTCASE', '', '', '', '', '', '', '', '', '',
+    'ROUND 1', '', '',
+    'ROUND 2', '', '',
+    'ROUND 3', '', ''
+  ];
+  // Cột header row 2
+  var headerRow2 = [
+    'Mã Testcase', 'Tên Testcase', 'Điều kiện tiên quyết', 'Bước thực hiện',
+    'Kết quả mong đợi', 'Kết quả thực tế', 'Phiên bản', 'Evidence',
+    'Trạng thái', 'Người chịu trách nhiệm',
+    'Tester lần 1', 'Ngày test lần 1', 'Trạng thái lần 1',
+    'Tester lần 2', 'Ngày test lần 2', 'Trạng thái lần 2',
+    'Tester lần 3', 'Ngày test lần 3', 'Trạng thái lần 3'
+  ];
+
+  var dataRows = item.testcases.map(function(tc) {
+    return [
+      tc.ma_testcase || '',
+      tc.ten_testcase || '',
+      tc.dieu_kien_tien_quyet || '',
+      tc.buoc_thuc_hien || '',
+      tc.ket_qua_mong_doi || '',
+      '', // Kết quả thực tế
+      'v1.0.0',
+      '', // Evidence
+      '', // Trạng thái
+      '', // Người chịu trách nhiệm
+      '', '', '', // Round 1
+      '', '', '', // Round 2
+      '', '', ''  // Round 3
+    ];
   });
-  const csv = '\uFEFF' + headers.map(function(h) { return '"' + h + '"'; }).join(',') + '\n' + rows.join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = item.id + '_testcase.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+
+  var wsData = [headerRow1, headerRow2].concat(dataRows);
+  var ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Merge cells cho header row 1
+  ws['!merges'] = [
+    { s: { r: 0, c: 0  }, e: { r: 0, c: 9  } }, // THÔNG TIN TESTCASE: A1:J1
+    { s: { r: 0, c: 10 }, e: { r: 0, c: 12 } }, // ROUND 1: K1:M1
+    { s: { r: 0, c: 13 }, e: { r: 0, c: 15 } }, // ROUND 2: N1:P1
+    { s: { r: 0, c: 16 }, e: { r: 0, c: 18 } }  // ROUND 3: Q1:S1
+  ];
+
+  // Độ rộng cột
+  ws['!cols'] = [
+    { wch: 12 }, // Mã Testcase
+    { wch: 30 }, // Tên Testcase
+    { wch: 40 }, // Điều kiện tiên quyết
+    { wch: 45 }, // Bước thực hiện
+    { wch: 45 }, // Kết quả mong đợi
+    { wch: 25 }, // Kết quả thực tế
+    { wch: 10 }, // Phiên bản
+    { wch: 15 }, // Evidence
+    { wch: 12 }, // Trạng thái
+    { wch: 20 }, // Người chịu trách nhiệm
+    { wch: 15 }, { wch: 15 }, { wch: 14 }, // Round 1
+    { wch: 15 }, { wch: 15 }, { wch: 14 }, // Round 2
+    { wch: 15 }, { wch: 15 }, { wch: 14 }  // Round 3
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Test Cases');
+  XLSX.writeFile(wb, item.id + '_testcase_v1.0.0.xlsx');
 }
 
 function buildTestcase(item) {
@@ -351,8 +402,8 @@ function buildTestcase(item) {
     statsWrap.appendChild(el('span', { className: 'tc-stat-badge ' + pair[1], textContent: pair[0] + ' (' + counts[pair[0]] + ')' }));
   });
   toolbar.appendChild(statsWrap);
-  const exportBtn = el('button', { className: 'tc-export-btn', textContent: '⬇ Xuất CSV' });
-  exportBtn.addEventListener('click', function() { exportTestcaseCSV(item); });
+  const exportBtn = el('button', { className: 'tc-export-btn', textContent: '⬇ Xuất Excel' });
+  exportBtn.addEventListener('click', function() { exportTestcaseExcel(item); });
   toolbar.appendChild(exportBtn);
   content.appendChild(toolbar);
 
@@ -378,7 +429,7 @@ function buildTestcase(item) {
   const table = el('table', { className: 'tc-table' });
   const thead = el('thead');
   const hr = el('tr');
-  ['#', 'ID', 'Tên testcase', 'Loại', 'Điều kiện', 'Bước thực hiện', 'Kết quả mong đợi'].forEach(function(h) {
+  ['#', 'Mã TC', 'Tên testcase', 'Nhóm', 'Loại', 'Điều kiện tiên quyết', 'Bước thực hiện', 'Kết quả mong đợi'].forEach(function(h) {
     hr.appendChild(el('th', { textContent: h }));
   });
   thead.appendChild(hr);
@@ -388,15 +439,16 @@ function buildTestcase(item) {
   item.testcases.forEach(function(tc, i) {
     const tr = el('tr', { 'data-loai': tc.loai });
     tr.appendChild(el('td', { textContent: String(i + 1), className: 'tc-num' }));
-    tr.appendChild(el('td', { textContent: tc.id, className: 'tc-id' }));
-    tr.appendChild(el('td', { textContent: tc.title, className: 'tc-title-cell' }));
+    tr.appendChild(el('td', { textContent: tc.ma_testcase, className: 'tc-id' }));
+    tr.appendChild(el('td', { textContent: tc.ten_testcase, className: 'tc-title-cell' }));
+    tr.appendChild(el('td', { textContent: tc.nhom, className: 'tc-nhom-cell' }));
     const loaiCls = tc.loai === 'Happy Path' ? 'tc-badge-happy' : tc.loai === 'Edge Case' ? 'tc-badge-edge' : 'tc-badge-error';
     const loaiTd = el('td', { className: 'tc-loai-cell' });
     loaiTd.appendChild(el('span', { className: 'tc-badge ' + loaiCls, textContent: tc.loai }));
     tr.appendChild(loaiTd);
-    tr.appendChild(el('td', { textContent: tc.dieu_kien, className: 'tc-pre-cell' }));
-    tr.appendChild(el('td', { textContent: tc.buoc,      className: 'tc-pre-cell' }));
-    tr.appendChild(el('td', { textContent: tc.ket_qua,   className: 'tc-pre-cell' }));
+    tr.appendChild(el('td', { textContent: tc.dieu_kien_tien_quyet, className: 'tc-pre-cell' }));
+    tr.appendChild(el('td', { textContent: tc.buoc_thuc_hien,       className: 'tc-pre-cell' }));
+    tr.appendChild(el('td', { textContent: tc.ket_qua_mong_doi,     className: 'tc-pre-cell' }));
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
