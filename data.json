@@ -1,6 +1,7 @@
 [
   {
-    "id": "US-MD-123",
+    "id": "US-AR-001",
+    "project": "Arena Billiard",
     "title": "Giỏ Hàng Người Dùng Tích Hợp Thanh Toán",
     "module": "Đặt hàng & Thanh toán",
     "author": "Product Team",
@@ -396,7 +397,8 @@
     ]
   },
   {
-    "id": "US-001",
+    "id": "US-AR-002",
+    "project": "Arena Billiard",
     "title": "Phân Bổ Giảm Giá Hoá Đơn Vào Từng Hàng Hoá",
     "module": "Báo cáo bán hàng theo hàng hoá",
     "author": "Product Team",
@@ -682,6 +684,7 @@
   },
   {
     "id": "US-LF-001",
+    "project": "Lunar Fest",
     "title": "Game Hỏi Đáp Q&A Tại Bàn Bida",
     "module": "Gamification & Loyalty",
     "author": "Product Team",

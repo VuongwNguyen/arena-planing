@@ -1,4 +1,4 @@
-# Arena Planning — Hướng dẫn cho Claude
+# Planning Tool — Hướng dẫn cho Claude
 
 ## Quy tắc bất biến
 
@@ -7,13 +7,23 @@
 - Sau mỗi thay đổi: `git add data.json && git commit -m "..." && git push origin main`
 - **Luôn xuất link** sau khi xong: `https://vuongwnguyen.github.io/arena-planing/?id=<ID>`
 
+## Convention ID (BẮT BUỘC)
+
+| Prefix | Project |
+|--------|---------|
+| `US-AR-XXX` | Arena Billiard |
+| `US-LF-XXX` | Lunar Fest |
+
+Số thứ tự 3 chữ số, tăng dần **trong từng project** (US-AR-001, US-AR-002... độc lập với US-LF-001, US-LF-002...).
+
 ## data.json Schema
 
 Mỗi item trong array `data.json` theo đúng cấu trúc sau:
 
 ```json
 {
-  "id": "US-XXX",
+  "id": "US-AR-001",
+  "project": "Arena Billiard",
   "title": "Tên tính năng có dấu",
   "module": "Tên module",
   "author": "Product Team",
@@ -90,6 +100,8 @@ Mỗi item trong array `data.json` theo đúng cấu trúc sau:
 
 ## Giá trị hợp lệ
 
+**project:** `Arena Billiard` | `Lunar Fest` | tên project khác khi mở rộng
+
 **status:** `Chờ phát triển` | `Đang phát triển` | `Hoàn thành`
 
 **sprintPlan.days[].color:** `purple` (Thứ 2) | `teal` (Thứ 3) | `blue` (Thứ 4–5) | `amber` (Thứ 6) | `green` (Thứ 7)
@@ -138,8 +150,10 @@ Có thể bỏ qua nếu không cần: `example`, `dbChanges`, `edgeCases`, `spr
 ## Quy trình thêm planning item mới
 
 1. Đọc `data.json` hiện tại, giữ nguyên các item cũ
-2. Thêm object mới, ID tăng dần: US-002, US-003...
-3. Thêm `testcases[]` đầy đủ theo schema và quy tắc trên — KHÔNG cần người dùng nhắc
-4. Verify: `node -e "JSON.parse(require('fs').readFileSync('data.json','utf8')); console.log('OK')"`
-5. Commit + push toàn bộ
-6. Xuất link: `https://vuongwnguyen.github.io/arena-planing/?id=<ID>`
+2. Xác định project → chọn prefix đúng (US-AR / US-LF / ...)
+3. Tìm ID lớn nhất trong project đó, tăng lên 1
+4. Thêm `"project"` field ngay sau `"id"`
+5. Thêm `testcases[]` đầy đủ theo schema và quy tắc trên — KHÔNG cần người dùng nhắc
+6. Verify: `node -e "JSON.parse(require('fs').readFileSync('data.json','utf8')); console.log('OK')"`
+7. Commit + push toàn bộ
+8. Xuất link: `https://vuongwnguyen.github.io/arena-planing/?id=<ID>`
