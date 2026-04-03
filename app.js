@@ -9,12 +9,13 @@ const STATUS_BADGE = {
 };
 
 const TABS = [
-  { id: 'overview', label: '📋 Overview' },
-  { id: 'ac',       label: '✅ Acceptance Criteria' },
-  { id: 'flow',     label: '🔀 Flow' },
-  { id: 'sprint',   label: '🗓️ Sprint Plan' },
-  { id: 'db',       label: '🗄️ DB Changes' },
-  { id: 'notes',    label: '📝 Notes Dev' },
+  { id: 'overview',  label: '📋 Overview' },
+  { id: 'ac',        label: '✅ Acceptance Criteria' },
+  { id: 'flow',      label: '🔀 Flow' },
+  { id: 'sprint',    label: '🗓️ Sprint Plan' },
+  { id: 'db',        label: '🗄️ DB Changes' },
+  { id: 'notes',     label: '📝 Notes Dev' },
+  { id: 'testcase',  label: '🧪 Testcase' },
 ];
 
 function showTab(id) {
@@ -312,12 +313,107 @@ function buildSprint(item) {
   return page;
 }
 
+function exportTestcaseCSV(item) {
+  const headers = ['ID', 'Tên testcase', 'Loại', 'Điều kiện tiên quyết', 'Bước thực hiện', 'Kết quả mong đợi'];
+  const rows = item.testcases.map(function(tc) {
+    return [tc.id, tc.title, tc.loai, tc.dieu_kien, tc.buoc, tc.ket_qua].map(function(v) {
+      return '"' + String(v || '').replace(/"/g, '""') + '"';
+    }).join(',');
+  });
+  const csv = '\uFEFF' + headers.map(function(h) { return '"' + h + '"'; }).join(',') + '\n' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = item.id + '_testcase.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function buildTestcase(item) {
+  if (!item.testcases || !item.testcases.length) return null;
+  const page = el('div', { id: 'page-testcase', className: 'page' });
+  page.appendChild(buildHeader(item));
+  const content = el('div', { className: 'content tc-content' });
+
+  // Đếm theo loại
+  const counts = { 'Happy Path': 0, 'Edge Case': 0, 'Error Case': 0 };
+  item.testcases.forEach(function(tc) { counts[tc.loai] = (counts[tc.loai] || 0) + 1; });
+
+  // Toolbar: stats + export
+  const toolbar = el('div', { className: 'tc-toolbar' });
+  const statsWrap = el('div', { className: 'tc-stats' });
+  statsWrap.appendChild(el('span', { className: 'tc-stat-total', textContent: 'Tổng: ' + item.testcases.length + ' testcase' }));
+  [['Happy Path', 'tc-badge-happy'], ['Edge Case', 'tc-badge-edge'], ['Error Case', 'tc-badge-error']].forEach(function(pair) {
+    if (!counts[pair[0]]) return;
+    statsWrap.appendChild(el('span', { className: 'tc-stat-badge ' + pair[1], textContent: pair[0] + ' (' + counts[pair[0]] + ')' }));
+  });
+  toolbar.appendChild(statsWrap);
+  const exportBtn = el('button', { className: 'tc-export-btn', textContent: '⬇ Xuất CSV' });
+  exportBtn.addEventListener('click', function() { exportTestcaseCSV(item); });
+  toolbar.appendChild(exportBtn);
+  content.appendChild(toolbar);
+
+  // Filter bar
+  const filterBar = el('div', { className: 'tc-filter-bar' });
+  const filterBtns = {};
+  ['Tất cả', 'Happy Path', 'Edge Case', 'Error Case'].forEach(function(f) {
+    const btn = el('button', { className: 'tc-filter-btn' + (f === 'Tất cả' ? ' active' : ''), textContent: f });
+    btn.addEventListener('click', function() {
+      Object.values(filterBtns).forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      tbody.querySelectorAll('tr').forEach(function(row) {
+        row.style.display = (f === 'Tất cả' || row.getAttribute('data-loai') === f) ? '' : 'none';
+      });
+    });
+    filterBtns[f] = btn;
+    filterBar.appendChild(btn);
+  });
+  content.appendChild(filterBar);
+
+  // Bảng testcase
+  const tableWrap = el('div', { className: 'tc-table-wrap' });
+  const table = el('table', { className: 'tc-table' });
+  const thead = el('thead');
+  const hr = el('tr');
+  ['#', 'ID', 'Tên testcase', 'Loại', 'Điều kiện', 'Bước thực hiện', 'Kết quả mong đợi'].forEach(function(h) {
+    hr.appendChild(el('th', { textContent: h }));
+  });
+  thead.appendChild(hr);
+  table.appendChild(thead);
+
+  var tbody = el('tbody');
+  item.testcases.forEach(function(tc, i) {
+    const tr = el('tr', { 'data-loai': tc.loai });
+    tr.appendChild(el('td', { textContent: String(i + 1), className: 'tc-num' }));
+    tr.appendChild(el('td', { textContent: tc.id, className: 'tc-id' }));
+    tr.appendChild(el('td', { textContent: tc.title, className: 'tc-title-cell' }));
+    const loaiCls = tc.loai === 'Happy Path' ? 'tc-badge-happy' : tc.loai === 'Edge Case' ? 'tc-badge-edge' : 'tc-badge-error';
+    const loaiTd = el('td', { className: 'tc-loai-cell' });
+    loaiTd.appendChild(el('span', { className: 'tc-badge ' + loaiCls, textContent: tc.loai }));
+    tr.appendChild(loaiTd);
+    tr.appendChild(el('td', { textContent: tc.dieu_kien, className: 'tc-pre-cell' }));
+    tr.appendChild(el('td', { textContent: tc.buoc,      className: 'tc-pre-cell' }));
+    tr.appendChild(el('td', { textContent: tc.ket_qua,   className: 'tc-pre-cell' }));
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  tableWrap.appendChild(table);
+  content.appendChild(tableWrap);
+
+  page.appendChild(content);
+  return page;
+}
+
 function renderNav(item) {
   const nav = document.getElementById('nav-tabs');
   TABS.forEach(function(t) {
-    if (t.id === 'sprint' && !item.sprintPlan) return;
-    if (t.id === 'db' && !item.dbChanges) return;
-    if (t.id === 'notes' && (!item.notes || !item.notes.length)) return;
+    if (t.id === 'sprint'    && !item.sprintPlan) return;
+    if (t.id === 'db'        && !item.dbChanges) return;
+    if (t.id === 'notes'     && (!item.notes || !item.notes.length)) return;
+    if (t.id === 'testcase'  && (!item.testcases || !item.testcases.length)) return;
     const tab = el('div', { className: 'nav-tab', 'data-tab': t.id, textContent: t.label });
     tab.addEventListener('click', function() { showTab(t.id); });
     nav.appendChild(tab);
@@ -357,6 +453,8 @@ async function init() {
   if (dbPage) app.appendChild(dbPage);
   const notesPage = buildNotes(item);
   if (notesPage) app.appendChild(notesPage);
+  const testcasePage = buildTestcase(item);
+  if (testcasePage) app.appendChild(testcasePage);
 
   showTab('overview');
 }

@@ -111,6 +111,34 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 .sprint-result { padding: 10px 18px; font-size: 13px; border-top: 1px solid #f1f5f9; }
 
+/* Testcase page */
+.tc-content { max-width: 100% !important; padding: 24px 32px !important; }
+.tc-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+.tc-stats { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tc-stat-total { font-size: 13px; font-weight: 700; color: #0f172a; }
+.tc-stat-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.tc-export-btn { padding: 7px 16px; font-size: 12px; font-weight: 600; border: 1.5px solid #2563eb; color: #2563eb; background: #fff; border-radius: 6px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tc-export-btn:hover { background: #2563eb; color: #fff; }
+.tc-filter-bar { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.tc-filter-btn { padding: 5px 14px; font-size: 12px; font-weight: 600; border: 1px solid #e2e8f0; color: #64748b; background: #fff; border-radius: 20px; cursor: pointer; transition: all 0.15s; }
+.tc-filter-btn:hover { border-color: #94a3b8; color: #1e293b; }
+.tc-filter-btn.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+.tc-table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
+.tc-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 860px; }
+.tc-table th { background: #f1f5f9; color: #64748b; font-weight: 600; text-align: left; padding: 10px 14px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+.tc-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+.tc-table tbody tr:last-child td { border-bottom: none; }
+.tc-table tbody tr:hover td { background: #f8fafc; }
+.tc-num { color: #94a3b8; font-size: 12px; width: 32px; text-align: center; }
+.tc-id { font-weight: 700; color: #0f172a; white-space: nowrap; }
+.tc-title-cell { font-weight: 500; color: #0f172a; min-width: 160px; }
+.tc-loai-cell { white-space: nowrap; }
+.tc-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.tc-badge-happy { background: #dcfce7; color: #15803d; }
+.tc-badge-edge  { background: #fff7ed; color: #c2410c; }
+.tc-badge-error { background: #fef2f2; color: #dc2626; }
+.tc-pre-cell { white-space: pre-line; font-size: 12px; color: #334155; line-height: 1.65; min-width: 160px; max-width: 260px; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }

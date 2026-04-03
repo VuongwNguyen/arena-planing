@@ -192,7 +192,178 @@
           ]
         }
       ]
-    }
+    },
+
+    "testcases": [
+      {
+        "id": "TC_001",
+        "title": "Thêm sản phẩm vào giỏ hàng thành công",
+        "loai": "Happy Path",
+        "dieu_kien": "- Đã đăng nhập hệ thống\n- Có ít nhất 1 sản phẩm trong thực đơn\n- Kết nối mạng ổn định",
+        "buoc": "1. Mở màn hình thực đơn\n2. Chọn sản phẩm (VD: Sting - 30.000đ)\n3. Nhấn nút [+] thêm vào giỏ\n4. Mở màn hình giỏ hàng kiểm tra",
+        "ket_qua": "- Sản phẩm xuất hiện trong giỏ với SL = 1\n- Tổng tiền = 30.000đ\n- Badge giỏ hàng hiển thị số 1"
+      },
+      {
+        "id": "TC_002",
+        "title": "Tăng số lượng sản phẩm trong giỏ bằng nút +",
+        "loai": "Happy Path",
+        "dieu_kien": "- Đã đăng nhập\n- Giỏ hàng có ít nhất 1 sản phẩm",
+        "buoc": "1. Mở màn hình giỏ hàng\n2. Nhấn nút [+] trên sản phẩm đang có SL = 1\n3. Nhấn thêm 2 lần nữa (tổng 3 lần)",
+        "ket_qua": "- SL sản phẩm tăng lên 3\n- Tổng tiền cập nhật đúng (3 × đơn giá)\n- Badge giỏ cập nhật theo"
+      },
+      {
+        "id": "TC_003",
+        "title": "Giảm số lượng sản phẩm trong giỏ (SL > 1)",
+        "loai": "Happy Path",
+        "dieu_kien": "- Giỏ hàng có sản phẩm với SL = 3",
+        "buoc": "1. Mở màn hình giỏ hàng\n2. Nhấn nút [-] trên sản phẩm có SL = 3\n3. Kiểm tra lại giỏ",
+        "ket_qua": "- SL giảm xuống 2\n- Tổng tiền giảm đúng theo (2 × đơn giá)\n- Sản phẩm vẫn còn trong giỏ"
+      },
+      {
+        "id": "TC_004",
+        "title": "Xoá sản phẩm khỏi giỏ hàng bằng nút Xoá",
+        "loai": "Happy Path",
+        "dieu_kien": "- Giỏ hàng có ít nhất 2 sản phẩm khác nhau",
+        "buoc": "1. Mở màn hình giỏ hàng\n2. Nhấn nút [Xoá] / [🗑] trên sản phẩm đầu tiên\n3. Xác nhận xoá (nếu có hộp thoại)\n4. Kiểm tra giỏ hàng",
+        "ket_qua": "- Sản phẩm bị xoá khỏi giỏ\n- Tổng tiền cập nhật lại chính xác\n- Sản phẩm còn lại vẫn giữ nguyên"
+      },
+      {
+        "id": "TC_005",
+        "title": "Xem tóm tắt giỏ hàng đầy đủ thông tin",
+        "loai": "Happy Path",
+        "dieu_kien": "- Giỏ hàng có ít nhất 2 sản phẩm\n- Có phí dịch vụ được cấu hình",
+        "buoc": "1. Thêm 2 sản phẩm khác nhau vào giỏ\n2. Mở màn hình giỏ hàng\n3. Đọc thông tin hiển thị",
+        "ket_qua": "- Hiển thị: tên món, số lượng, đơn giá, thành tiền từng dòng\n- Tổng cộng đúng = SUM(thành tiền)\n- Phí dịch vụ (nếu có) hiển thị riêng dòng\n- Nút [Thanh toán] hiển thị rõ ràng"
+      },
+      {
+        "id": "TC_006",
+        "title": "Màn hình chọn phương thức thanh toán hiển thị 3 lựa chọn",
+        "loai": "Happy Path",
+        "dieu_kien": "- Giỏ hàng có ít nhất 1 sản phẩm\n- Cấu hình cổng thanh toán đã sẵn sàng",
+        "buoc": "1. Vào giỏ hàng\n2. Nhấn nút [Thanh toán]\n3. Quan sát màn hình chọn phương thức",
+        "ket_qua": "- Hiển thị đúng 3 lựa chọn: MoMo, VNPay, Thẻ ngân hàng (ATM/Visa/Master)\n- Mỗi lựa chọn có logo và nhãn rõ ràng\n- Có nút [Xác nhận] sau khi chọn"
+      },
+      {
+        "id": "TC_007",
+        "title": "Thanh toán thành công qua MoMo",
+        "loai": "Happy Path",
+        "dieu_kien": "- Giỏ hàng có sản phẩm, tổng 150.000đ\n- Tài khoản MoMo sandbox có đủ số dư",
+        "buoc": "1. Nhấn [Thanh toán] → chọn MoMo → [Xác nhận]\n2. Hệ thống chuyển sang cổng MoMo sandbox\n3. Nhập OTP / xác thực thành công trên cổng\n4. Quay lại app kiểm tra",
+        "ket_qua": "- Đơn hàng chuyển sang trạng thái Đã thanh toán\n- Màn hình xác nhận hiển thị mã đơn hàng\n- Notification gửi tới nhà bếp/quầy bar\n- Giỏ hàng được reset trống"
+      },
+      {
+        "id": "TC_008",
+        "title": "Thanh toán thành công qua VNPay",
+        "loai": "Happy Path",
+        "dieu_kien": "- Giỏ hàng có sản phẩm\n- Tài khoản VNPay sandbox sẵn sàng",
+        "buoc": "1. Nhấn [Thanh toán] → chọn VNPay → [Xác nhận]\n2. Hoàn tất trên cổng VNPay sandbox\n3. Quay lại app kiểm tra kết quả",
+        "ket_qua": "- Đơn hàng trạng thái Đã thanh toán\n- Màn hình xác nhận + mã đơn\n- Notification bếp/bar nhận được"
+      },
+      {
+        "id": "TC_009",
+        "title": "Thanh toán thành công qua Thẻ ngân hàng (ATM/Visa)",
+        "loai": "Happy Path",
+        "dieu_kien": "- Giỏ hàng có sản phẩm\n- Thẻ test sandbox sẵn sàng",
+        "buoc": "1. Nhấn [Thanh toán] → chọn Thẻ ngân hàng → [Xác nhận]\n2. Nhập thông tin thẻ test\n3. Hoàn tất xác thực\n4. Kiểm tra kết quả",
+        "ket_qua": "- Đơn hàng trạng thái Đã thanh toán\n- Màn hình xác nhận + mã đơn\n- Thông tin thẻ KHÔNG được lưu lại trong DB"
+      },
+      {
+        "id": "TC_010",
+        "title": "Nhà bếp/quầy bar nhận realtime notification sau thanh toán",
+        "loai": "Happy Path",
+        "dieu_kien": "- Kitchen Display System đang online\n- Đơn hàng vừa thanh toán thành công qua MoMo",
+        "buoc": "1. Hoàn tất thanh toán thành công\n2. Quan sát màn hình Kitchen Display trong vòng 5 giây",
+        "ket_qua": "- Notification xuất hiện trên Kitchen Display trong < 5s\n- Thông báo gồm: số bàn, danh sách món, mã đơn\n- Âm thanh thông báo phát (nếu cấu hình)"
+      },
+      {
+        "id": "TC_011",
+        "title": "Giảm SL sản phẩm về 0 → tự động xoá khỏi giỏ",
+        "loai": "Edge Case",
+        "dieu_kien": "- Giỏ hàng có sản phẩm với SL = 1",
+        "buoc": "1. Mở giỏ hàng\n2. Nhấn nút [-] trên sản phẩm có SL = 1\n3. Không xác nhận gì thêm",
+        "ket_qua": "- Sản phẩm tự xoá khỏi giỏ (không còn hiển thị)\n- Tổng tiền giảm về 0 (nếu chỉ có 1 sản phẩm)\n- Không báo lỗi, UX mượt mà"
+      },
+      {
+        "id": "TC_012",
+        "title": "Giỏ hàng trống — hiển thị trạng thái rỗng đúng",
+        "loai": "Edge Case",
+        "dieu_kien": "- Người dùng đã đăng nhập\n- Chưa thêm bất kỳ sản phẩm nào vào giỏ",
+        "buoc": "1. Nhấn vào icon giỏ hàng\n2. Quan sát nội dung màn hình",
+        "ket_qua": "- Hiển thị trạng thái rỗng (empty state) với hình ảnh/text phù hợp\n- Có nút [Xem thực đơn] để điều hướng\n- KHÔNG hiển thị nút [Thanh toán]"
+      },
+      {
+        "id": "TC_013",
+        "title": "Timeout phiên thanh toán sau 15 phút không hoàn tất",
+        "loai": "Edge Case",
+        "dieu_kien": "- Đã bắt đầu phiên thanh toán trên cổng\n- Không thực hiện bất kỳ thao tác nào trong 15 phút",
+        "buoc": "1. Bắt đầu thanh toán, chuyển sang cổng MoMo\n2. Để màn hình không thao tác 15 phút (hoặc mock timeout)\n3. Quay lại app kiểm tra",
+        "ket_qua": "- Đơn hàng huỷ tự động sau 15 phút\n- Giỏ hàng giữ lại để khách đặt lại\n- Thông báo: 'Phiên thanh toán đã hết hạn. Vui lòng thử lại.'\n- Cron job đã dọn sạch đơn pending quá hạn"
+      },
+      {
+        "id": "TC_014",
+        "title": "Sản phẩm hết hàng sau khi đã thêm vào giỏ",
+        "loai": "Edge Case",
+        "dieu_kien": "- Giỏ hàng có sản phẩm A\n- Sản phẩm A bị đánh dấu hết hàng trên hệ thống trong lúc khách đang giỏ",
+        "buoc": "1. Thêm sản phẩm A vào giỏ\n2. Admin cập nhật sản phẩm A = hết hàng (mock)\n3. Khách nhấn [Thanh toán]",
+        "ket_qua": "- Hệ thống kiểm tra tồn kho lúc checkout\n- Thông báo: 'Sản phẩm [A] đã hết hàng'\n- Sản phẩm A tự xoá khỏi giỏ\n- Khách có thể tiếp tục thanh toán các sản phẩm còn lại"
+      },
+      {
+        "id": "TC_015",
+        "title": "Giá sản phẩm thay đổi trong lúc khách đang giỏ hàng",
+        "loai": "Edge Case",
+        "dieu_kien": "- Giỏ có sản phẩm A giá 30.000đ\n- Admin cập nhật giá A lên 35.000đ",
+        "buoc": "1. Thêm sản phẩm A (30.000đ) vào giỏ\n2. Admin đổi giá A → 35.000đ\n3. Khách thanh toán đơn",
+        "ket_qua": "- Đơn vẫn tính giá 30.000đ (snapshot giá lúc thêm vào giỏ)\n- Trường unit_price trong cart_items giữ nguyên 30.000đ\n- KHÔNG áp giá mới vào đơn đang chờ"
+      },
+      {
+        "id": "TC_016",
+        "title": "Webhook thanh toán đến 2 lần (duplicate callback)",
+        "loai": "Edge Case",
+        "dieu_kien": "- Đơn hàng đã được xử lý webhook lần 1 thành công\n- Cổng thanh toán gửi lại webhook lần 2 (cùng payment_ref)",
+        "buoc": "1. Webhook lần 1: cổng gửi SUCCESS với payment_ref = TXN123\n2. Hệ thống xử lý, đơn chuyển sang Đã thanh toán\n3. Webhook lần 2: cùng TXN123 gửi lại",
+        "ket_qua": "- Webhook lần 2 bị bỏ qua (idempotent)\n- Đơn hàng KHÔNG bị xử lý 2 lần\n- Trả về HTTP 200 OK (không báo lỗi cho cổng)\n- Log ghi nhận duplicate webhook"
+      },
+      {
+        "id": "TC_017",
+        "title": "Tổng tiền = 0đ sau khi áp dụng khuyến mãi 100%",
+        "loai": "Edge Case",
+        "dieu_kien": "- Giỏ hàng có sản phẩm tổng 50.000đ\n- Mã khuyến mãi 100% được áp dụng",
+        "buoc": "1. Thêm sản phẩm vào giỏ\n2. Áp mã khuyến mãi giảm 100%\n3. Nhấn [Thanh toán]",
+        "ket_qua": "- Bỏ qua bước chọn cổng thanh toán\n- Đơn tạo trực tiếp với payment_status = paid\n- Màn hình xác nhận hiển thị bình thường\n- Notification gửi bếp/bar như bình thường"
+      },
+      {
+        "id": "TC_018",
+        "title": "Thanh toán thất bại trên cổng thanh toán",
+        "loai": "Error Case",
+        "dieu_kien": "- Giỏ hàng có sản phẩm\n- Cổng thanh toán trả về FAILED (mock/sandbox)",
+        "buoc": "1. Nhấn [Thanh toán] → chọn MoMo\n2. Trên cổng sandbox: chọn kịch bản thất bại\n3. Quay lại app",
+        "ket_qua": "- Đơn hàng giữ trạng thái Chờ thanh toán\n- Giỏ hàng vẫn còn nguyên\n- Thông báo lỗi rõ ràng: 'Thanh toán thất bại'\n- Hiển thị nút [Thử lại] để quay lại chọn phương thức"
+      },
+      {
+        "id": "TC_019",
+        "title": "Khách huỷ thanh toán trên cổng",
+        "loai": "Error Case",
+        "dieu_kien": "- Đang ở màn hình thanh toán của cổng\n- Khách nhấn Huỷ / Back",
+        "buoc": "1. Nhấn [Thanh toán] → chuyển sang cổng\n2. Trên cổng nhấn [Huỷ] hoặc nhấn Back\n3. Hệ thống nhận callback CANCELLED\n4. Quay lại app kiểm tra",
+        "ket_qua": "- Cổng callback CANCELLED về backend\n- Đơn giữ trạng thái Chờ thanh toán\n- Giỏ hàng còn nguyên\n- Thông báo: 'Bạn đã huỷ thanh toán' + nút [Thử lại]"
+      },
+      {
+        "id": "TC_020",
+        "title": "Mất kết nối internet giữa chừng khi đang thanh toán",
+        "loai": "Error Case",
+        "dieu_kien": "- Đang ở màn hình cổng thanh toán\n- Kết nối mạng bị ngắt đột ngột",
+        "buoc": "1. Bắt đầu thanh toán, chuyển sang cổng\n2. Tắt WiFi/4G giữa chừng\n3. Mở lại app sau khi có mạng trở lại",
+        "ket_qua": "- App kiểm tra trạng thái đơn qua API khi có mạng lại\n- Nếu đã thanh toán → hiển thị màn hình xác nhận\n- Nếu chưa thanh toán → giỏ hàng còn nguyên, cho thử lại\n- Không mất dữ liệu đơn hàng"
+      },
+      {
+        "id": "TC_021",
+        "title": "Webhook chữ ký không hợp lệ từ cổng thanh toán",
+        "loai": "Error Case",
+        "dieu_kien": "- Hệ thống đang chạy\n- Có request webhook giả mạo gửi đến (signature sai)",
+        "buoc": "1. Gửi request webhook POST với payload hợp lệ nhưng signature sai\n2. Backend xác thực chữ ký\n3. Kiểm tra response và trạng thái đơn",
+        "ket_qua": "- Backend từ chối xử lý (trả về 400 Bad Request)\n- Đơn hàng KHÔNG thay đổi trạng thái\n- Log ghi nhận webhook không hợp lệ\n- KHÔNG tạo đơn hàng giả"
+      }
+    ]
   },
   {
     "id": "US-001",
@@ -348,6 +519,113 @@
           ]
         }
       ]
-    }
+    },
+
+    "testcases": [
+      {
+        "id": "TC_001",
+        "title": "Phân bổ đúng tỷ lệ cho hoá đơn 3 items",
+        "loai": "Happy Path",
+        "dieu_kien": "- Có hoá đơn 3 items: Sting 60k, Bia 90k, Thuốc lá 350k (tổng 500k)\n- Thu ngân giảm tay 100.000đ\n- Hoá đơn vừa hoàn thành",
+        "buoc": "1. Tạo hoá đơn với 3 items như điều kiện\n2. Thu ngân giảm tay 100.000đ\n3. Nhấn [Hoàn thành thanh toán]\n4. Truy vấn discount_allocated trong order_items",
+        "ket_qua": "- Sting: allocated = 100.000 × (60.000/500.000) = 12.000đ\n- Bia: allocated = 100.000 × (90.000/500.000) = 18.000đ\n- Thuốc lá: allocated = 100.000 × (350.000/500.000) = 70.000đ\n- SUM(allocated) = 100.000đ ✓"
+      },
+      {
+        "id": "TC_002",
+        "title": "Phân bổ đúng tỷ lệ cho hoá đơn 2 items",
+        "loai": "Happy Path",
+        "dieu_kien": "- Hoá đơn 2 items: SP_A 200k, SP_B 300k (tổng 500k)\n- Giảm tay 50.000đ",
+        "buoc": "1. Tạo hoá đơn 2 items\n2. Giảm tay 50.000đ → hoàn thành\n3. Kiểm tra discount_allocated",
+        "ket_qua": "- SP_A: allocated = 50.000 × (200.000/500.000) = 20.000đ\n- SP_B: allocated = 50.000 × (300.000/500.000) = 30.000đ\n- SUM = 50.000đ ✓"
+      },
+      {
+        "id": "TC_003",
+        "title": "Báo cáo hàng hoá hiển thị đúng 3 cột",
+        "loai": "Happy Path",
+        "dieu_kien": "- Có hoá đơn đã hoàn thành với giảm giá tay trong kỳ báo cáo",
+        "buoc": "1. Mở màn hình Báo cáo bán hàng theo hàng hoá\n2. Chọn kỳ có hoá đơn giảm giá\n3. Quan sát bảng dữ liệu",
+        "ket_qua": "- Hiển thị cột: Giá trị niêm yết (qty × unit_price)\n- Hiển thị cột: Doanh thu thuần (niêm yết − allocated)\n- Hiển thị cột: Chênh lệch (= −allocated)"
+      },
+      {
+        "id": "TC_004",
+        "title": "Chênh lệch âm hiển thị màu đỏ trên báo cáo",
+        "loai": "Happy Path",
+        "dieu_kien": "- Hoá đơn có giảm giá tay > 0\n- Báo cáo đang mở",
+        "buoc": "1. Mở báo cáo hàng hoá\n2. Quan sát cột Chênh lệch trên các dòng có giảm giá",
+        "ket_qua": "- Giá trị chênh lệch < 0 hiển thị màu đỏ (#dc2626 hoặc tương đương)\n- Giá trị chênh lệch = 0 hiển thị màu bình thường"
+      },
+      {
+        "id": "TC_005",
+        "title": "Footer báo cáo ghi rõ nguồn giảm giá",
+        "loai": "Happy Path",
+        "dieu_kien": "- Báo cáo hàng hoá đang hiển thị với hoá đơn có giảm giá tay",
+        "buoc": "1. Mở báo cáo\n2. Cuộn xuống cuối bảng\n3. Đọc phần footer / ghi chú",
+        "ket_qua": "- Footer hiển thị: '(Đã phân bổ giảm giá hoá đơn, giảm giá phiếu trả)'\n- Ghi chú xuất hiện đúng khi có giảm giá\n- Không xuất hiện khi không có giảm giá"
+      },
+      {
+        "id": "TC_006",
+        "title": "Hoá đơn chỉ có 1 item — toàn bộ giảm về item đó",
+        "loai": "Edge Case",
+        "dieu_kien": "- Hoá đơn chỉ có 1 sản phẩm: Thuốc lá 350.000đ\n- Thu ngân giảm tay 50.000đ",
+        "buoc": "1. Tạo hoá đơn 1 item\n2. Giảm tay 50.000đ → hoàn thành\n3. Kiểm tra discount_allocated",
+        "ket_qua": "- Item duy nhất nhận toàn bộ 50.000đ\n- allocated = 50.000đ\n- SUM = 50.000đ ✓"
+      },
+      {
+        "id": "TC_007",
+        "title": "Làm tròn lẻ — áp dụng Largest Remainder Method",
+        "loai": "Edge Case",
+        "dieu_kien": "- Hoá đơn 3 items đồng giá: A 33k, B 33k, C 34k (tổng 100k)\n- Giảm tay 7đ",
+        "buoc": "1. Tạo hoá đơn 3 items đồng giá\n2. Giảm tay 7đ → hoàn thành\n3. Kiểm tra allocated từng item",
+        "ket_qua": "- FLOOR cho từng item: A=2, B=2, C=2 (tổng 6, còn dư 1đ)\n- Largest Remainder: item có fractional cao nhất nhận thêm 1đ\n- Kết quả: [3, 2, 2] hoặc tương đương\n- SUM(allocated) = 7đ ✓ (không được = 6 hay 8)"
+      },
+      {
+        "id": "TC_008",
+        "title": "Có item SL = 0 trong hoá đơn — bỏ qua khi phân bổ",
+        "loai": "Edge Case",
+        "dieu_kien": "- Hoá đơn có item A (SL=2, 100k) và item B (SL=0, 50k)\n- Giảm tay 20.000đ",
+        "buoc": "1. Tạo hoá đơn với item B có SL = 0\n2. Giảm tay 20.000đ → hoàn thành\n3. Kiểm tra allocated",
+        "ket_qua": "- Item B (SL=0) bị bỏ qua hoàn toàn\n- Toàn bộ 20.000đ phân bổ vào item A\n- SUM(allocated) = 20.000đ ✓"
+      },
+      {
+        "id": "TC_009",
+        "title": "Hoá đơn bị sửa sau hoàn thành — trigger tính lại phân bổ",
+        "loai": "Edge Case",
+        "dieu_kien": "- Hoá đơn đã hoàn thành và đã có discount_allocated\n- Có quyền sửa hoá đơn sau hoàn thành",
+        "buoc": "1. Lấy hoá đơn đã hoàn thành (allocated đã tính)\n2. Sửa số lượng 1 item trong hoá đơn\n3. Lưu lại\n4. Kiểm tra discount_allocated",
+        "ket_qua": "- Trigger On Invoice Update kích hoạt\n- discount_allocated được tính lại với số liệu mới\n- SUM(allocated) vẫn = D (giảm giá gốc)\n- Log ghi nhận việc tính lại"
+      },
+      {
+        "id": "TC_010",
+        "title": "Giảm giá = 0đ — không phân bổ, báo cáo bình thường",
+        "loai": "Edge Case",
+        "dieu_kien": "- Hoá đơn không có giảm giá tay (discount_amount = 0)",
+        "buoc": "1. Tạo và hoàn thành hoá đơn bình thường (không giảm)\n2. Kiểm tra discount_allocated trong order_items\n3. Xem báo cáo hàng hoá",
+        "ket_qua": "- Tất cả discount_allocated = 0\n- net_revenue = quantity × unit_price\n- Báo cáo không hiển thị cột Chênh lệch đỏ\n- Footer không hiển thị ghi chú giảm giá"
+      },
+      {
+        "id": "TC_011",
+        "title": "Giảm giá > tổng hoá đơn — hệ thống từ chối",
+        "loai": "Error Case",
+        "dieu_kien": "- Hoá đơn tổng 500.000đ\n- Thu ngân nhập giảm tay 600.000đ",
+        "buoc": "1. Tạo hoá đơn 500.000đ\n2. Nhập giảm tay 600.000đ\n3. Nhấn [Hoàn thành]",
+        "ket_qua": "- Hệ thống validate và từ chối\n- Thông báo lỗi: 'Giảm giá không được vượt quá tổng hoá đơn (500.000đ)'\n- Hoá đơn không được hoàn thành\n- Không có discount_allocated nào được tạo"
+      },
+      {
+        "id": "TC_012",
+        "title": "SUM(allocated) ≠ D — hệ thống log lỗi để debug",
+        "loai": "Error Case",
+        "dieu_kien": "- Tình huống bất thường: bug trong thuật toán khiến SUM ≠ D\n- (Mock bằng cách inject lỗi vào service)",
+        "buoc": "1. Mock allocateDiscount trả về giá trị sai (SUM ≠ D)\n2. Hoàn thành hoá đơn\n3. Kiểm tra log hệ thống",
+        "ket_qua": "- Log ERROR ghi nhận: 'SUM(allocated)=[X] ≠ D=[Y] tại invoice_id=[Z]'\n- Đơn hàng vẫn hoàn thành (không block nghiệp vụ)\n- Alert gửi tới team (nếu cấu hình)\n- Có thể tái tính lại bằng tool admin"
+      },
+      {
+        "id": "TC_013",
+        "title": "Truy cập báo cáo hàng hoá khi không có quyền",
+        "loai": "Error Case",
+        "dieu_kien": "- Đăng nhập với tài khoản không có quyền xem báo cáo (VD: role Nhân viên bán hàng)",
+        "buoc": "1. Đăng nhập tài khoản role thấp\n2. Truy cập trực tiếp URL màn hình Báo cáo bán hàng theo hàng hoá\n3. Hoặc nhấn menu nếu hiển thị",
+        "ket_qua": "- Hệ thống từ chối truy cập (403 Forbidden)\n- Redirect về trang chủ hoặc trang lỗi phù hợp\n- Thông báo: 'Bạn không có quyền xem báo cáo này'\n- Không lộ bất kỳ dữ liệu báo cáo nào"
+      }
+    ]
   }
 ]
