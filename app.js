@@ -12,6 +12,7 @@ const TABS = [
   { id: 'overview', label: '📋 Overview' },
   { id: 'ac',       label: '✅ Acceptance Criteria' },
   { id: 'flow',     label: '🔀 Flow' },
+  { id: 'sprint',   label: '🗓️ Sprint Plan' },
   { id: 'db',       label: '🗄️ DB Changes' },
   { id: 'notes',    label: '📝 Notes Dev' },
 ];
@@ -207,9 +208,114 @@ function renderNotFound(id) {
   document.getElementById('app').appendChild(wrap);
 }
 
+const SPRINT_COLOR = {
+  purple: { bg: '#f5f3ff', border: '#7c3aed', text: '#5b21b6', dot: '#7c3aed' },
+  teal:   { bg: '#f0fdf9', border: '#0f9b7a', text: '#065f46', dot: '#0f9b7a' },
+  blue:   { bg: '#eff6ff', border: '#2563eb', text: '#1e40af', dot: '#2563eb' },
+  amber:  { bg: '#fffbeb', border: '#d97706', text: '#92400e', dot: '#d97706' },
+  green:  { bg: '#f0fdf4', border: '#16a34a', text: '#14532d', dot: '#16a34a' },
+};
+
+const TAG_COLOR = {
+  'Dev':    { bg: '#eff6ff', color: '#1e40af' },
+  'Claude': { bg: '#f5f3ff', color: '#5b21b6' },
+  'Team':   { bg: '#f0fdf9', color: '#065f46' },
+  'Git':    { bg: '#fffbeb', color: '#92400e' },
+  'Kham cap': { bg: '#fef2f2', color: '#991b1b' },
+};
+
+function buildSprint(item) {
+  if (!item.sprintPlan) return null;
+  const sp = item.sprintPlan;
+  const page = el('div', { id: 'page-sprint', className: 'page' });
+  page.appendChild(buildHeader(item));
+  const content = el('div', { className: 'content' });
+
+  // Sprint header info
+  const info = el('div', { className: 'sprint-info' });
+  info.appendChild(el('span', { className: 'sprint-info-item', textContent: '📅 ' + sp.startDate + ' → ' + sp.endDate }));
+  info.appendChild(el('span', { className: 'sprint-info-sep', textContent: '·' }));
+  info.appendChild(el('span', { className: 'sprint-info-item', textContent: '6 ngày làm việc' }));
+  content.appendChild(info);
+
+  // Git rule banner
+  const rule = el('div', { className: 'sprint-rule' });
+  rule.appendChild(el('span', { textContent: '⚠️' }));
+  const ruleText = el('span');
+  ruleText.textContent = 'Quy tắc mỗi ngày: Đầu ngày chạy ';
+  const ruleCode = el('code', { textContent: 'git pull origin develop' });
+  ruleText.appendChild(ruleCode);
+  ruleText.appendChild(document.createTextNode(' về nhánh feature. Có conflict → giải quyết ngay.'));
+  rule.appendChild(ruleText);
+  content.appendChild(rule);
+
+  // Day cards
+  sp.days.forEach(function(day) {
+    const c = SPRINT_COLOR[day.color] || SPRINT_COLOR.blue;
+    const card = el('div', { className: 'sprint-card' });
+    card.style.borderLeftColor = c.border;
+
+    // Card header
+    const header = el('div', { className: 'sprint-card-header' });
+    const badge = el('span', { className: 'sprint-day-badge', textContent: day.day });
+    badge.style.background = c.bg;
+    badge.style.color = c.text;
+    badge.style.borderColor = c.border;
+    header.appendChild(badge);
+
+    const titleWrap = el('div');
+    titleWrap.appendChild(el('div', { className: 'sprint-day-date', textContent: day.date }));
+    titleWrap.appendChild(el('div', { className: 'sprint-day-theme', textContent: day.theme }));
+    header.appendChild(titleWrap);
+    card.appendChild(header);
+
+    // Task list
+    const ul = el('ul', { className: 'sprint-task-list' });
+    day.tasks.forEach(function(task) {
+      const li = el('li', { className: 'sprint-task-item' });
+
+      const dot = el('div', { className: 'sprint-task-dot' });
+      dot.style.borderColor = c.dot;
+      li.appendChild(dot);
+
+      const textWrap = el('div', { className: 'sprint-task-text' });
+      textWrap.appendChild(document.createTextNode(task.text));
+
+      // Tags
+      if (task.tags && task.tags.length) {
+        task.tags.forEach(function(tag) {
+          const tc = TAG_COLOR[tag] || { bg: '#f1f5f9', color: '#475569' };
+          const t = el('span', { className: 'sprint-tag', textContent: tag });
+          t.style.background = tc.bg;
+          t.style.color = tc.color;
+          textWrap.appendChild(t);
+        });
+      }
+      li.appendChild(textWrap);
+      ul.appendChild(li);
+    });
+    card.appendChild(ul);
+
+    // Result
+    const result = el('div', { className: 'sprint-result' });
+    result.style.background = c.bg;
+    result.style.color = c.text;
+    result.appendChild(el('span', { textContent: '✓ ' }));
+    result.appendChild(el('strong', { textContent: 'Kết thúc ' + day.day + ': ' }));
+    result.appendChild(document.createTextNode(day.result));
+    card.appendChild(result);
+
+    content.appendChild(card);
+  });
+
+  page.appendChild(content);
+  return page;
+}
+
 function renderNav(item) {
   const nav = document.getElementById('nav-tabs');
   TABS.forEach(function(t) {
+    if (t.id === 'sprint' && !item.sprintPlan) return;
     if (t.id === 'db' && !item.dbChanges) return;
     if (t.id === 'notes' && (!item.notes || !item.notes.length)) return;
     const tab = el('div', { className: 'nav-tab', 'data-tab': t.id, textContent: t.label });
@@ -245,6 +351,8 @@ async function init() {
   app.appendChild(buildOverview(item));
   app.appendChild(buildAC(item));
   app.appendChild(buildFlow(item));
+  const sprintPage = buildSprint(item);
+  if (sprintPage) app.appendChild(sprintPage);
   const dbPage = buildDB(item);
   if (dbPage) app.appendChild(dbPage);
   const notesPage = buildNotes(item);

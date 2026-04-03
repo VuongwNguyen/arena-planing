@@ -58,6 +58,102 @@
       "Neu hoa don bi sua lai sau hoan thanh -> trigger tinh lai phan bo",
       "Log moi truong hop SUM(allocated) != D de debug",
       "Don vi tinh: VND nguyen (integer), khong dung float"
-    ]
+    ],
+    "sprintPlan": {
+      "startDate": "07/04/2026",
+      "endDate": "12/04/2026",
+      "days": [
+        {
+          "day": "Thu 2",
+          "date": "07/04/2026",
+          "theme": "Chuan bi & Thong nhat",
+          "color": "purple",
+          "result": "Flow HTML + Test case + AC da duoc team thong nhat",
+          "tasks": [
+            { "text": "Tao user story US-001 voi mo ta day du context va business logic", "tags": ["Dev", "Claude"] },
+            { "text": "Claude sinh acceptance criteria cho 6 truong hop (AC-01 den AC-06)", "tags": ["Claude"] },
+            { "text": "Claude sinh danh sach test case bao gom happy path, edge cases, rounding", "tags": ["Claude"] },
+            { "text": "Hop team: PO duyet business logic phan bo giam gia, Tech Lead duyet thuat toan Largest Remainder", "tags": ["Team"] },
+            { "text": "Neu chua dat -> chinh sua AC va flow theo gop y, duyet lai trong ngay", "tags": ["Claude"] }
+          ]
+        },
+        {
+          "day": "Thu 3",
+          "date": "08/04/2026",
+          "theme": "Phan ra task & Bat dau code",
+          "color": "teal",
+          "result": "Nhanh feature da tao. Migration DB da chay. Skeleton Discount Allocation Service da co.",
+          "tasks": [
+            { "text": "git pull origin develop ve nhanh feature/discount-allocation", "tags": ["Git"] },
+            { "text": "Tao nhanh: feature/invoice-discount-allocation", "tags": ["Git"] },
+            { "text": "Viet migration: ALTER TABLE order_items ADD COLUMN discount_allocated, net_revenue", "tags": ["Dev", "Claude"] },
+            { "text": "Tao DiscountAllocationService skeleton voi interface ro rang", "tags": ["Dev", "Claude"] },
+            { "text": "Viet unit test cho ham tinh ty le (exact ratio) truoc khi code", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thu 4",
+          "date": "09/04/2026",
+          "theme": "Code chinh - Thuat toan phan bo",
+          "color": "blue",
+          "result": "Hoan thanh 60% logic chinh. Thuat toan Largest Remainder da co unit test xanh.",
+          "tasks": [
+            { "text": "git pull origin develop - kiem tra conflict", "tags": ["Git"] },
+            { "text": "Code ham allocateDiscount(invoiceDiscount, lineItems): allocated[]", "tags": ["Dev", "Claude"] },
+            { "text": "Code Largest Remainder: FLOOR tung item, phan chia phan du cho top items theo fractional DESC", "tags": ["Dev", "Claude"] },
+            { "text": "Claude test tung ham: kiem tra SUM(allocated) == D voi nhieu bo du lieu", "tags": ["Claude"] },
+            { "text": "Code trigger On Invoice Complete: goi allocateDiscount va luu vao DB", "tags": ["Dev", "Claude"] },
+            { "text": "Cuoi ngay: commit va push len nhanh feature", "tags": ["Git"] }
+          ]
+        },
+        {
+          "day": "Thu 5",
+          "date": "10/04/2026",
+          "theme": "Code chinh (phan 2) + Tu QA toan bo",
+          "color": "blue",
+          "result": "Feature hoan thanh 100%. Toan bo test case da dat. Bao cao QA da xuat.",
+          "tasks": [
+            { "text": "git pull origin develop - cap nhat code moi tu develop", "tags": ["Git"] },
+            { "text": "Code query bao cao: JOIN order_items + orders, GROUP BY product_id", "tags": ["Dev", "Claude"] },
+            { "text": "Hien thi 3 cot bao cao: Gia tri niem yet / Doanh thu thuan / Chenh lech (do neu am)", "tags": ["Dev", "Claude"] },
+            { "text": "Xu ly AC-04: giam gia phan bo tinh tren gia sau khi da giam truc tiep", "tags": ["Dev", "Claude"] },
+            { "text": "Xu ly AC-05: khong an cot Chenh lech khi D=0", "tags": ["Dev", "Claude"] },
+            { "text": "Claude chay toan bo test case (AC-01 den AC-06 + 4 edge cases) - xuat bao cao ket qua", "tags": ["Dev", "Claude"] },
+            { "text": "Neu co loi -> sua ngay, chay lai test den khi xanh het", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thu 6",
+          "date": "11/04/2026",
+          "theme": "Phan tich anh huong + Code review",
+          "color": "amber",
+          "result": "Code da review xong. Bao cao anh huong da co. San sang merge.",
+          "tasks": [
+            { "text": "git pull origin develop - lan cuoi truoc khi review", "tags": ["Git"] },
+            { "text": "Claude phan tich anh huong: feature nay anh huong Bao cao doanh thu, Bao cao doi soat, API xuat bao cao?", "tags": ["Dev", "Claude"] },
+            { "text": "Claude xuat bao cao anh huong + danh sach regression test cu the cho tung module bi anh huong", "tags": ["Claude"] },
+            { "text": "Dev chay regression test theo de xuat: Bao cao doanh thu, Hoa don co giam gia item-level", "tags": ["Dev", "Claude"] },
+            { "text": "Tech Lead review code: kiem tra thuat toan Largest Remainder, DB migration, query bao cao", "tags": ["Team"] },
+            { "text": "Neu co gop y -> sua trong ngay, chay lai test", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thu 7",
+          "date": "12/04/2026",
+          "theme": "Merge & Release Beta",
+          "color": "green",
+          "result": "Release beta thanh cong. Migration DB da chay. Tai lieu da cap nhat. Sprint hoan thanh!",
+          "tasks": [
+            { "text": "Pull code moi nhat tu develop -> giai quyet conflict cuoi cung", "tags": ["Git"] },
+            { "text": "Chay lai toan bo test case lan cuoi sau khi merge develop vao feature", "tags": ["Dev", "Claude"] },
+            { "text": "Neu dat het -> merge feature/invoice-discount-allocation vao develop", "tags": ["Git"] },
+            { "text": "Chay DB migration tren moi truong beta", "tags": ["Dev"] },
+            { "text": "Claude tao release note: mo ta tinh nang, cach tinh phan bo, edge cases da xu ly", "tags": ["Claude"] },
+            { "text": "Deploy ban beta tu nhanh develop", "tags": ["Team"] },
+            { "text": "Neu co loi sau deploy -> hotfix ngay tren develop", "tags": ["Kham cap"] }
+          ]
+        }
+      ]
+    }
   }
 ]
