@@ -332,7 +332,7 @@ async function init() {
 
   let data;
   try {
-    const res = await fetch('./data.json');
+    const res = await fetch('./data.json?v=' + Date.now());
     if (!res.ok) throw new Error('fetch failed');
     data = await res.json();
   } catch (e) {
