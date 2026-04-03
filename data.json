@@ -679,5 +679,343 @@
         "loai": "Happy Path"
       }
     ]
+  },
+  {
+    "id": "US-LF-001",
+    "title": "Game Hỏi Đáp Q&A Tại Bàn Bida",
+    "module": "Gamification & Loyalty",
+    "author": "Product Team",
+    "date": "03/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Khách hàng tại Arena Billiard thường có thời gian chờ giữa các ván (lúc đối thủ chơi, lúc chờ bàn trống). Thay vì để thời gian này trống, hệ thống cung cấp game hỏi đáp Q&A ngay trên app để khách giải trí, tăng tương tác và thời gian ở lại quán. Câu hỏi xoay quanh kiến thức bida, văn hoá thể thao và câu đố vui. Khách trả lời đúng tích điểm, đổi điểm lấy ưu đãi.",
+
+    "userStory": {
+      "as": "Khách hàng đang chờ hoặc nghỉ giữa ván bida tại Arena",
+      "iWant": "Tham gia game hỏi đáp Q&A ngay trên điện thoại để giải trí và tích điểm thưởng",
+      "soThat": "Thời gian chờ trở nên thú vị, tích luỹ điểm đổi ưu đãi tại quán"
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Vào màn hình game Q&A",
+        "given": "Khách đang đăng nhập app Arena",
+        "when": "Khách nhấn vào tab/icon Game Q&A từ màn hình chính",
+        "then": "Hiển thị màn hình game với: tổng điểm tích luỹ, lịch sử phiên đã chơi, nút [Chơi ngay], trạng thái lượt còn lại trong ngày (VD: 2/3)"
+      },
+      {
+        "id": "AC-02",
+        "title": "Hiển thị câu hỏi và 4 lựa chọn",
+        "given": "Khách nhấn [Chơi ngay] và còn lượt chơi trong ngày",
+        "when": "Hệ thống chọn ngẫu nhiên câu hỏi chưa từng trả lời",
+        "then": "Hiển thị: nội dung câu hỏi, 4 đáp án A/B/C/D, đồng hồ đếm ngược 30 giây, tiến trình câu (VD: Câu 1/10)"
+      },
+      {
+        "id": "AC-03",
+        "title": "Trả lời đúng — cộng điểm theo độ khó",
+        "given": "Khách chọn đáp án trong thời gian 30 giây",
+        "when": "Đáp án được chọn là đúng",
+        "then": "Highlight đáp án màu xanh, cộng điểm: Dễ +10đ / Trung bình +20đ / Khó +50đ. Hiển thị giải thích ngắn. Tự chuyển câu tiếp theo sau 2 giây"
+      },
+      {
+        "id": "AC-04",
+        "title": "Trả lời sai — không trừ điểm, hiện đáp án đúng",
+        "given": "Khách chọn đáp án trong thời gian 30 giây",
+        "when": "Đáp án được chọn là sai",
+        "then": "Highlight đáp án sai màu đỏ, đáp án đúng màu xanh. Không trừ điểm. Hiển thị giải thích. Tự chuyển câu tiếp theo sau 3 giây"
+      },
+      {
+        "id": "AC-05",
+        "title": "Timeout — đồng hồ về 0 chưa chọn",
+        "given": "Đồng hồ đếm ngược về 0 mà khách chưa chọn đáp án",
+        "when": "Hết 30 giây",
+        "then": "Tự động ghi nhận 'không trả lời'. Hiển thị đáp án đúng. Không cộng điểm. Tự chuyển câu tiếp theo"
+      },
+      {
+        "id": "AC-06",
+        "title": "Kết thúc phiên — màn hình kết quả",
+        "given": "Khách vừa trả lời xong câu thứ 10",
+        "when": "Phiên hoàn thành",
+        "then": "Màn hình kết quả hiển thị: số câu đúng/10, điểm kiếm được phiên này, tổng điểm tích luỹ, xếp hạng phiên so với người chơi khác, nút [Chơi lại] (nếu còn lượt) và [Đổi điểm]"
+      },
+      {
+        "id": "AC-07",
+        "title": "Giới hạn 3 phiên mỗi ngày",
+        "given": "Khách đã hoàn thành 3 phiên trong ngày",
+        "when": "Khách nhấn [Chơi ngay]",
+        "then": "Thông báo: 'Bạn đã hết lượt chơi hôm nay (3/3). Quay lại lúc 00:00 để tiếp tục!' Nút [Chơi ngay] bị vô hiệu hoá"
+      },
+      {
+        "id": "AC-08",
+        "title": "Bảng xếp hạng tuần",
+        "given": "Khách vào tab Bảng xếp hạng",
+        "when": "Tải leaderboard",
+        "then": "Top 10 người chơi trong tuần hiển thị: tên, avatar, tổng điểm. Khách thấy vị trí của mình ngay cả khi không nằm trong top 10"
+      }
+    ],
+
+    "flow": "[KHÁCH HÀNG]\n    |\n    ▼\nMở tab Game Q&A\n    |\n    ▼\nXem điểm tích luỹ + lượt còn lại (X/3)\n    |\n    ▼\nNhấn [Chơi ngay]\n    |\n    ├─ Hết lượt (3/3) ──────────────────────────────┐\n    │                                                ▼\n    │                               Thông báo hết lượt hôm nay\n    │                               Hiển thị giờ reset (00:00)\n    │\n    └─ Còn lượt ─────────────────────────────────────┐\n                                                      ▼\n                                       Câu hỏi 1/10 + đồng hồ 30s\n                                              |\n                                ┌─────────────┼─────────────┐\n                                ▼             ▼             ▼\n                            Trả lời       Trả lời       Timeout\n                              ĐÚNG          SAI\n                                │             │             │\n                                ▼             ▼             ▼\n                           +10/20/50đ    Hiện đáp án    Hiện đáp án\n                           Giải thích    Giải thích     (0 điểm)\n                                └─────────────┴─────────────┘\n                                              │\n                                              ▼\n                                     Câu tiếp theo\n                                  (lặp đến câu 10/10)\n                                              │\n                                              ▼\n                                     Màn hình Kết quả\n                                     (điểm, xếp hạng)\n                                              |\n                                 ┌────────────┴────────────┐\n                                 ▼                         ▼\n                            [Chơi lại]               [Đổi điểm]\n                       (nếu còn lượt)            (sang module Loyalty)",
+
+    "dbChanges": "-- Ngân hàng câu hỏi\nCREATE TABLE qa_questions (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  content TEXT NOT NULL,\n  option_a TEXT NOT NULL,\n  option_b TEXT NOT NULL,\n  option_c TEXT NOT NULL,\n  option_d TEXT NOT NULL,\n  correct_option CHAR(1) NOT NULL CHECK (correct_option IN ('A','B','C','D')),\n  explanation TEXT,\n  difficulty VARCHAR(10) NOT NULL CHECK (difficulty IN ('easy','medium','hard')),\n  category VARCHAR(50) DEFAULT 'general', -- billiard | sport | general\n  is_active BOOLEAN DEFAULT TRUE,\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n-- Phiên chơi\nCREATE TABLE qa_sessions (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  user_id UUID NOT NULL REFERENCES users(id),\n  started_at TIMESTAMPTZ DEFAULT NOW(),\n  finished_at TIMESTAMPTZ,\n  total_questions INT DEFAULT 10,\n  correct_count INT DEFAULT 0,\n  points_earned INT DEFAULT 0,\n  status VARCHAR(20) DEFAULT 'in_progress' -- in_progress | completed | abandoned\n);\n\n-- Chi tiết từng câu trong phiên\nCREATE TABLE qa_session_answers (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  session_id UUID NOT NULL REFERENCES qa_sessions(id) ON DELETE CASCADE,\n  question_id UUID NOT NULL REFERENCES qa_questions(id),\n  selected_option CHAR(1), -- NULL nếu timeout\n  is_correct BOOLEAN,\n  time_taken_seconds INT,\n  answered_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n-- Tổng điểm tích luỹ\nALTER TABLE users ADD COLUMN IF NOT EXISTS qa_total_points INT DEFAULT 0;",
+
+    "edgeCases": [
+      { "case": "Câu hỏi đã hết (khách làm hết toàn bộ ngân hàng)", "handle": "Reset trạng thái 'đã trả lời' sau 30 ngày. Nếu vẫn hết, hiển thị 'Câu hỏi mới sắp được thêm vào — quay lại sau!'" },
+      { "case": "Mạng đứt giữa phiên chơi", "handle": "Auto-save tiến trình phiên xuống local storage. Khi có mạng lại, sync về server. Cho phép tiếp tục phiên dang dở trong vòng 30 phút" },
+      { "case": "Khách thoát app giữa phiên", "handle": "Phiên giữ trạng thái in_progress. Khi mở lại app trong 30 phút → hỏi 'Tiếp tục phiên trước?'. Quá 30 phút → huỷ phiên, không tính lượt" },
+      { "case": "Nhiều thiết bị chơi cùng 1 tài khoản", "handle": "Giới hạn lượt tính theo user_id, không theo thiết bị. Thiết bị mở sau thấy đúng số lượt còn lại" },
+      { "case": "Điểm số âm do bug", "handle": "Validate points_earned >= 0 tại service layer. qa_total_points không bao giờ cho phép giảm xuống dưới 0" }
+    ],
+
+    "notes": [
+      "Ngân hàng câu hỏi tối thiểu 100 câu trước khi go-live (nội dung team chuẩn bị)",
+      "Điểm Q&A tích hợp vào hệ thống Loyalty chung — dùng event-driven hoặc direct DB update (thống nhất với team)",
+      "Giới hạn 3 phiên/ngày reset lúc 00:00 giờ Việt Nam (Asia/Ho_Chi_Minh)",
+      "Random câu: ưu tiên câu chưa làm, sau đó xoay vòng FIFO với câu cũ nhất",
+      "Timeout mỗi câu: 30 giây (env: QA_QUESTION_TIMEOUT). Số câu/phiên: 10 (env: QA_SESSION_SIZE)",
+      "Leaderboard cache Redis 5 phút để tránh query nặng"
+    ],
+
+    "sprintPlan": {
+      "startDate": "13/04/2026",
+      "endDate": "18/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "13/04/2026",
+          "theme": "Chuẩn bị & Thống nhất",
+          "color": "purple",
+          "result": "US, AC, DB schema và bộ câu hỏi mẫu đã được PO + Tech Lead duyệt",
+          "tasks": [
+            { "text": "Tạo user story US-LF-001 với đầy đủ AC-01 đến AC-08", "tags": ["Dev", "Claude"] },
+            { "text": "Họp team: duyệt luồng game, thống nhất điểm theo độ khó, giới hạn 3 lượt/ngày", "tags": ["Team"] },
+            { "text": "Content team chuẩn bị 30 câu hỏi mẫu (10 dễ, 10 trung bình, 10 khó) — bida + thể thao + đố vui", "tags": ["Team"] },
+            { "text": "Claude thiết kế DB schema: qa_questions, qa_sessions, qa_session_answers", "tags": ["Claude"] },
+            { "text": "Thống nhất cơ chế tích hợp điểm Q&A vào module Loyalty", "tags": ["Team"] }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "14/04/2026",
+          "theme": "Phân rã task & Tạo nhánh",
+          "color": "teal",
+          "result": "Nhánh feature tạo xong. Migration DB chạy trên dev. API skeleton có sẵn. 30 câu hỏi seed vào DB.",
+          "tasks": [
+            { "text": "git pull origin develop → tạo nhánh feature/qa-game", "tags": ["Git"] },
+            { "text": "Viết và chạy migration: tạo 3 bảng qa_questions, qa_sessions, qa_session_answers", "tags": ["Dev", "Claude"] },
+            { "text": "Seed 30 câu hỏi mẫu vào DB dev", "tags": ["Dev"] },
+            { "text": "Tạo API skeleton: GET /qa/questions/random, POST /qa/sessions, POST /qa/sessions/:id/answer, GET /qa/sessions/:id/result, GET /qa/leaderboard", "tags": ["Dev", "Claude"] },
+            { "text": "Viết unit test cho QuestionService: random pick, filter câu đã làm, rotation logic", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "15/04/2026",
+          "theme": "Code core game logic",
+          "color": "blue",
+          "result": "Logic game hoàn chỉnh: random câu, tính điểm, đếm lượt ngày. Unit test xanh.",
+          "tasks": [
+            { "text": "git pull origin develop — kiểm tra conflict", "tags": ["Git"] },
+            { "text": "Implement SessionService: tạo phiên, validate giới hạn 3 lượt/ngày, lưu tiến trình", "tags": ["Dev", "Claude"] },
+            { "text": "Implement AnswerService: validate đáp án, tính điểm theo độ khó, xử lý timeout", "tags": ["Dev", "Claude"] },
+            { "text": "Implement LeaderboardService: aggregate điểm theo tuần, cache Redis 5 phút", "tags": ["Dev", "Claude"] },
+            { "text": "Commit và push cuối ngày", "tags": ["Git"] }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "16/04/2026",
+          "theme": "Frontend + QA toàn bộ",
+          "color": "blue",
+          "result": "UI game hoàn chỉnh. Toàn bộ AC-01 đến AC-08 pass. Offline mode hoạt động.",
+          "tasks": [
+            { "text": "git pull origin develop — cập nhật code mới", "tags": ["Git"] },
+            { "text": "Build màn hình game: câu hỏi, 4 đáp án, đồng hồ đếm ngược, feedback đúng/sai + giải thích", "tags": ["Dev", "Claude"] },
+            { "text": "Build màn hình kết quả: điểm phiên, tổng điểm, xếp hạng, nút chơi lại/đổi điểm", "tags": ["Dev", "Claude"] },
+            { "text": "Xử lý offline mode: lưu local storage, sync khi có mạng trở lại", "tags": ["Dev", "Claude"] },
+            { "text": "Claude chạy toàn bộ test case AC-01 → AC-08 + 5 edge cases, xuất báo cáo", "tags": ["Dev", "Claude"] },
+            { "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "17/04/2026",
+          "theme": "Code review + Impact analysis",
+          "color": "amber",
+          "result": "Code review sạch. Xác nhận không ảnh hưởng module Loyalty và Profile.",
+          "tasks": [
+            { "text": "git pull origin develop — lần cuối trước review", "tags": ["Git"] },
+            { "text": "Claude phân tích ảnh hưởng: Q&A ảnh hưởng module Loyalty, Profile, Báo cáo doanh thu không?", "tags": ["Dev", "Claude"] },
+            { "text": "Chạy regression test: module Loyalty điểm tích luỹ vẫn hoạt động đúng sau khi Q&A cộng điểm", "tags": ["Dev", "Claude"] },
+            { "text": "Tech Lead review: logic random câu, tính điểm, giới hạn lượt, bảo mật API", "tags": ["Team"] },
+            { "text": "Kiểm tra performance: leaderboard query với 1000+ users, đảm bảo < 200ms", "tags": ["Dev"] },
+            { "text": "Sửa theo góp ý, chạy lại test", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "18/04/2026",
+          "theme": "Merge & Release Beta",
+          "color": "green",
+          "result": "Game Q&A hoạt động trên beta. 30 câu hỏi seed sẵn. Leaderboard hiển thị đúng.",
+          "tasks": [
+            { "text": "Pull code mới nhất từ develop → giải quyết conflict cuối", "tags": ["Git"] },
+            { "text": "Chạy toàn bộ test lần cuối sau merge develop vào feature", "tags": ["Dev", "Claude"] },
+            { "text": "Đạt hết → merge feature/qa-game vào develop", "tags": ["Git"] },
+            { "text": "Chạy migration + seed câu hỏi trên môi trường beta", "tags": ["Dev"] },
+            { "text": "Test smoke: vào game → chơi 10 câu → xem kết quả → kiểm tra bảng xếp hạng", "tags": ["Dev"] },
+            { "text": "Claude tạo release note: mô tả tính năng, cách tính điểm, giới hạn lượt/ngày", "tags": ["Claude"] },
+            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+          ]
+        }
+      ]
+    },
+
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Vào màn hình game Q&A — hiển thị đầy đủ thông tin",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã đăng nhập hệ thống\n- Tài khoản chưa chơi phiên nào hôm nay\n- Kết nối mạng ổn định",
+        "buoc_thuc_hien": "1. Mở app Arena\n2. Nhấn vào tab/icon Game Q&A trên màn hình chính\n3. Quan sát nội dung hiển thị",
+        "ket_qua_mong_doi": "- Màn hình game Q&A mở thành công\n- Hiển thị tổng điểm tích luỹ của tài khoản\n- Hiển thị lượt còn lại: 3/3\n- Nút [Chơi ngay] hiển thị và có thể nhấn",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Chơi phiên đầu tiên — câu hỏi hiển thị đúng format",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang ở màn hình game Q&A\n- Còn lượt chơi trong ngày\n- Ngân hàng câu hỏi có ít nhất 10 câu chưa làm",
+        "buoc_thuc_hien": "1. Nhấn [Chơi ngay]\n2. Quan sát câu hỏi đầu tiên hiển thị",
+        "ket_qua_mong_doi": "- Câu hỏi hiển thị rõ ràng\n- 4 đáp án A/B/C/D đều hiển thị\n- Đồng hồ đếm ngược bắt đầu từ 30 giây\n- Tiến trình hiển thị: Câu 1/10",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Trả lời đúng câu Dễ — cộng 10 điểm",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang chơi phiên, hiển thị câu hỏi độ khó: Dễ\n- Biết đáp án đúng (từ seed data)",
+        "buoc_thuc_hien": "1. Chọn đáp án đúng trong vòng 30 giây\n2. Quan sát phản hồi\n3. Chờ chuyển câu tiếp theo",
+        "ket_qua_mong_doi": "- Đáp án được highlight màu xanh\n- Hiển thị giải thích câu hỏi\n- Điểm cộng thêm +10\n- Tự chuyển sang câu tiếp theo sau 2 giây",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Trả lời đúng câu Khó — cộng 50 điểm",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Câu hỏi độ khó: Khó đang hiển thị",
+        "buoc_thuc_hien": "1. Chọn đúng đáp án\n2. Kiểm tra điểm thay đổi",
+        "ket_qua_mong_doi": "- Cộng đúng +50 điểm (không phải +10 hay +20)\n- Tổng điểm phiên cập nhật ngay",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Trả lời sai — không trừ điểm, hiện đáp án đúng",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang chơi phiên, hiển thị câu hỏi\n- Chủ động chọn đáp án sai",
+        "buoc_thuc_hien": "1. Chọn đáp án sai\n2. Quan sát phản hồi\n3. Ghi nhận điểm",
+        "ket_qua_mong_doi": "- Đáp án sai highlight đỏ\n- Đáp án đúng highlight xanh\n- Điểm phiên KHÔNG thay đổi (không trừ)\n- Hiển thị giải thích\n- Chuyển câu tiếp sau 3 giây",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "Hoàn thành phiên 10 câu — màn hình kết quả đầy đủ",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang chơi phiên, đã đến câu 10/10",
+        "buoc_thuc_hien": "1. Trả lời câu hỏi thứ 10\n2. Quan sát màn hình kết quả",
+        "ket_qua_mong_doi": "- Hiển thị số câu đúng/10\n- Điểm kiếm được phiên này\n- Tổng điểm tích luỹ (đã cộng điểm phiên)\n- Xếp hạng so với người chơi khác\n- Nút [Chơi lại] (nếu còn lượt) và [Đổi điểm]",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_007",
+        "ten_testcase": "Bảng xếp hạng tuần hiển thị Top 10 và vị trí của người dùng",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có ít nhất 10 người đã chơi trong tuần\n- Tài khoản hiện tại xếp hạng 15",
+        "buoc_thuc_hien": "1. Vào tab Bảng xếp hạng\n2. Quan sát danh sách",
+        "ket_qua_mong_doi": "- Hiển thị top 10 người chơi: tên, avatar, điểm\n- Vị trí của tài khoản hiện tại (hạng 15) hiển thị phân tách bên dưới\n- Dữ liệu load trong < 2 giây",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_008",
+        "ten_testcase": "Đồng hồ về 0 — tự động ghi nhận timeout, không cộng điểm",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang hiển thị câu hỏi với đồng hồ 30 giây\n- Không thao tác gì",
+        "buoc_thuc_hien": "1. Chờ đồng hồ đếm ngược về 0 mà không chọn đáp án\n2. Quan sát hành vi hệ thống",
+        "ket_qua_mong_doi": "- Hệ thống tự ghi nhận: không trả lời\n- Hiển thị đáp án đúng\n- Điểm KHÔNG thay đổi\n- Tự chuyển câu tiếp theo",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_009",
+        "ten_testcase": "Hết 3 lượt chơi trong ngày — nút bị vô hiệu hoá",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Tài khoản đã chơi đúng 3 phiên hoàn chỉnh trong ngày",
+        "buoc_thuc_hien": "1. Vào màn hình game Q&A\n2. Nhấn [Chơi ngay]",
+        "ket_qua_mong_doi": "- Thông báo: 'Bạn đã hết lượt chơi hôm nay (3/3). Quay lại lúc 00:00 để tiếp tục!'\n- Nút [Chơi ngay] bị disable\n- Không có phiên mới được tạo",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_010",
+        "ten_testcase": "Thoát app giữa phiên — hỏi tiếp tục khi mở lại trong 30 phút",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang chơi phiên, đã qua câu 3/10\n- Đóng app hoàn toàn",
+        "buoc_thuc_hien": "1. Chơi đến câu 3/10\n2. Đóng app (force close)\n3. Mở lại app sau 10 phút\n4. Vào tab Game Q&A",
+        "ket_qua_mong_doi": "- Hệ thống nhận ra phiên dang dở\n- Hiển thị hộp thoại: 'Bạn có phiên chơi chưa hoàn thành. Tiếp tục từ câu 4/10?'\n- Chọn [Tiếp tục] → vào đúng câu 4\n- Chọn [Bỏ qua] → huỷ phiên, không tính lượt",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_011",
+        "ten_testcase": "Mạng đứt giữa phiên — sync khi có mạng trở lại",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang chơi phiên câu 5/10\n- WiFi/4G bị ngắt đột ngột",
+        "buoc_thuc_hien": "1. Chơi đến câu 5/10\n2. Tắt WiFi/4G\n3. Tiếp tục trả lời câu 5, 6, 7 (offline)\n4. Bật lại mạng\n5. Quan sát hệ thống sync",
+        "ket_qua_mong_doi": "- App vẫn cho phép chơi offline (local storage)\n- Khi có mạng: tự động sync tiến trình về server\n- Điểm và tiến trình không bị mất\n- Không thông báo lỗi gây hoảng loạn người dùng",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_012",
+        "ten_testcase": "Câu hỏi không xuất hiện trùng lặp trong cùng 1 phiên",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Ngân hàng câu hỏi có ít nhất 10 câu active",
+        "buoc_thuc_hien": "1. Chơi 1 phiên hoàn chỉnh 10 câu\n2. Ghi lại ID của 10 câu đã hiện\n3. Kiểm tra trùng lặp",
+        "ket_qua_mong_doi": "- 10 câu hỏi trong phiên là 10 câu khác nhau\n- Không có câu nào lặp lại trong cùng 1 phiên",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_013",
+        "ten_testcase": "API tạo phiên không xác thực token — từ chối truy cập",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- Hệ thống đang chạy\n- Gửi request POST /qa/sessions không có Authorization header",
+        "buoc_thuc_hien": "1. Gửi POST /qa/sessions không có token\n2. Kiểm tra response",
+        "ket_qua_mong_doi": "- Backend trả về 401 Unauthorized\n- Không tạo phiên nào\n- Không lộ thông tin câu hỏi",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_014",
+        "ten_testcase": "Gửi đáp án sau khi phiên đã kết thúc — bị từ chối",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- Phiên đã ở trạng thái completed\n- Cố tình gửi thêm đáp án qua API",
+        "buoc_thuc_hien": "1. Hoàn thành phiên (10/10 câu)\n2. Gửi POST /qa/sessions/:id/answer với câu thứ 11\n3. Kiểm tra response và DB",
+        "ket_qua_mong_doi": "- Backend trả về 409 Conflict hoặc 400 Bad Request\n- Điểm phiên KHÔNG thay đổi\n- DB không ghi thêm bản ghi answer nào",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_015",
+        "ten_testcase": "Tạo phiên khi đã hết 3 lượt — bị từ chối ở cả frontend và backend",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- User đã hoàn thành 3 phiên trong ngày\n- Bypass frontend, gọi trực tiếp API",
+        "buoc_thuc_hien": "1. Dùng tool (Postman) gọi POST /qa/sessions với token hợp lệ\n2. Kiểm tra response",
+        "ket_qua_mong_doi": "- Backend từ chối với 429 Too Many Requests hoặc 403 Forbidden\n- Thông báo rõ lý do: đã hết lượt hôm nay\n- Không tạo phiên thứ 4",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_016",
+        "ten_testcase": "End-to-end: Khách chơi 1 phiên hoàn chỉnh → điểm cộng vào Loyalty",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Môi trường beta đang chạy (App + Backend + DB)\n- Tài khoản test đăng nhập, tổng điểm Loyalty ban đầu = 100đ\n- Ngân hàng có đủ 10 câu (5 Dễ, 3 Trung bình, 2 Khó)",
+        "buoc_thuc_hien": "1. Vào tab Game Q&A → nhấn [Chơi ngay]\n2. Trả lời 10 câu: trả lời đúng tất cả\n3. Xem màn hình kết quả\n4. Vào module Loyalty kiểm tra tổng điểm\n5. Kiểm tra DB: qa_sessions.status = completed, qa_total_points",
+        "ket_qua_mong_doi": "- 10 câu đúng: 5×10 + 3×20 + 2×50 = 210 điểm kiếm được\n- Màn hình kết quả: 10/10 đúng, +210đ\n- Loyalty tổng điểm = 100 + 210 = 310đ\n- DB: qa_sessions.correct_count = 10, points_earned = 210, status = completed\n- Lượt còn lại giảm: 2/3",
+        "loai": "Happy Path"
+      }
+    ]
   }
 ]
