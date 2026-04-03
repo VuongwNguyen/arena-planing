@@ -344,7 +344,7 @@ function exportTestcaseExcel(item) {
       'v1.0.0',
       '', // Evidence
       '', // Trạng thái
-      '', // Người chịu trách nhiệm
+      'Vương', // Người chịu trách nhiệm
       '', '', '', // Round 1
       '', '', '', // Round 2
       '', '', ''  // Round 3
