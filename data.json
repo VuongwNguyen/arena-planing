@@ -99,12 +99,12 @@
     ],
 
     "sprintPlan": {
-      "startDate": "07/04/2026",
-      "endDate": "12/04/2026",
+      "startDate": "06/04/2026",
+      "endDate": "11/04/2026",
       "days": [
         {
           "day": "Thứ 2",
-          "date": "07/04/2026",
+          "date": "06/04/2026",
           "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
           "result": "User story, AC và flow đã được PO + Tech Lead duyệt. Sandbox credentials MoMo/VNPay đã có.",
@@ -118,7 +118,7 @@
         },
         {
           "day": "Thứ 3",
-          "date": "08/04/2026",
+          "date": "07/04/2026",
           "theme": "Phân rã task & Tạo nhánh",
           "color": "teal",
           "result": "Nhánh feature tạo xong. Migration DB đã chạy trên dev. API skeleton giỏ hàng đã có.",
@@ -132,7 +132,7 @@
         },
         {
           "day": "Thứ 4",
-          "date": "09/04/2026",
+          "date": "08/04/2026",
           "theme": "Code giỏ hàng + Tích hợp MoMo",
           "color": "blue",
           "result": "Luồng giỏ hàng hoàn chỉnh. Thanh toán MoMo sandbox hoạt động end-to-end.",
@@ -147,7 +147,7 @@
         },
         {
           "day": "Thứ 5",
-          "date": "10/04/2026",
+          "date": "09/04/2026",
           "theme": "Tích hợp VNPay + QA toàn bộ",
           "color": "blue",
           "result": "Cả MoMo và VNPay hoạt động. Toàn bộ AC-01 đến AC-07 đã pass.",
@@ -162,7 +162,7 @@
         },
         {
           "day": "Thứ 6",
-          "date": "11/04/2026",
+          "date": "10/04/2026",
           "theme": "Phân tích ảnh hưởng + Code review",
           "color": "amber",
           "result": "Code đã review sạch. Báo cáo ảnh hưởng đã có. Sẵn sàng merge.",
@@ -177,7 +177,7 @@
         },
         {
           "day": "Thứ 7",
-          "date": "12/04/2026",
+          "date": "11/04/2026",
           "theme": "Merge & Release Beta 🚀",
           "color": "green",
           "result": "Release beta thành công. Luồng giỏ hàng + thanh toán MoMo/VNPay hoạt động trên môi trường beta.",
@@ -255,12 +255,12 @@
       "Đơn vị tính: VNĐ nguyên (integer), không dùng float"
     ],
     "sprintPlan": {
-      "startDate": "07/04/2026",
-      "endDate": "12/04/2026",
+      "startDate": "06/04/2026",
+      "endDate": "11/04/2026",
       "days": [
         {
           "day": "Thứ 2",
-          "date": "07/04/2026",
+          "date": "06/04/2026",
           "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
           "result": "Flow HTML + Test case + AC đã được team thống nhất",
@@ -274,7 +274,7 @@
         },
         {
           "day": "Thứ 3",
-          "date": "08/04/2026",
+          "date": "07/04/2026",
           "theme": "Phân rã task & Bắt đầu code",
           "color": "teal",
           "result": "Nhánh feature đã tạo. Migration DB đã chạy. Skeleton Discount Allocation Service đã có.",
@@ -288,7 +288,7 @@
         },
         {
           "day": "Thứ 4",
-          "date": "09/04/2026",
+          "date": "08/04/2026",
           "theme": "Code chính — Thuật toán phân bổ",
           "color": "blue",
           "result": "Hoàn thành 60% logic chính. Thuật toán Largest Remainder đã có unit test xanh.",
@@ -303,7 +303,7 @@
         },
         {
           "day": "Thứ 5",
-          "date": "10/04/2026",
+          "date": "09/04/2026",
           "theme": "Code chính (phần 2) + Tự QA toàn bộ",
           "color": "blue",
           "result": "Feature hoàn thành 100%. Toàn bộ test case đã đạt. Báo cáo QA đã xuất.",
@@ -318,7 +318,7 @@
         },
         {
           "day": "Thứ 6",
-          "date": "11/04/2026",
+          "date": "10/04/2026",
           "theme": "Phân tích ảnh hưởng + Code review",
           "color": "amber",
           "result": "Code đã review xong. Báo cáo ảnh hưởng đã có. Sẵn sàng merge.",
@@ -333,7 +333,7 @@
         },
         {
           "day": "Thứ 7",
-          "date": "12/04/2026",
+          "date": "11/04/2026",
           "theme": "Merge & Release Beta 🚀",
           "color": "green",
           "result": "Release beta thành công. Migration DB đã chạy. Tài liệu đã cập nhật. Sprint hoàn thành!",
