@@ -1,13 +1,3 @@
-// Escape HTML entities - ngan XSS khi render data tu JSON
-function esc(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 function fmt(n) {
   return Number(n).toLocaleString('vi-VN') + 'd';
 }
@@ -180,8 +170,8 @@ function buildFlow(item) {
 }
 
 function buildDB(item) {
+  if (!item.dbChanges) return null;
   const page = el('div', { id: 'page-db', className: 'page' });
-  if (!item.dbChanges) return page;
   page.appendChild(buildHeader(item));
   const content = el('div', { className: 'content' });
   content.appendChild(el('div', { className: 'section-title', textContent: 'DB Changes' }));
@@ -191,8 +181,8 @@ function buildDB(item) {
 }
 
 function buildNotes(item) {
+  if (!item.notes || !item.notes.length) return null;
   const page = el('div', { id: 'page-notes', className: 'page' });
-  if (!item.notes || !item.notes.length) return page;
   page.appendChild(buildHeader(item));
   const content = el('div', { className: 'content' });
   content.appendChild(el('div', { className: 'section-title', textContent: 'Notes cho Dev' }));
@@ -238,6 +228,7 @@ async function init() {
     if (!res.ok) throw new Error('fetch failed');
     data = await res.json();
   } catch (e) {
+    console.error('[arena-planning] fetch error:', e);
     renderNotFound(id);
     return;
   }
@@ -252,8 +243,10 @@ async function init() {
   app.appendChild(buildOverview(item));
   app.appendChild(buildAC(item));
   app.appendChild(buildFlow(item));
-  app.appendChild(buildDB(item));
-  app.appendChild(buildNotes(item));
+  const dbPage = buildDB(item);
+  if (dbPage) app.appendChild(dbPage);
+  const notesPage = buildNotes(item);
+  if (notesPage) app.appendChild(notesPage);
 
   showTab('overview');
 }
