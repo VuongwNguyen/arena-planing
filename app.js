@@ -316,68 +316,64 @@ function buildSprint(item) {
 function exportTestcaseExcel(item) {
   var wb = XLSX.utils.book_new();
 
-  // Cột header row 1 (merged)
-  var headerRow1 = [
-    'THÔNG TIN TESTCASE', '', '', '', '', '', '', '', '', '',
-    'ROUND 1', '', '',
-    'ROUND 2', '', '',
-    'ROUND 3', '', ''
-  ];
-  // Cột header row 2
-  var headerRow2 = [
-    'Mã Testcase', 'Tên Testcase', 'Điều kiện tiên quyết', 'Bước thực hiện',
-    'Kết quả mong đợi', 'Kết quả thực tế', 'Phiên bản', 'Evidence',
-    'Trạng thái', 'Người chịu trách nhiệm',
-    'Tester lần 1', 'Ngày test lần 1', 'Trạng thái lần 1',
-    'Tester lần 2', 'Ngày test lần 2', 'Trạng thái lần 2',
-    'Tester lần 3', 'Ngày test lần 3', 'Trạng thái lần 3'
-  ];
+  var NAVY = '1F3864', ORANGE = 'ED7D31', BLUE = '2E75B6', WHITE = 'FFFFFF';
 
+  function border() {
+    var s = { style: 'thin', color: { rgb: 'D9D9D9' } };
+    return { top: s, bottom: s, left: s, right: s };
+  }
+  function sHead(fill) {
+    return {
+      fill: { patternType: 'solid', fgColor: { rgb: fill } },
+      font: { bold: true, color: { rgb: WHITE }, sz: 11 },
+      alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+      border: border()
+    };
+  }
+  var sData = { alignment: { vertical: 'top', wrapText: true }, border: border() };
+  var sDataID = { font: { bold: true }, alignment: { horizontal: 'center', vertical: 'top', wrapText: true }, border: border() };
+
+  var row1 = ['THÔNG TIN TESTCASE','','','','','','','','','','ROUND 1','','','ROUND 2','','','ROUND 3','',''];
+  var row2 = ['Mã Testcase','Tên Testcase','Điều kiện tiên quyết','Bước thực hiện','Kết quả mong đợi','Kết quả thực tế','Phiên bản','Evidence','Trạng thái','Người chịu trách nhiệm','Tester lần 1','Ngày test lần 1','Trạng thái lần 1','Tester lần 2','Ngày test lần 2','Trạng thái lần 2','Tester lần 3','Ngày test lần 3','Trạng thái lần 3'];
   var dataRows = item.testcases.map(function(tc) {
-    return [
-      tc.ma_testcase || '',
-      tc.ten_testcase || '',
-      tc.dieu_kien_tien_quyet || '',
-      tc.buoc_thuc_hien || '',
-      tc.ket_qua_mong_doi || '',
-      '', // Kết quả thực tế
-      'v1.0.0',
-      '', // Evidence
-      '', // Trạng thái
-      'Vương', // Người chịu trách nhiệm
-      '', '', '', // Round 1
-      '', '', '', // Round 2
-      '', '', ''  // Round 3
-    ];
+    return [tc.ma_testcase||'', tc.ten_testcase||'', tc.dieu_kien_tien_quyet||'', tc.buoc_thuc_hien||'', tc.ket_qua_mong_doi||'', '', 'v1.0.0', '', '', 'Vương', '','','','','','','','',''];
   });
 
-  var wsData = [headerRow1, headerRow2].concat(dataRows);
-  var ws = XLSX.utils.aoa_to_sheet(wsData);
+  var ws = XLSX.utils.aoa_to_sheet([row1, row2].concat(dataRows));
 
-  // Merge cells cho header row 1
+  // Style row 1
+  for (var c = 0; c < 19; c++) {
+    var a = XLSX.utils.encode_cell({ r: 0, c: c });
+    if (!ws[a]) ws[a] = { v: '', t: 's' };
+    ws[a].s = sHead(c < 10 ? NAVY : BLUE);
+  }
+  // Style row 2
+  for (var c = 0; c < 19; c++) {
+    var a = XLSX.utils.encode_cell({ r: 1, c: c });
+    if (!ws[a]) ws[a] = { v: '', t: 's' };
+    ws[a].s = sHead(c < 5 ? NAVY : c < 10 ? ORANGE : BLUE);
+  }
+  // Style data rows
+  for (var r = 2; r < dataRows.length + 2; r++) {
+    for (var c = 0; c < 19; c++) {
+      var a = XLSX.utils.encode_cell({ r: r, c: c });
+      if (!ws[a]) ws[a] = { v: '', t: 's' };
+      ws[a].s = (c === 0) ? sDataID : sData;
+    }
+  }
+
   ws['!merges'] = [
-    { s: { r: 0, c: 0  }, e: { r: 0, c: 9  } }, // THÔNG TIN TESTCASE: A1:J1
-    { s: { r: 0, c: 10 }, e: { r: 0, c: 12 } }, // ROUND 1: K1:M1
-    { s: { r: 0, c: 13 }, e: { r: 0, c: 15 } }, // ROUND 2: N1:P1
-    { s: { r: 0, c: 16 }, e: { r: 0, c: 18 } }  // ROUND 3: Q1:S1
+    { s: { r:0, c:0  }, e: { r:0, c:9  } },
+    { s: { r:0, c:10 }, e: { r:0, c:12 } },
+    { s: { r:0, c:13 }, e: { r:0, c:15 } },
+    { s: { r:0, c:16 }, e: { r:0, c:18 } }
   ];
-
-  // Độ rộng cột
   ws['!cols'] = [
-    { wch: 12 }, // Mã Testcase
-    { wch: 30 }, // Tên Testcase
-    { wch: 40 }, // Điều kiện tiên quyết
-    { wch: 45 }, // Bước thực hiện
-    { wch: 45 }, // Kết quả mong đợi
-    { wch: 25 }, // Kết quả thực tế
-    { wch: 10 }, // Phiên bản
-    { wch: 15 }, // Evidence
-    { wch: 12 }, // Trạng thái
-    { wch: 20 }, // Người chịu trách nhiệm
-    { wch: 15 }, { wch: 15 }, { wch: 14 }, // Round 1
-    { wch: 15 }, { wch: 15 }, { wch: 14 }, // Round 2
-    { wch: 15 }, { wch: 15 }, { wch: 14 }  // Round 3
+    {wch:10},{wch:25},{wch:30},{wch:35},{wch:30},
+    {wch:18},{wch:12},{wch:12},{wch:15},{wch:22},
+    {wch:15},{wch:15},{wch:14},{wch:15},{wch:15},{wch:14},{wch:15},{wch:15},{wch:14}
   ];
+  ws['!rows'] = [{hpt:28},{hpt:36}];
 
   XLSX.utils.book_append_sheet(wb, ws, 'Test Cases');
   XLSX.writeFile(wb, item.id + '_testcase_v1.0.0.xlsx');
