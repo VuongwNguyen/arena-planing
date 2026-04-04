@@ -945,5 +945,288 @@
         "loai": "Happy Path"
       }
     ]
+  },
+  {
+    "id": "US-AR-003",
+    "project": "Arena Billiard",
+    "title": "Nút Livestream Dẫn Đến Link Phát Trực Tiếp Trận Đấu",
+    "module": "Giải đấu & Trực tiếp",
+    "author": "Product Team",
+    "date": "04/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Khi Arena tổ chức giải đấu, các trận đấu được phát trực tiếp trên YouTube hoặc Facebook. Hiện tại cơ thủ và khán giả phải tự tìm link stream hoặc hỏi BTC — gây bất tiện và làm mất lượt xem. Cần thêm nút Livestream / Play vào từng trận đấu trong hệ thống: BTC nhập link một lần, tất cả người xem click vào là đến thẳng kênh phát mà không cần tìm kiếm.",
+
+    "userStory": {
+      "as": "Cơ thủ, khán giả và đơn vị truyền thông theo dõi giải đấu Arena",
+      "iWant": "Thấy nút Livestream / Play ngay trên trận đấu đang diễn ra và click vào là mở thẳng link YouTube hoặc Facebook",
+      "soThat": "Không cần tìm kiếm hay hỏi BTC, lượt xem tăng tự nhiên, giải đấu trông chuyên nghiệp hơn"
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "BTC/Admin nhập link livestream cho trận đấu",
+        "given": "Admin đang quản lý trận đấu trong hệ thống",
+        "when": "Admin điền URL vào field Livestream và lưu",
+        "then": "Hệ thống lưu URL hợp lệ (YouTube hoặc Facebook). Trận đấu hiển thị nút Livestream/Play ngay lập tức"
+      },
+      {
+        "id": "AC-02",
+        "title": "Hiển thị nút Livestream khi trận có link",
+        "given": "Trận đấu đang diễn ra và đã được nhập link livestream",
+        "when": "Người dùng xem danh sách/chi tiết trận đấu",
+        "then": "Nút Livestream (hoặc icon Play) hiển thị rõ ràng bên cạnh thông tin trận. Có thể phân biệt icon YouTube / Facebook dựa theo domain của URL"
+      },
+      {
+        "id": "AC-03",
+        "title": "Click nút mở đúng link trên tab mới",
+        "given": "Trận đấu có link livestream và nút đang hiển thị",
+        "when": "Người dùng click nút Livestream/Play",
+        "then": "Trình duyệt mở tab mới đến đúng URL đã nhập (YouTube hoặc Facebook). Không điều hướng rời khỏi trang Arena"
+      },
+      {
+        "id": "AC-04",
+        "title": "Nút ẩn khi không có link hoặc trận chưa có stream",
+        "given": "Trận đấu chưa được nhập link livestream",
+        "when": "Người dùng xem thông tin trận",
+        "then": "Không hiển thị nút Livestream / Play. Không hiển thị placeholder hay nút bị disabled gây nhầm lẫn"
+      },
+      {
+        "id": "AC-05",
+        "title": "Admin cập nhật link khi chuyển kênh stream",
+        "given": "Trận đang stream, admin muốn đổi sang kênh khác",
+        "when": "Admin cập nhật URL mới và lưu",
+        "then": "Nút dẫn đến URL mới ngay lập tức. Người dùng reload trang thấy link đã cập nhật"
+      },
+      {
+        "id": "AC-06",
+        "title": "Admin xoá link khi kết thúc phát sóng",
+        "given": "Trận đấu đã kết thúc, admin muốn gỡ link",
+        "when": "Admin xoá URL và lưu",
+        "then": "Nút Livestream biến mất. Có thể thay bằng trạng thái 'Đã kết thúc' hoặc ẩn hoàn toàn tuỳ UX"
+      }
+    ],
+
+    "flow": "[ADMIN / BTC]\n    |\n    ▼\nVào quản lý trận đấu trong hệ thống\n    |\n    ▼\nNhập URL livestream (YouTube / Facebook)\n    |\n    ▼\nLưu → hệ thống validate URL hợp lệ\n    |\n    ├─ URL không hợp lệ ─────────────────────────┐\n    │                                              ▼\n    │                              Thông báo lỗi, yêu cầu nhập lại\n    │\n    └─ URL hợp lệ ────────────────────────────────┐\n                                                   ▼\n                              Lưu stream_url vào DB\n                              Nút Livestream hiển thị trên trận đấu\n\n[CƠ THỦ / KHÁN GIẢ]\n    |\n    ▼\nXem danh sách / chi tiết trận đấu\n    |\n    ▼\nThấy nút Livestream / Play (icon YouTube hoặc Facebook)\n    |\n    ▼\nClick nút\n    |\n    ▼\nMở tab mới → YouTube hoặc Facebook stream",
+
+    "dbChanges": "-- Thêm field stream_url vào bảng trận đấu (tuỳ tên bảng hiện có)\nALTER TABLE matches ADD COLUMN IF NOT EXISTS stream_url VARCHAR(500);\n-- stream_url: NULL nếu chưa có link, URL đầy đủ nếu đang stream\n-- Validate domain tại application layer (youtube.com, youtu.be, facebook.com, fb.watch)",
+
+    "edgeCases": [
+      { "case": "Admin nhập URL không phải YouTube/Facebook (VD: tiktok.com)", "handle": "Tuỳ quyết định: hoặc cho phép mọi URL hợp lệ, hoặc chỉ whitelist YouTube + Facebook. Nên thống nhất với team trước khi code" },
+      { "case": "URL YouTube dạng rút gọn (youtu.be/xxx)", "handle": "Chấp nhận cả 2 dạng youtu.be và youtube.com. Icon nhận diện dựa trên domain" },
+      { "case": "Người dùng trên app mobile click nút", "handle": "Nếu đã cài app YouTube/Facebook → mở app. Nếu chưa → mở trình duyệt. Hành vi mặc định của OS, không cần xử lý thêm" },
+      { "case": "Link stream hết hạn (stream đã kết thúc trên YouTube nhưng admin chưa xoá)", "handle": "Người dùng click vào sẽ thấy 'Video không khả dụng' trên YouTube. Cần remind admin xoá link sau khi stream xong" },
+      { "case": "Nhiều trận cùng lúc, mỗi trận stream khác kênh", "handle": "Mỗi trận lưu stream_url độc lập — không ảnh hưởng nhau" }
+    ],
+
+    "notes": [
+      "Không cần build video player riêng — chỉ cần lưu URL và mở tab mới",
+      "Icon phân biệt YouTube/Facebook dựa trên domain URL để UX rõ ràng hơn",
+      "Nên thêm tooltip hoặc label 'Xem trực tiếp' để người dùng mới hiểu nút này làm gì",
+      "Nếu muốn đo lượt click: thêm event tracking (Google Analytics / Mixpanel) khi người dùng click nút",
+      "Cân nhắc: hiển thị link cho cả trận đã kết thúc (xem lại VOD) hay chỉ khi đang live?"
+    ],
+
+    "sprintPlan": {
+      "startDate": "13/04/2026",
+      "endDate": "18/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "13/04/2026",
+          "theme": "Chuẩn bị & Thống nhất",
+          "color": "purple",
+          "result": "US, AC đã duyệt. Thống nhất whitelist domain, UX nút, và cách hiển thị sau khi stream kết thúc.",
+          "tasks": [
+            { "text": "Tạo US-AR-003 với đầy đủ AC-01 đến AC-06", "tags": ["Dev", "Claude"] },
+            { "text": "Họp team: whitelist chỉ YouTube/Facebook hay mọi URL? Hiển thị nút khi stream kết thúc không?", "tags": ["Team"] },
+            { "text": "Xác định vị trí hiển thị nút trên UI: danh sách trận hay chỉ trang chi tiết trận?", "tags": ["Team"] },
+            { "text": "Claude thiết kế migration: ALTER TABLE matches ADD COLUMN stream_url", "tags": ["Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "14/04/2026",
+          "theme": "Phân rã task & Tạo nhánh",
+          "color": "teal",
+          "result": "Nhánh feature tạo xong. Migration chạy trên dev. API admin nhập link hoạt động.",
+          "tasks": [
+            { "text": "git pull origin develop → tạo nhánh feature/match-livestream", "tags": ["Git"] },
+            { "text": "Chạy migration: thêm cột stream_url vào bảng matches", "tags": ["Dev", "Claude"] },
+            { "text": "Thêm field stream_url vào API PUT /matches/:id (admin update trận)", "tags": ["Dev", "Claude"] },
+            { "text": "Validate URL ở backend: kiểm tra format hợp lệ, whitelist domain nếu cần", "tags": ["Dev", "Claude"] },
+            { "text": "Thêm stream_url vào response GET /matches và GET /matches/:id", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "15/04/2026",
+          "theme": "Frontend — Admin UI + Hiển thị nút",
+          "color": "blue",
+          "result": "Admin nhập được link. Nút Livestream hiển thị đúng trên trang người dùng.",
+          "tasks": [
+            { "text": "git pull origin develop — kiểm tra conflict", "tags": ["Git"] },
+            { "text": "Admin UI: thêm input field 'Link Livestream' vào form quản lý trận đấu", "tags": ["Dev", "Claude"] },
+            { "text": "Frontend người dùng: hiển thị nút Livestream/Play khi stream_url != null, ẩn khi null", "tags": ["Dev", "Claude"] },
+            { "text": "Logic nhận diện icon: youtube.com/youtu.be → icon YouTube, facebook.com/fb.watch → icon Facebook", "tags": ["Dev", "Claude"] },
+            { "text": "Commit và push cuối ngày", "tags": ["Git"] }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "16/04/2026",
+          "theme": "QA toàn bộ AC",
+          "color": "blue",
+          "result": "Toàn bộ AC-01 đến AC-06 pass. Edge cases đã xử lý.",
+          "tasks": [
+            { "text": "git pull origin develop — cập nhật code mới nhất", "tags": ["Git"] },
+            { "text": "Claude chạy toàn bộ test case TC_001 → TC_012, xuất báo cáo", "tags": ["Dev", "Claude"] },
+            { "text": "Test trên mobile: iOS + Android — click nút mở đúng app YouTube/Facebook", "tags": ["Dev"] },
+            { "text": "Test edge case: URL rút gọn youtu.be, URL Facebook live, URL không hợp lệ", "tags": ["Dev", "Claude"] },
+            { "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "17/04/2026",
+          "theme": "Code review + Impact analysis",
+          "color": "amber",
+          "result": "Code review sạch. Xác nhận không ảnh hưởng các tính năng quản lý trận khác.",
+          "tasks": [
+            { "text": "git pull origin develop — lần cuối trước review", "tags": ["Git"] },
+            { "text": "Claude phân tích ảnh hưởng: thêm stream_url có ảnh hưởng API lịch thi đấu, báo cáo giải đấu không?", "tags": ["Dev", "Claude"] },
+            { "text": "Tech Lead review: validate URL, security (open redirect?), UX nút", "tags": ["Team"] },
+            { "text": "Sửa theo góp ý, chạy lại test", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "18/04/2026",
+          "theme": "Merge & Release Beta",
+          "color": "green",
+          "result": "Tính năng nút Livestream hoạt động trên beta. Admin nhập link → người dùng click → mở stream.",
+          "tasks": [
+            { "text": "Pull code mới nhất từ develop → giải quyết conflict cuối", "tags": ["Git"] },
+            { "text": "Chạy toàn bộ test lần cuối sau merge", "tags": ["Dev", "Claude"] },
+            { "text": "Merge feature/match-livestream vào develop", "tags": ["Git"] },
+            { "text": "Chạy migration trên môi trường beta", "tags": ["Dev"] },
+            { "text": "Test smoke: Admin nhập link YouTube → khán giả thấy nút → click → mở stream", "tags": ["Dev"] },
+            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+          ]
+        }
+      ]
+    },
+
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Admin nhập link YouTube hợp lệ — nút hiển thị",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Đăng nhập tài khoản Admin\n- Có trận đấu đang diễn ra trong hệ thống\n- Trận chưa có link livestream",
+        "buoc_thuc_hien": "1. Vào quản lý trận đấu\n2. Chọn trận đang diễn ra\n3. Nhập URL: https://youtube.com/live/xxx\n4. Nhấn Lưu\n5. Vào trang người dùng xem trận đấu đó",
+        "ket_qua_mong_doi": "- Hệ thống lưu thành công, không báo lỗi\n- Nút Livestream/Play hiển thị trên trận đấu\n- Icon YouTube nhận diện đúng",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Admin nhập link Facebook live hợp lệ — nút hiển thị với icon Facebook",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Đăng nhập Admin\n- Trận đấu chưa có link",
+        "buoc_thuc_hien": "1. Nhập URL: https://www.facebook.com/watch/live/?ref=xxx\n2. Lưu\n3. Kiểm tra nút trên trang người dùng",
+        "ket_qua_mong_doi": "- Nút hiển thị với icon Facebook\n- Click mở đúng link Facebook trên tab mới",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Người dùng click nút Livestream — mở tab mới đúng URL",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Trận đấu có stream_url = https://youtube.com/live/abc123\n- Đang xem trang danh sách hoặc chi tiết trận",
+        "buoc_thuc_hien": "1. Tìm trận đấu có nút Livestream\n2. Click nút\n3. Quan sát hành vi trình duyệt",
+        "ket_qua_mong_doi": "- Tab mới mở ra với URL https://youtube.com/live/abc123\n- Trang Arena không bị điều hướng đi",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Admin cập nhật link sang kênh mới — nút dẫn đến link mới",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Trận đã có link YouTube cũ\n- Admin muốn chuyển sang kênh Facebook",
+        "buoc_thuc_hien": "1. Admin vào sửa trận, đổi URL sang link Facebook mới\n2. Lưu\n3. Người dùng reload trang và click nút",
+        "ket_qua_mong_doi": "- Nút dẫn đến link Facebook mới\n- Icon cập nhật từ YouTube → Facebook\n- Không còn trỏ về link YouTube cũ",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Trận không có link — không hiển thị nút",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Trận đấu đang diễn ra nhưng stream_url = NULL",
+        "buoc_thuc_hien": "1. Xem trang danh sách trận đấu\n2. Tìm trận chưa có link livestream",
+        "ket_qua_mong_doi": "- Không có nút Livestream/Play xuất hiện\n- Không có placeholder hay nút bị disable",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "URL dạng rút gọn youtu.be — nhận diện đúng là YouTube",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Admin nhập URL dạng https://youtu.be/xxx",
+        "buoc_thuc_hien": "1. Nhập https://youtu.be/dQw4w9WgXcQ vào field livestream\n2. Lưu\n3. Kiểm tra icon nút",
+        "ket_qua_mong_doi": "- Hệ thống chấp nhận URL hợp lệ\n- Icon nhận diện là YouTube\n- Click mở đúng link",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_007",
+        "ten_testcase": "Nhiều trận cùng lúc, mỗi trận link khác nhau",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có 3 trận đang diễn ra đồng thời\n- Trận A: link YouTube, Trận B: link Facebook, Trận C: không có link",
+        "buoc_thuc_hien": "1. Xem danh sách tất cả trận đang diễn ra\n2. Quan sát nút của từng trận",
+        "ket_qua_mong_doi": "- Trận A: nút với icon YouTube\n- Trận B: nút với icon Facebook\n- Trận C: không có nút\n- Các trận không ảnh hưởng nhau",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_008",
+        "ten_testcase": "Admin xoá link sau khi stream kết thúc — nút biến mất",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Trận đấu đã kết thúc, stream_url đang có giá trị",
+        "buoc_thuc_hien": "1. Admin vào sửa trận, xoá URL\n2. Lưu\n3. Người dùng reload trang",
+        "ket_qua_mong_doi": "- Nút Livestream không còn hiển thị\n- Trang vẫn hiển thị thông tin trận bình thường",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_009",
+        "ten_testcase": "Admin nhập URL không hợp lệ (không phải URL)",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Admin đang sửa thông tin trận đấu",
+        "buoc_thuc_hien": "1. Nhập chuỗi không phải URL: 'abc123' hoặc 'youtube'\n2. Nhấn Lưu",
+        "ket_qua_mong_doi": "- Hệ thống từ chối lưu\n- Thông báo lỗi: 'Vui lòng nhập URL hợp lệ (bắt đầu bằng https://)'\n- stream_url không thay đổi",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_010",
+        "ten_testcase": "User không có quyền Admin cố cập nhật link qua API",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- Tài khoản role thường (không phải Admin)\n- Biết match ID",
+        "buoc_thuc_hien": "1. Gọi PUT /matches/:id với body { stream_url: '...' } bằng token user thường\n2. Kiểm tra response",
+        "ket_qua_mong_doi": "- Backend trả về 403 Forbidden\n- stream_url không thay đổi trong DB",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_011",
+        "ten_testcase": "Click nút trên mobile — mở app YouTube/Facebook nếu đã cài",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Thiết bị mobile đã cài app YouTube\n- Trận có link YouTube",
+        "buoc_thuc_hien": "1. Mở Arena trên mobile\n2. Tìm trận có nút Livestream\n3. Nhấn nút",
+        "ket_qua_mong_doi": "- App YouTube mở thẳng video (nếu OS hỗ trợ deep link)\n- Hoặc trình duyệt mobile mở link (fallback)\n- Không crash hay lỗi",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_012",
+        "ten_testcase": "End-to-end: Admin nhập link → cơ thủ xem livestream",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Môi trường beta đang chạy\n- Có trận đấu đang diễn ra trong hệ thống\n- Có link YouTube live thật (sandbox)",
+        "buoc_thuc_hien": "1. Admin đăng nhập → vào quản lý trận → nhập link YouTube live → Lưu\n2. Cơ thủ mở trang danh sách trận (không reload trước)\n3. Cơ thủ reload trang, tìm trận vừa cập nhật\n4. Click nút Livestream\n5. Kiểm tra tab mới mở ra",
+        "ket_qua_mong_doi": "- Sau khi Admin lưu: nút Livestream xuất hiện trên trận\n- Click mở đúng link YouTube trên tab mới\n- Trang Arena không bị điều hướng\n- Toàn bộ flow < 30 giây từ Admin lưu đến cơ thủ xem được",
+        "loai": "Happy Path"
+      }
+    ]
   }
 ]
