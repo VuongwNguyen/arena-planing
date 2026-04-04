@@ -7,25 +7,31 @@
     "author": "Product Team",
     "date": "03/04/2026",
     "status": "Đang phát triển",
-
     "context": "Khách hàng tại Arena Billiard hiện tại phải gọi nhân viên để đặt đồ ăn/thức uống trong khi đang chơi bida. Luồng này chậm và dễ nhầm lẫn đơn hàng. Cần xây dựng tính năng giỏ hàng tự phục vụ trên app/web để khách tự chọn món, thanh toán trực tuyến (MoMo, VNPay, thẻ ngân hàng) mà không cần gián đoạn trận đấu.",
-
     "userStory": {
       "as": "Khách hàng đang chơi bida tại Arena",
       "iWant": "Tự thêm món vào giỏ hàng và thanh toán trực tuyến ngay trên điện thoại",
       "soThat": "Không cần gọi nhân viên, đơn hàng được xử lý nhanh và chính xác, thanh toán tiện lợi"
     },
-
     "example": {
       "description": "Khách tại bàn số 5 đặt 2 Sting + 1 Bia Heineken, tổng 150.000đ, thanh toán MoMo",
       "discount": 0,
       "total": 150000,
       "items": [
-        { "code": "DU001", "name": "Sting", "qty": 2, "price": 30000 },
-        { "code": "DU002", "name": "Bia Heineken", "qty": 1, "price": 90000 }
+        {
+          "code": "DU001",
+          "name": "Sting",
+          "qty": 2,
+          "price": 30000
+        },
+        {
+          "code": "DU002",
+          "name": "Bia Heineken",
+          "qty": 1,
+          "price": 90000
+        }
       ]
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -77,20 +83,34 @@
         "then": "Đơn hàng huỷ tự động; giỏ hàng giữ lại để khách có thể đặt lại; hiển thị thông báo hết hạn"
       }
     ],
-
     "flow": "[KHÁCH HÀNG]\n    |\n    ▼\nXem thực đơn → Chọn món → Thêm vào giỏ\n    |\n    ▼\nXem giỏ hàng (danh sách, tổng tiền)\n    |\n    ▼\nNhấn Thanh toán\n    |\n    ▼\nChọn phương thức: MoMo / VNPay / Thẻ\n    |\n    ▼\n─── Chuyển sang cổng thanh toán ───\n    |\n    ├── THÀNH CÔNG ──────────────────────────────┐\n    │                                             ▼\n    │                              Tạo Order (trạng thái: Đã thanh toán)\n    │                              Gửi notification cho bếp/bar\n    │                              Hiển thị màn hình xác nhận + mã đơn\n    │\n    └── THẤT BẠI / HUỶ ──────────────────────────┐\n                                                  ▼\n                               Giữ nguyên giỏ hàng\n                               Hiển thị lỗi + nút Thử lại\n\n─── WEBHOOK từ cổng thanh toán ───\n    |\n    ▼\n[BACKEND — Payment Service]\n    ├─ Xác thực chữ ký (signature) từ MoMo/VNPay\n    ├─ Kiểm tra idempotency (tránh xử lý 2 lần)\n    ├─ Cập nhật trạng thái đơn hàng\n    └─ Gửi realtime notification tới kitchen display",
-
     "dbChanges": "-- Bảng giỏ hàng\nCREATE TABLE carts (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  user_id UUID NOT NULL REFERENCES users(id),\n  table_number VARCHAR(10),\n  status VARCHAR(20) DEFAULT 'active', -- active | checked_out\n  created_at TIMESTAMPTZ DEFAULT NOW(),\n  updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n-- Chi tiết giỏ hàng\nCREATE TABLE cart_items (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  cart_id UUID NOT NULL REFERENCES carts(id) ON DELETE CASCADE,\n  product_id UUID NOT NULL REFERENCES products(id),\n  quantity INT NOT NULL CHECK (quantity > 0),\n  unit_price BIGINT NOT NULL, -- snapshot giá lúc thêm vào giỏ\n  note TEXT\n);\n\n-- Đơn hàng (tạo khi thanh toán thành công)\nCREATE TABLE orders (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  cart_id UUID REFERENCES carts(id),\n  user_id UUID NOT NULL REFERENCES users(id),\n  total_amount BIGINT NOT NULL,\n  payment_method VARCHAR(20), -- momo | vnpay | card\n  payment_status VARCHAR(20) DEFAULT 'pending', -- pending | paid | failed | cancelled\n  payment_ref VARCHAR(100), -- mã giao dịch từ cổng\n  paid_at TIMESTAMPTZ,\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);",
-
     "edgeCases": [
-      { "case": "Sản phẩm hết hàng sau khi đã thêm vào giỏ", "handle": "Khi checkout, kiểm tra lại tồn kho; nếu hết → thông báo và xoá khỏi giỏ trước khi thanh toán" },
-      { "case": "Giá sản phẩm thay đổi trong lúc khách đang giỏ hàng", "handle": "Snapshot giá lúc thêm vào giỏ (unit_price trong cart_items); không áp giá mới cho đơn đang chờ" },
-      { "case": "Webhook thanh toán đến 2 lần (duplicate callback)", "handle": "Dùng payment_ref làm unique key; lần 2 trở đi bỏ qua (idempotent)" },
-      { "case": "Mạng khách đứt giữa chừng khi đang thanh toán", "handle": "Khách quay lại app → kiểm tra trạng thái đơn qua API; nếu đã thanh toán → hiện xác nhận; nếu chưa → cho thử lại" },
-      { "case": "Khách mở nhiều tab và thanh toán cùng lúc", "handle": "Khoá đơn bằng distributed lock khi bắt đầu tạo payment session; tab thứ 2 nhận lỗi 409 Conflict" },
-      { "case": "Tổng tiền = 0đ (áp dụng khuyến mãi 100%)", "handle": "Bỏ qua bước cổng thanh toán; tạo đơn trực tiếp với payment_status = paid" }
+      {
+        "case": "Sản phẩm hết hàng sau khi đã thêm vào giỏ",
+        "handle": "Khi checkout, kiểm tra lại tồn kho; nếu hết → thông báo và xoá khỏi giỏ trước khi thanh toán"
+      },
+      {
+        "case": "Giá sản phẩm thay đổi trong lúc khách đang giỏ hàng",
+        "handle": "Snapshot giá lúc thêm vào giỏ (unit_price trong cart_items); không áp giá mới cho đơn đang chờ"
+      },
+      {
+        "case": "Webhook thanh toán đến 2 lần (duplicate callback)",
+        "handle": "Dùng payment_ref làm unique key; lần 2 trở đi bỏ qua (idempotent)"
+      },
+      {
+        "case": "Mạng khách đứt giữa chừng khi đang thanh toán",
+        "handle": "Khách quay lại app → kiểm tra trạng thái đơn qua API; nếu đã thanh toán → hiện xác nhận; nếu chưa → cho thử lại"
+      },
+      {
+        "case": "Khách mở nhiều tab và thanh toán cùng lúc",
+        "handle": "Khoá đơn bằng distributed lock khi bắt đầu tạo payment session; tab thứ 2 nhận lỗi 409 Conflict"
+      },
+      {
+        "case": "Tổng tiền = 0đ (áp dụng khuyến mãi 100%)",
+        "handle": "Bỏ qua bước cổng thanh toán; tạo đơn trực tiếp với payment_status = paid"
+      }
     ],
-
     "notes": [
       "Xác thực chữ ký webhook bắt buộc — không tin tuyệt đối payload từ cổng thanh toán",
       "Lưu toàn bộ raw webhook payload vào bảng payment_logs để debug",
@@ -98,7 +118,6 @@
       "Thời gian timeout phiên thanh toán: 15 phút (config qua env, không hardcode)",
       "Test môi trường sandbox của MoMo và VNPay trước khi go-live"
     ],
-
     "sprintPlan": {
       "startDate": "06/04/2026",
       "endDate": "11/04/2026",
@@ -110,11 +129,37 @@
           "color": "purple",
           "result": "User story, AC và flow đã được PO + Tech Lead duyệt. Sandbox credentials MoMo/VNPay đã có.",
           "tasks": [
-            { "text": "Tạo user story US-MD-123 với đầy đủ context và AC (AC-01 đến AC-07)", "tags": ["Dev", "Claude"] },
-            { "text": "Họp team: PO duyệt luồng giỏ hàng, Tech Lead chọn cổng thanh toán ưu tiên (MoMo trước)", "tags": ["Team"] },
-            { "text": "Xin sandbox credentials từ MoMo và VNPay (partner portal)", "tags": ["Dev"] },
-            { "text": "Claude vẽ flow webhook và idempotency pattern để team review", "tags": ["Claude"] },
-            { "text": "Thống nhất schema DB: carts, cart_items, orders, payment_logs", "tags": ["Team"] }
+            {
+              "text": "Tạo user story US-MD-123 với đầy đủ context và AC (AC-01 đến AC-07)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Họp team: PO duyệt luồng giỏ hàng, Tech Lead chọn cổng thanh toán ưu tiên (MoMo trước)",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Xin sandbox credentials từ MoMo và VNPay (partner portal)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Claude vẽ flow webhook và idempotency pattern để team review",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thống nhất schema DB: carts, cart_items, orders, payment_logs",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -124,11 +169,39 @@
           "color": "teal",
           "result": "Nhánh feature tạo xong. Migration DB đã chạy trên dev. API skeleton giỏ hàng đã có.",
           "tasks": [
-            { "text": "git pull origin develop → tạo nhánh feature/cart-payment", "tags": ["Git"] },
-            { "text": "Viết và chạy migration: tạo bảng carts, cart_items, orders, payment_logs", "tags": ["Dev", "Claude"] },
-            { "text": "Tạo Cart API skeleton: POST /cart/items, PUT /cart/items/:id, DELETE /cart/items/:id, GET /cart", "tags": ["Dev", "Claude"] },
-            { "text": "Viết unit test cho CartService: thêm/bớt/xoá item, tính tổng tiền", "tags": ["Dev", "Claude"] },
-            { "text": "Cài đặt SDK MoMo sandbox, test kết nối cơ bản", "tags": ["Dev"] }
+            {
+              "text": "git pull origin develop → tạo nhánh feature/cart-payment",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Viết và chạy migration: tạo bảng carts, cart_items, orders, payment_logs",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Tạo Cart API skeleton: POST /cart/items, PUT /cart/items/:id, DELETE /cart/items/:id, GET /cart",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Viết unit test cho CartService: thêm/bớt/xoá item, tính tổng tiền",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Cài đặt SDK MoMo sandbox, test kết nối cơ bản",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -138,12 +211,45 @@
           "color": "blue",
           "result": "Luồng giỏ hàng hoàn chỉnh. Thanh toán MoMo sandbox hoạt động end-to-end.",
           "tasks": [
-            { "text": "git pull origin develop — kiểm tra conflict", "tags": ["Git"] },
-            { "text": "Hoàn thiện CartService: xử lý snapshot giá, kiểm tra tồn kho khi checkout", "tags": ["Dev", "Claude"] },
-            { "text": "Tích hợp MoMo: tạo payment URL, xử lý return URL, xử lý webhook với xác thực chữ ký", "tags": ["Dev", "Claude"] },
-            { "text": "Implement idempotency: kiểm tra payment_ref trước khi xử lý webhook", "tags": ["Dev", "Claude"] },
-            { "text": "Claude test các kịch bản MoMo sandbox: thành công, thất bại, huỷ", "tags": ["Claude"] },
-            { "text": "Commit và push cuối ngày", "tags": ["Git"] }
+            {
+              "text": "git pull origin develop — kiểm tra conflict",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Hoàn thiện CartService: xử lý snapshot giá, kiểm tra tồn kho khi checkout",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Tích hợp MoMo: tạo payment URL, xử lý return URL, xử lý webhook với xác thực chữ ký",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Implement idempotency: kiểm tra payment_ref trước khi xử lý webhook",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Claude test các kịch bản MoMo sandbox: thành công, thất bại, huỷ",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Commit và push cuối ngày",
+              "tags": [
+                "Git"
+              ]
+            }
           ]
         },
         {
@@ -153,12 +259,47 @@
           "color": "blue",
           "result": "Cả MoMo và VNPay hoạt động. Toàn bộ AC-01 đến AC-07 đã pass.",
           "tasks": [
-            { "text": "git pull origin develop — cập nhật code mới", "tags": ["Git"] },
-            { "text": "Tích hợp VNPay sandbox: tạo payment URL, xử lý IPN webhook, xác thực secure hash", "tags": ["Dev", "Claude"] },
-            { "text": "Xử lý edge case: timeout 15 phút (cron job huỷ đơn pending quá hạn)", "tags": ["Dev", "Claude"] },
-            { "text": "Xử lý edge case: duplicate webhook, giá thay đổi, sản phẩm hết hàng", "tags": ["Dev", "Claude"] },
-            { "text": "Claude chạy toàn bộ test case AC-01 → AC-07 + 6 edge cases, xuất báo cáo", "tags": ["Dev", "Claude"] },
-            { "text": "Sửa lỗi phát sinh, chạy lại test đến khi xanh hết", "tags": ["Dev", "Claude"] }
+            {
+              "text": "git pull origin develop — cập nhật code mới",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Tích hợp VNPay sandbox: tạo payment URL, xử lý IPN webhook, xác thực secure hash",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Xử lý edge case: timeout 15 phút (cron job huỷ đơn pending quá hạn)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Xử lý edge case: duplicate webhook, giá thay đổi, sản phẩm hết hàng",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Claude chạy toàn bộ test case AC-01 → AC-07 + 6 edge cases, xuất báo cáo",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Sửa lỗi phát sinh, chạy lại test đến khi xanh hết",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -168,12 +309,44 @@
           "color": "amber",
           "result": "Code đã review sạch. Báo cáo ảnh hưởng đã có. Sẵn sàng merge.",
           "tasks": [
-            { "text": "git pull origin develop — lần cuối trước khi review", "tags": ["Git"] },
-            { "text": "Claude phân tích ảnh hưởng: tính năng này ảnh hưởng module Báo cáo doanh thu, Quản lý kho, Kitchen Display không?", "tags": ["Dev", "Claude"] },
-            { "text": "Chạy regression test: luồng đặt hàng cũ (nhân viên đặt hộ), báo cáo cuối ngày", "tags": ["Dev", "Claude"] },
-            { "text": "Tech Lead review: xác thực webhook, idempotency, bảo mật payment_ref, không lưu thông tin thẻ", "tags": ["Team"] },
-            { "text": "Kiểm tra rate limit và error handling với cổng thanh toán khi sandbox bị chậm", "tags": ["Dev"] },
-            { "text": "Sửa theo góp ý, chạy lại test", "tags": ["Dev"] }
+            {
+              "text": "git pull origin develop — lần cuối trước khi review",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Claude phân tích ảnh hưởng: tính năng này ảnh hưởng module Báo cáo doanh thu, Quản lý kho, Kitchen Display không?",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Chạy regression test: luồng đặt hàng cũ (nhân viên đặt hộ), báo cáo cuối ngày",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Tech Lead review: xác thực webhook, idempotency, bảo mật payment_ref, không lưu thông tin thẻ",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Kiểm tra rate limit và error handling với cổng thanh toán khi sandbox bị chậm",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Sửa theo góp ý, chạy lại test",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -183,18 +356,53 @@
           "color": "green",
           "result": "Release beta thành công. Luồng giỏ hàng + thanh toán MoMo/VNPay hoạt động trên môi trường beta.",
           "tasks": [
-            { "text": "Pull code mới nhất từ develop → giải quyết conflict cuối cùng", "tags": ["Git"] },
-            { "text": "Chạy toàn bộ test lần cuối sau khi merge develop vào feature", "tags": ["Dev", "Claude"] },
-            { "text": "Đạt hết → merge feature/cart-payment vào develop", "tags": ["Git"] },
-            { "text": "Chạy migration DB trên môi trường beta", "tags": ["Dev"] },
-            { "text": "Test smoke: thêm món → giỏ hàng → thanh toán MoMo sandbox → xác nhận đơn", "tags": ["Dev"] },
-            { "text": "Claude tạo release note: mô tả tính năng, phương thức hỗ trợ, edge cases đã xử lý", "tags": ["Claude"] },
-            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+            {
+              "text": "Pull code mới nhất từ develop → giải quyết conflict cuối cùng",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy toàn bộ test lần cuối sau khi merge develop vào feature",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Đạt hết → merge feature/cart-payment vào develop",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy migration DB trên môi trường beta",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Test smoke: thêm món → giỏ hàng → thanh toán MoMo sandbox → xác nhận đơn",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Claude tạo release note: mô tả tính năng, phương thức hỗ trợ, edge cases đã xử lý",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Deploy và thông báo team",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -415,9 +623,24 @@
       "discount": 100000,
       "total": 500000,
       "items": [
-        { "code": "SP000001", "name": "Sting", "qty": 2, "price": 30000 },
-        { "code": "SP000002", "name": "Bia",   "qty": 3, "price": 30000 },
-        { "code": "SP000003", "name": "Thuốc lá", "qty": 1, "price": 350000 }
+        {
+          "code": "SP000001",
+          "name": "Sting",
+          "qty": 2,
+          "price": 30000
+        },
+        {
+          "code": "SP000002",
+          "name": "Bia",
+          "qty": 3,
+          "price": 30000
+        },
+        {
+          "code": "SP000003",
+          "name": "Thuốc lá",
+          "qty": 1,
+          "price": 350000
+        }
       ]
     },
     "acceptanceCriteria": [
@@ -446,10 +669,22 @@
     "flow": "[THU NGÂN]\n    |\n    ▼\nTạo order → Thêm items vào hoá đơn\n    |\n    ▼\nÁp dụng giảm giá tay\n    |\n    ▼\nHoàn thành thanh toán\n    |\n    ▼\n─── TRIGGER: On Invoice Complete ───\n    |\n    ▼\n[BACKEND — Discount Allocation Service]\n    ├─ Lấy invoice.discount_amount (D)\n    ├─ Lấy danh sách line_items[]\n    ├─ Tính total = SUM(line_total[i])\n    ├─ FOR each item[i]: allocated[i] = FLOOR(D × line_total[i] / total)\n    ├─ Largest Remainder cho phần dư\n    └─ SUM CHECK: SUM(allocated) == D",
     "dbChanges": "ALTER TABLE order_items ADD COLUMN discount_allocated BIGINT DEFAULT 0;\n-- Giá trị giảm được phân bổ từ invoice discount (đơn vị: đồng)\n\nALTER TABLE order_items ADD COLUMN net_revenue BIGINT;\n-- = (quantity × unit_price) − discount_direct − discount_allocated",
     "edgeCases": [
-      { "case": "Hoá đơn có 1 item", "handle": "Toàn bộ giảm giá về item đó" },
-      { "case": "Giảm giá > tổng hoá đơn", "handle": "Validate: không cho giảm vượt tổng" },
-      { "case": "Item có SL = 0", "handle": "Bỏ qua item đó trong phân bổ" },
-      { "case": "Làm tròn lẻ (7đ / 3 items)", "handle": "Largest Remainder → [3, 2, 2]" }
+      {
+        "case": "Hoá đơn có 1 item",
+        "handle": "Toàn bộ giảm giá về item đó"
+      },
+      {
+        "case": "Giảm giá > tổng hoá đơn",
+        "handle": "Validate: không cho giảm vượt tổng"
+      },
+      {
+        "case": "Item có SL = 0",
+        "handle": "Bỏ qua item đó trong phân bổ"
+      },
+      {
+        "case": "Làm tròn lẻ (7đ / 3 items)",
+        "handle": "Largest Remainder → [3, 2, 2]"
+      }
     ],
     "notes": [
       "Không tính lại discount_allocated khi chỉ xem báo cáo",
@@ -468,11 +703,37 @@
           "color": "purple",
           "result": "Flow HTML + Test case + AC đã được team thống nhất",
           "tasks": [
-            { "text": "Tạo user story US-001 với mô tả đầy đủ context và business logic", "tags": ["Dev", "Claude"] },
-            { "text": "Claude sinh acceptance criteria cho 3 trường hợp (AC-01 đến AC-03)", "tags": ["Claude"] },
-            { "text": "Claude sinh danh sách test case bao gồm happy path, edge cases, rounding", "tags": ["Claude"] },
-            { "text": "Họp team: PO duyệt business logic phân bổ giảm giá, Tech Lead duyệt thuật toán Largest Remainder", "tags": ["Team"] },
-            { "text": "Nếu chưa đạt → chỉnh sửa AC và flow theo góp ý, duyệt lại trong ngày", "tags": ["Claude"] }
+            {
+              "text": "Tạo user story US-001 với mô tả đầy đủ context và business logic",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Claude sinh acceptance criteria cho 3 trường hợp (AC-01 đến AC-03)",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Claude sinh danh sách test case bao gồm happy path, edge cases, rounding",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Họp team: PO duyệt business logic phân bổ giảm giá, Tech Lead duyệt thuật toán Largest Remainder",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Nếu chưa đạt → chỉnh sửa AC và flow theo góp ý, duyệt lại trong ngày",
+              "tags": [
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -482,11 +743,39 @@
           "color": "teal",
           "result": "Nhánh feature đã tạo. Migration DB đã chạy. Skeleton Discount Allocation Service đã có.",
           "tasks": [
-            { "text": "git pull origin develop về nhánh feature/discount-allocation", "tags": ["Git"] },
-            { "text": "Tạo nhánh: feature/invoice-discount-allocation", "tags": ["Git"] },
-            { "text": "Viết migration: ALTER TABLE order_items ADD COLUMN discount_allocated, net_revenue", "tags": ["Dev", "Claude"] },
-            { "text": "Tạo DiscountAllocationService skeleton với interface rõ ràng", "tags": ["Dev", "Claude"] },
-            { "text": "Viết unit test cho hàm tính tỷ lệ (exact ratio) trước khi code", "tags": ["Dev", "Claude"] }
+            {
+              "text": "git pull origin develop về nhánh feature/discount-allocation",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Tạo nhánh: feature/invoice-discount-allocation",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Viết migration: ALTER TABLE order_items ADD COLUMN discount_allocated, net_revenue",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Tạo DiscountAllocationService skeleton với interface rõ ràng",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Viết unit test cho hàm tính tỷ lệ (exact ratio) trước khi code",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -496,12 +785,45 @@
           "color": "blue",
           "result": "Hoàn thành 60% logic chính. Thuật toán Largest Remainder đã có unit test xanh.",
           "tasks": [
-            { "text": "git pull origin develop — kiểm tra conflict", "tags": ["Git"] },
-            { "text": "Code hàm allocateDiscount(invoiceDiscount, lineItems): allocated[]", "tags": ["Dev", "Claude"] },
-            { "text": "Code Largest Remainder: FLOOR từng item, phân chia phần dư cho top items theo fractional DESC", "tags": ["Dev", "Claude"] },
-            { "text": "Claude test từng hàm: kiểm tra SUM(allocated) == D với nhiều bộ dữ liệu", "tags": ["Claude"] },
-            { "text": "Code trigger On Invoice Complete: gọi allocateDiscount và lưu vào DB", "tags": ["Dev", "Claude"] },
-            { "text": "Cuối ngày: commit và push lên nhánh feature", "tags": ["Git"] }
+            {
+              "text": "git pull origin develop — kiểm tra conflict",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Code hàm allocateDiscount(invoiceDiscount, lineItems): allocated[]",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Code Largest Remainder: FLOOR từng item, phân chia phần dư cho top items theo fractional DESC",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Claude test từng hàm: kiểm tra SUM(allocated) == D với nhiều bộ dữ liệu",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Code trigger On Invoice Complete: gọi allocateDiscount và lưu vào DB",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Cuối ngày: commit và push lên nhánh feature",
+              "tags": [
+                "Git"
+              ]
+            }
           ]
         },
         {
@@ -511,12 +833,47 @@
           "color": "blue",
           "result": "Feature hoàn thành 100%. Toàn bộ test case đã đạt. Báo cáo QA đã xuất.",
           "tasks": [
-            { "text": "git pull origin develop — cập nhật code mới từ develop", "tags": ["Git"] },
-            { "text": "Code query báo cáo: JOIN order_items + orders, GROUP BY product_id", "tags": ["Dev", "Claude"] },
-            { "text": "Hiển thị 3 cột báo cáo: Giá trị niêm yết / Doanh thu thuần / Chênh lệch (đỏ nếu âm)", "tags": ["Dev", "Claude"] },
-            { "text": "Xử lý AC-03: footer ghi rõ nguồn giảm giá", "tags": ["Dev", "Claude"] },
-            { "text": "Claude chạy toàn bộ test case (AC-01 đến AC-03 + 4 edge cases) — xuất báo cáo kết quả", "tags": ["Dev", "Claude"] },
-            { "text": "Nếu có lỗi → sửa ngay, chạy lại test đến khi xanh hết", "tags": ["Dev", "Claude"] }
+            {
+              "text": "git pull origin develop — cập nhật code mới từ develop",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Code query báo cáo: JOIN order_items + orders, GROUP BY product_id",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Hiển thị 3 cột báo cáo: Giá trị niêm yết / Doanh thu thuần / Chênh lệch (đỏ nếu âm)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Xử lý AC-03: footer ghi rõ nguồn giảm giá",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Claude chạy toàn bộ test case (AC-01 đến AC-03 + 4 edge cases) — xuất báo cáo kết quả",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Nếu có lỗi → sửa ngay, chạy lại test đến khi xanh hết",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -526,12 +883,44 @@
           "color": "amber",
           "result": "Code đã review xong. Báo cáo ảnh hưởng đã có. Sẵn sàng merge.",
           "tasks": [
-            { "text": "git pull origin develop — lần cuối trước khi review", "tags": ["Git"] },
-            { "text": "Claude phân tích ảnh hưởng: feature này ảnh hưởng Báo cáo doanh thu, Báo cáo đối soát, API xuất báo cáo?", "tags": ["Dev", "Claude"] },
-            { "text": "Claude xuất báo cáo ảnh hưởng + danh sách regression test cụ thể cho từng module", "tags": ["Claude"] },
-            { "text": "Dev chạy regression test theo đề xuất: Báo cáo doanh thu, Hoá đơn có giảm giá item-level", "tags": ["Dev", "Claude"] },
-            { "text": "Tech Lead review code: kiểm tra thuật toán Largest Remainder, DB migration, query báo cáo", "tags": ["Team"] },
-            { "text": "Nếu có góp ý → sửa trong ngày, chạy lại test", "tags": ["Dev"] }
+            {
+              "text": "git pull origin develop — lần cuối trước khi review",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Claude phân tích ảnh hưởng: feature này ảnh hưởng Báo cáo doanh thu, Báo cáo đối soát, API xuất báo cáo?",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Claude xuất báo cáo ảnh hưởng + danh sách regression test cụ thể cho từng module",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Dev chạy regression test theo đề xuất: Báo cáo doanh thu, Hoá đơn có giảm giá item-level",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Tech Lead review code: kiểm tra thuật toán Largest Remainder, DB migration, query báo cáo",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Nếu có góp ý → sửa trong ngày, chạy lại test",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -541,18 +930,53 @@
           "color": "green",
           "result": "Release beta thành công. Migration DB đã chạy. Tài liệu đã cập nhật. Sprint hoàn thành!",
           "tasks": [
-            { "text": "Pull code mới nhất từ develop → giải quyết conflict cuối cùng", "tags": ["Git"] },
-            { "text": "Chạy lại toàn bộ test case lần cuối sau khi merge develop vào feature", "tags": ["Dev", "Claude"] },
-            { "text": "Nếu đạt hết → merge feature/invoice-discount-allocation vào develop", "tags": ["Git"] },
-            { "text": "Chạy DB migration trên môi trường beta", "tags": ["Dev"] },
-            { "text": "Claude tạo release note: mô tả tính năng, cách tính phân bổ, edge cases đã xử lý", "tags": ["Claude"] },
-            { "text": "Deploy bản beta từ nhánh develop", "tags": ["Team"] },
-            { "text": "Nếu có lỗi sau deploy → hotfix ngay trên develop", "tags": ["Khẩn cấp"] }
+            {
+              "text": "Pull code mới nhất từ develop → giải quyết conflict cuối cùng",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy lại toàn bộ test case lần cuối sau khi merge develop vào feature",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Nếu đạt hết → merge feature/invoice-discount-allocation vào develop",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy DB migration trên môi trường beta",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Claude tạo release note: mô tả tính năng, cách tính phân bổ, edge cases đã xử lý",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Deploy bản beta từ nhánh develop",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Nếu có lỗi sau deploy → hotfix ngay trên develop",
+              "tags": [
+                "Khẩn cấp"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -690,15 +1114,12 @@
     "author": "Product Team",
     "date": "04/04/2026",
     "status": "Đang phát triển",
-
     "context": "Lunar Fest là platform tổ chức mini-game real-time cho sự kiện tập thể (Tết, team building, ...). Tính năng Quiz là một trong các mini-game cốt lõi: Host điều khiển từng câu hỏi, người chơi trả lời đồng thời qua điện thoại, hệ thống chấm điểm tức thì và cập nhật bảng xếp hạng sau mỗi câu. Hiện tại câu hỏi đang hardcode trong source — cần đánh giá luồng hiện tại và xác định các điểm cần hoàn thiện để sự kiện chạy ổn định.",
-
     "userStory": {
       "as": "Host tổ chức sự kiện Lunar Fest",
       "iWant": "Đẩy câu hỏi Q&A đến toàn bộ người chơi cùng lúc, reveal đáp án và cập nhật điểm real-time",
       "soThat": "Sự kiện diễn ra sôi nổi, người chơi cạnh tranh điểm số minh bạch qua từng câu hỏi"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -750,19 +1171,30 @@
         "then": "currentQuizAnswer = '' (rỗng) → server tính 0 điểm khi reveal. Màn hình chờ reveal đáp án từ Host"
       }
     ],
-
     "flow": "[HOST]\n    |\n    ▼\nTạo Match mới (POST /match)\n    |\n    ▼\nChia sẻ Match ID cho người chơi\n    |\n    ▼\n[NGƯỜI CHƠI] Join match qua Match ID\n    |\n    ▼\nLobby — chờ Host bắt đầu\n    |\n    ▼\n[HOST] Chọn câu hỏi (index) → Nhấn [Gửi]\n    |\n    ▼\n[SERVER] emit quiz:question → tất cả người chơi\n    |\n    ▼\n[NGƯỜI CHƠI] Đồng hồ 15s — chọn đáp án\n    ├─ Chọn trong 15s → emit quiz:answer (answerId)\n    └─ Timeout → currentQuizAnswer = '' (0 điểm)\n    |\n    ▼\n[HOST] Nhấn [Reveal đáp án]\n    |\n    ▼\n[SERVER] Tính điểm: +500 đúng / -200 sai / +0 timeout\n         emit quiz:reveal (correctId) → tất cả người chơi\n         emit leaderboard:updated → Host Dashboard\n    |\n    ▼\n[NGƯỜI CHƠI] Thấy kết quả đáp án + điểm\n    |\n    ▼\n[HOST] Tiếp tục câu tiếp theo hoặc chuyển mini-game khác",
-
     "dbChanges": "// MongoDB — Match schema (bổ sung field quiz)\n// File: src/models/match.schema.ts\ncurrentQuestion: {\n  index: Number,\n  text: String,\n  answers: [{ id: String, text: String }],\n  correctId: String\n}\n\n// MongoDB — Player schema (field quiz hiện có)\nquizPoints: { type: Number, default: 0 }        // điểm câu vừa reveal\nquizCorrectCount: { type: Number, default: 0 }  // tổng số câu đúng\ncurrentQuizAnswer: { type: String, default: '' } // đáp án câu đang chơi\n\n// Nếu cần lưu câu hỏi động (thay vì hardcode):\n// Thêm collection questions với schema:\n// { index, text, answers: [{id, text}], correctId, category, isActive }",
-
     "edgeCases": [
-      { "case": "Host gửi câu hỏi khi không còn người chơi online", "handle": "Cho phép gửi bình thường — khi người chơi reconnect sẽ thấy phase REVEAL. Không block Host" },
-      { "case": "Người chơi gửi đáp án sau khi Host đã reveal", "handle": "Server kiểm tra phase của match — nếu đã REVEAL thì bỏ qua emit từ client, không tính điểm lại" },
-      { "case": "Host gửi cùng 1 câu hỏi 2 lần", "handle": "Reset currentQuizAnswer về '' cho tất cả player trước khi emit câu mới (đã xử lý trong startQuizPhase)" },
-      { "case": "Nhiều người chơi submit đáp án cùng lúc (race condition)", "handle": "MongoDB update per player là độc lập — không có shared state cần lock. Mỗi player update document của mình" },
-      { "case": "Người chơi join vào giữa chừng khi đang có câu hỏi", "handle": "Người join sau thấy phase WAITING hoặc ANSWERING tuỳ thời điểm. Không nhận câu hỏi đang chạy — chờ câu tiếp theo" }
+      {
+        "case": "Host gửi câu hỏi khi không còn người chơi online",
+        "handle": "Cho phép gửi bình thường — khi người chơi reconnect sẽ thấy phase REVEAL. Không block Host"
+      },
+      {
+        "case": "Người chơi gửi đáp án sau khi Host đã reveal",
+        "handle": "Server kiểm tra phase của match — nếu đã REVEAL thì bỏ qua emit từ client, không tính điểm lại"
+      },
+      {
+        "case": "Host gửi cùng 1 câu hỏi 2 lần",
+        "handle": "Reset currentQuizAnswer về '' cho tất cả player trước khi emit câu mới (đã xử lý trong startQuizPhase)"
+      },
+      {
+        "case": "Nhiều người chơi submit đáp án cùng lúc (race condition)",
+        "handle": "MongoDB update per player là độc lập — không có shared state cần lock. Mỗi player update document của mình"
+      },
+      {
+        "case": "Người chơi join vào giữa chừng khi đang có câu hỏi",
+        "handle": "Người join sau thấy phase WAITING hoặc ANSWERING tuỳ thời điểm. Không nhận câu hỏi đang chạy — chờ câu tiếp theo"
+      }
     ],
-
     "notes": [
       "Câu hỏi hiện hardcode trong QUIZ_QUESTIONS (match.service.ts) — 5 câu về Tết. Cần bổ sung thêm hoặc chuyển sang DB nếu muốn quản lý động",
       "Điểm quiz: +500 đúng, -200 sai, +0 timeout — hardcode trong revealQuizAnswer(). Nếu muốn config được phải đưa ra env/config",
@@ -770,7 +1202,6 @@
       "Socket event names: quiz:question (server→client), quiz:answer (client→server), quiz:reveal (server→client)",
       "Leaderboard emit sau mỗi reveal — nếu có nhiều người chơi (100+) cần cân nhắc throttle hoặc chỉ emit cho Host"
     ],
-
     "sprintPlan": {
       "startDate": "07/04/2026",
       "endDate": "12/04/2026",
@@ -782,10 +1213,32 @@
           "color": "teal",
           "result": "US-LF-001 được duyệt. Danh sách câu hỏi Tết đã có. Xác định các điểm cần fix/cải thiện.",
           "tasks": [
-            { "text": "Review US-LF-001: AC, flow, edge cases với team", "tags": ["Team"] },
-            { "text": "Test thủ công toàn bộ luồng quiz hiện tại: Host gửi câu → chơi → reveal → leaderboard", "tags": ["Dev", "Claude"] },
-            { "text": "Ghi lại danh sách bug/thiếu so với AC-01 đến AC-07", "tags": ["Dev", "Claude"] },
-            { "text": "Content chuẩn bị thêm câu hỏi Tết (hiện có 5, cần ít nhất 10 cho 1 sự kiện)", "tags": ["Team"] }
+            {
+              "text": "Review US-LF-001: AC, flow, edge cases với team",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Test thủ công toàn bộ luồng quiz hiện tại: Host gửi câu → chơi → reveal → leaderboard",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Ghi lại danh sách bug/thiếu so với AC-01 đến AC-07",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Content chuẩn bị thêm câu hỏi Tết (hiện có 5, cần ít nhất 10 cho 1 sự kiện)",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -795,11 +1248,39 @@
           "color": "blue",
           "result": "Toàn bộ AC-01 đến AC-07 pass. Logic reconnect và timeout hoạt động đúng.",
           "tasks": [
-            { "text": "git pull origin main → tạo nhánh feature/quiz-improvements", "tags": ["Git"] },
-            { "text": "Fix các bug phát hiện ở Thứ 3", "tags": ["Dev", "Claude"] },
-            { "text": "Xử lý AC-06: reconnect đúng phase (ANSWERING/REVEAL)", "tags": ["Dev", "Claude"] },
-            { "text": "Kiểm tra race condition: nhiều player submit cùng lúc", "tags": ["Dev", "Claude"] },
-            { "text": "Thêm câu hỏi Tết vào QUIZ_QUESTIONS (tổng 10 câu)", "tags": ["Dev"] }
+            {
+              "text": "git pull origin main → tạo nhánh feature/quiz-improvements",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Fix các bug phát hiện ở Thứ 3",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Xử lý AC-06: reconnect đúng phase (ANSWERING/REVEAL)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Kiểm tra race condition: nhiều player submit cùng lúc",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thêm câu hỏi Tết vào QUIZ_QUESTIONS (tổng 10 câu)",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -809,10 +1290,33 @@
           "color": "blue",
           "result": "Quiz chạy ổn với 20+ người chơi đồng thời. Toàn bộ test case pass.",
           "tasks": [
-            { "text": "Chạy toàn bộ test case TC_001 → TC_012, ghi kết quả", "tags": ["Dev", "Claude"] },
-            { "text": "Stress test: simulate 20 người chơi join + trả lời đồng thời", "tags": ["Dev", "Claude"] },
-            { "text": "Kiểm tra leaderboard update đúng sau mỗi reveal", "tags": ["Dev"] },
-            { "text": "Sửa lỗi phát sinh, chạy lại test", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Chạy toàn bộ test case TC_001 → TC_012, ghi kết quả",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Stress test: simulate 20 người chơi join + trả lời đồng thời",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Kiểm tra leaderboard update đúng sau mỗi reveal",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Sửa lỗi phát sinh, chạy lại test",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -822,10 +1326,30 @@
           "color": "amber",
           "result": "Code review xong. Môi trường production sẵn sàng cho sự kiện.",
           "tasks": [
-            { "text": "Tech Lead review: socket events, scoring logic, reconnect handling", "tags": ["Team"] },
-            { "text": "Test end-to-end trên môi trường production (fly.toml deploy)", "tags": ["Dev"] },
-            { "text": "Sửa theo góp ý", "tags": ["Dev"] },
-            { "text": "Chuẩn bị script chạy sự kiện: thứ tự game, số câu hỏi quiz", "tags": ["Team"] }
+            {
+              "text": "Tech Lead review: socket events, scoring logic, reconnect handling",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Test end-to-end trên môi trường production (fly.toml deploy)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Sửa theo góp ý",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Chuẩn bị script chạy sự kiện: thứ tự game, số câu hỏi quiz",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -835,15 +1359,34 @@
           "color": "green",
           "result": "Code merge vào main. Production deploy thành công. Sẵn sàng cho sự kiện.",
           "tasks": [
-            { "text": "Merge feature/quiz-improvements vào main", "tags": ["Git"] },
-            { "text": "Deploy lên Fly.io (BE) và hosting FE", "tags": ["Dev"] },
-            { "text": "Test smoke production: Host tạo match → 3 người chơi join → chạy quiz 3 câu", "tags": ["Dev"] },
-            { "text": "Thông báo team: production ready", "tags": ["Team"] }
+            {
+              "text": "Merge feature/quiz-improvements vào main",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Deploy lên Fly.io (BE) và hosting FE",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Test smoke production: Host tạo match → 3 người chơi join → chạy quiz 3 câu",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Thông báo team: production ready",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -948,21 +1491,19 @@
   },
   {
     "id": "US-AR-003",
+    "jiraId": "GE-561",
     "project": "Arena Billiard",
     "title": "Nút Livestream YouTube Cho Trận Đấu",
     "module": "Giải đấu & Trực tiếp",
     "author": "Product Team",
     "date": "04/04/2026",
     "status": "Chờ phát triển",
-
     "context": "Khi Arena tổ chức giải đấu, các trận đấu thường được phát trực tiếp trên YouTube. Hiện tại cơ thủ và khán giả phải tự tìm link stream hoặc hỏi BTC — gây bất tiện và làm mất lượt xem. Cần thêm nút YouTube vào từng trận đấu trong hệ thống: BTC nhập link một lần, người xem click vào là đến thẳng kênh YouTube mà không cần tìm kiếm.",
-
     "userStory": {
       "as": "Cơ thủ, khán giả và đơn vị truyền thông theo dõi giải đấu Arena",
       "iWant": "Thấy nút YouTube ngay trên trận đấu đang diễn ra và click vào là mở thẳng link stream",
       "soThat": "Không cần tìm kiếm hay hỏi BTC, lượt xem YouTube tăng tự nhiên, giải đấu trông chuyên nghiệp hơn"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -1007,24 +1548,31 @@
         "then": "Nút YouTube biến mất"
       }
     ],
-
     "flow": "[ADMIN / BTC]\n    |\n    ▼\nVào quản lý trận đấu\n    |\n    ▼\nNhập URL YouTube (youtube.com hoặc youtu.be)\n    |\n    ▼\nLưu → validate domain YouTube\n    |\n    ├─ Không phải YouTube domain ────────────────┐\n    │                                             ▼\n    │                             Báo lỗi: 'Chỉ chấp nhận link YouTube'\n    │\n    └─ Hợp lệ ────────────────────────────────────┐\n                                                   ▼\n                              Lưu youtube_stream_url vào DB\n                              Nút YouTube hiển thị trên trận đấu\n\n[CƠ THỦ / KHÁN GIẢ]\n    |\n    ▼\nXem danh sách / chi tiết trận đấu\n    |\n    ▼\nThấy nút icon YouTube\n    |\n    ▼\nClick → Mở tab mới → YouTube stream",
-
     "dbChanges": "ALTER TABLE matches ADD COLUMN IF NOT EXISTS youtube_stream_url VARCHAR(500);\n-- Validate domain tại application layer: chỉ chấp nhận youtube.com và youtu.be",
-
     "edgeCases": [
-      { "case": "URL dạng rút gọn youtu.be/xxx", "handle": "Chấp nhận cả youtu.be lẫn youtube.com khi validate domain" },
-      { "case": "Admin nhập link không phải YouTube (facebook.com, tiktok.com...)", "handle": "Báo lỗi rõ ràng: 'Chỉ chấp nhận link YouTube (youtube.com hoặc youtu.be)'" },
-      { "case": "Stream kết thúc trên YouTube nhưng admin chưa xoá link", "handle": "Người dùng click sẽ thấy video YouTube bình thường (VOD). Không ảnh hưởng hệ thống — remind admin xoá nếu không muốn hiển thị" },
-      { "case": "Mobile đã cài app YouTube", "handle": "OS tự xử lý deep link → mở app YouTube. Không cần code thêm" }
+      {
+        "case": "URL dạng rút gọn youtu.be/xxx",
+        "handle": "Chấp nhận cả youtu.be lẫn youtube.com khi validate domain"
+      },
+      {
+        "case": "Admin nhập link không phải YouTube (facebook.com, tiktok.com...)",
+        "handle": "Báo lỗi rõ ràng: 'Chỉ chấp nhận link YouTube (youtube.com hoặc youtu.be)'"
+      },
+      {
+        "case": "Stream kết thúc trên YouTube nhưng admin chưa xoá link",
+        "handle": "Người dùng click sẽ thấy video YouTube bình thường (VOD). Không ảnh hưởng hệ thống — remind admin xoá nếu không muốn hiển thị"
+      },
+      {
+        "case": "Mobile đã cài app YouTube",
+        "handle": "OS tự xử lý deep link → mở app YouTube. Không cần code thêm"
+      }
     ],
-
     "notes": [
       "Không cần video player — chỉ lưu URL và mở tab mới (target='_blank')",
       "Validate domain YouTube tại backend, không chỉ frontend",
       "US-AR-004 xử lý tương tự cho Facebook — 2 nút có thể cùng hiển thị trên 1 trận"
     ],
-
     "sprintPlan": {
       "startDate": "13/04/2026",
       "endDate": "18/04/2026",
@@ -1036,10 +1584,31 @@
           "color": "purple",
           "result": "US, AC đã duyệt. Thống nhất whitelist domain, UX nút, và cách hiển thị sau khi stream kết thúc.",
           "tasks": [
-            { "text": "Tạo US-AR-003 với đầy đủ AC-01 đến AC-06", "tags": ["Dev", "Claude"] },
-            { "text": "Họp team: whitelist chỉ YouTube/Facebook hay mọi URL? Hiển thị nút khi stream kết thúc không?", "tags": ["Team"] },
-            { "text": "Xác định vị trí hiển thị nút trên UI: danh sách trận hay chỉ trang chi tiết trận?", "tags": ["Team"] },
-            { "text": "Claude thiết kế migration: ALTER TABLE matches ADD COLUMN stream_url", "tags": ["Claude"] }
+            {
+              "text": "Tạo US-AR-003 với đầy đủ AC-01 đến AC-06",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Họp team: whitelist chỉ YouTube/Facebook hay mọi URL? Hiển thị nút khi stream kết thúc không?",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Xác định vị trí hiển thị nút trên UI: danh sách trận hay chỉ trang chi tiết trận?",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Claude thiết kế migration: ALTER TABLE matches ADD COLUMN stream_url",
+              "tags": [
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -1049,11 +1618,40 @@
           "color": "teal",
           "result": "Nhánh feature tạo xong. Migration chạy trên dev. API admin nhập link hoạt động.",
           "tasks": [
-            { "text": "git pull origin develop → tạo nhánh feature/match-livestream", "tags": ["Git"] },
-            { "text": "Chạy migration: thêm cột stream_url vào bảng matches", "tags": ["Dev", "Claude"] },
-            { "text": "Thêm field stream_url vào API PUT /matches/:id (admin update trận)", "tags": ["Dev", "Claude"] },
-            { "text": "Validate URL ở backend: kiểm tra format hợp lệ, whitelist domain nếu cần", "tags": ["Dev", "Claude"] },
-            { "text": "Thêm stream_url vào response GET /matches và GET /matches/:id", "tags": ["Dev", "Claude"] }
+            {
+              "text": "git pull origin develop → tạo nhánh feature/match-livestream",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy migration: thêm cột stream_url vào bảng matches",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thêm field stream_url vào API PUT /matches/:id (admin update trận)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Validate URL ở backend: kiểm tra format hợp lệ, whitelist domain nếu cần",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thêm stream_url vào response GET /matches và GET /matches/:id",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -1063,11 +1661,39 @@
           "color": "blue",
           "result": "Admin nhập được link. Nút Livestream hiển thị đúng trên trang người dùng.",
           "tasks": [
-            { "text": "git pull origin develop — kiểm tra conflict", "tags": ["Git"] },
-            { "text": "Admin UI: thêm input field 'Link Livestream' vào form quản lý trận đấu", "tags": ["Dev", "Claude"] },
-            { "text": "Frontend người dùng: hiển thị nút Livestream/Play khi stream_url != null, ẩn khi null", "tags": ["Dev", "Claude"] },
-            { "text": "Logic nhận diện icon: youtube.com/youtu.be → icon YouTube, facebook.com/fb.watch → icon Facebook", "tags": ["Dev", "Claude"] },
-            { "text": "Commit và push cuối ngày", "tags": ["Git"] }
+            {
+              "text": "git pull origin develop — kiểm tra conflict",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Admin UI: thêm input field 'Link Livestream' vào form quản lý trận đấu",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Frontend người dùng: hiển thị nút Livestream/Play khi stream_url != null, ẩn khi null",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Logic nhận diện icon: youtube.com/youtu.be → icon YouTube, facebook.com/fb.watch → icon Facebook",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Commit và push cuối ngày",
+              "tags": [
+                "Git"
+              ]
+            }
           ]
         },
         {
@@ -1077,11 +1703,39 @@
           "color": "blue",
           "result": "Toàn bộ AC-01 đến AC-06 pass. Edge cases đã xử lý.",
           "tasks": [
-            { "text": "git pull origin develop — cập nhật code mới nhất", "tags": ["Git"] },
-            { "text": "Claude chạy toàn bộ test case TC_001 → TC_012, xuất báo cáo", "tags": ["Dev", "Claude"] },
-            { "text": "Test trên mobile: iOS + Android — click nút mở đúng app YouTube/Facebook", "tags": ["Dev"] },
-            { "text": "Test edge case: URL rút gọn youtu.be, URL Facebook live, URL không hợp lệ", "tags": ["Dev", "Claude"] },
-            { "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết", "tags": ["Dev", "Claude"] }
+            {
+              "text": "git pull origin develop — cập nhật code mới nhất",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Claude chạy toàn bộ test case TC_001 → TC_012, xuất báo cáo",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Test trên mobile: iOS + Android — click nút mở đúng app YouTube/Facebook",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Test edge case: URL rút gọn youtu.be, URL Facebook live, URL không hợp lệ",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -1091,10 +1745,31 @@
           "color": "amber",
           "result": "Code review sạch. Xác nhận không ảnh hưởng các tính năng quản lý trận khác.",
           "tasks": [
-            { "text": "git pull origin develop — lần cuối trước review", "tags": ["Git"] },
-            { "text": "Claude phân tích ảnh hưởng: thêm stream_url có ảnh hưởng API lịch thi đấu, báo cáo giải đấu không?", "tags": ["Dev", "Claude"] },
-            { "text": "Tech Lead review: validate URL, security (open redirect?), UX nút", "tags": ["Team"] },
-            { "text": "Sửa theo góp ý, chạy lại test", "tags": ["Dev"] }
+            {
+              "text": "git pull origin develop — lần cuối trước review",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Claude phân tích ảnh hưởng: thêm stream_url có ảnh hưởng API lịch thi đấu, báo cáo giải đấu không?",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Tech Lead review: validate URL, security (open redirect?), UX nút",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Sửa theo góp ý, chạy lại test",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -1104,17 +1779,47 @@
           "color": "green",
           "result": "Tính năng nút Livestream hoạt động trên beta. Admin nhập link → người dùng click → mở stream.",
           "tasks": [
-            { "text": "Pull code mới nhất từ develop → giải quyết conflict cuối", "tags": ["Git"] },
-            { "text": "Chạy toàn bộ test lần cuối sau merge", "tags": ["Dev", "Claude"] },
-            { "text": "Merge feature/match-livestream vào develop", "tags": ["Git"] },
-            { "text": "Chạy migration trên môi trường beta", "tags": ["Dev"] },
-            { "text": "Test smoke: Admin nhập link YouTube → khán giả thấy nút → click → mở stream", "tags": ["Dev"] },
-            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+            {
+              "text": "Pull code mới nhất từ develop → giải quyết conflict cuối",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy toàn bộ test lần cuối sau merge",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Merge feature/match-livestream vào develop",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy migration trên môi trường beta",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Test smoke: Admin nhập link YouTube → khán giả thấy nút → click → mở stream",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Deploy và thông báo team",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -1219,21 +1924,19 @@
   },
   {
     "id": "US-AR-004",
+    "jiraId": "GE-562",
     "project": "Arena Billiard",
     "title": "Nút Livestream Facebook Cho Trận Đấu",
     "module": "Giải đấu & Trực tiếp",
     "author": "Product Team",
     "date": "04/04/2026",
     "status": "Chờ phát triển",
-
     "context": "Song song với YouTube (US-AR-003), các trận đấu Arena cũng được phát trực tiếp trên Facebook để tiếp cận khán giả trên nền tảng này. Cần thêm nút Facebook riêng biệt trên từng trận — 1 trận có thể hiển thị đồng thời cả 2 nút YouTube và Facebook nếu stream trên cả 2 kênh.",
-
     "userStory": {
       "as": "Cơ thủ, khán giả và đơn vị truyền thông theo dõi giải đấu Arena",
       "iWant": "Thấy nút Facebook ngay trên trận đấu đang diễn ra và click vào là mở thẳng link Facebook Live",
       "soThat": "Khán giả trên Facebook không cần tìm kiếm, lượt xem Facebook tăng tự nhiên"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -1278,25 +1981,32 @@
         "then": "Hiển thị 2 nút song song: icon YouTube và icon Facebook. Mỗi nút dẫn đến đúng link của nền tảng đó"
       }
     ],
-
     "flow": "[ADMIN / BTC]\n    |\n    ▼\nVào quản lý trận đấu\n    |\n    ▼\nNhập URL Facebook (facebook.com hoặc fb.watch)\n    |\n    ▼\nLưu → validate domain Facebook\n    |\n    ├─ Không phải Facebook domain ───────────────┐\n    │                                             ▼\n    │                             Báo lỗi: 'Chỉ chấp nhận link Facebook'\n    │\n    └─ Hợp lệ ────────────────────────────────────┐\n                                                   ▼\n                              Lưu facebook_stream_url vào DB\n                              Nút Facebook hiển thị trên trận đấu\n                              (cùng với nút YouTube nếu có)\n\n[CƠ THỦ / KHÁN GIẢ]\n    |\n    ▼\nXem trận đấu\n    |\n    ▼\nThấy nút YouTube và/hoặc Facebook\n    |\n    ▼\nClick nút Facebook → Mở tab mới → Facebook Live",
-
     "dbChanges": "ALTER TABLE matches ADD COLUMN IF NOT EXISTS facebook_stream_url VARCHAR(500);\n-- Validate domain: chỉ chấp nhận facebook.com và fb.watch\n-- Kết hợp với youtube_stream_url (US-AR-003): 2 cột độc lập, cùng bảng",
-
     "edgeCases": [
-      { "case": "URL fb.watch (dạng rút gọn của Facebook)", "handle": "Chấp nhận cả fb.watch lẫn facebook.com khi validate domain" },
-      { "case": "Admin nhập link YouTube vào field Facebook", "handle": "Báo lỗi: 'Chỉ chấp nhận link Facebook (facebook.com hoặc fb.watch)'" },
-      { "case": "Trận stream cả 2 nền tảng, 1 link hết hạn", "handle": "Nút của nền tảng còn lại vẫn hoạt động bình thường — 2 field độc lập" },
-      { "case": "Mobile đã cài app Facebook", "handle": "OS tự xử lý deep link → mở app Facebook. Không cần code thêm" }
+      {
+        "case": "URL fb.watch (dạng rút gọn của Facebook)",
+        "handle": "Chấp nhận cả fb.watch lẫn facebook.com khi validate domain"
+      },
+      {
+        "case": "Admin nhập link YouTube vào field Facebook",
+        "handle": "Báo lỗi: 'Chỉ chấp nhận link Facebook (facebook.com hoặc fb.watch)'"
+      },
+      {
+        "case": "Trận stream cả 2 nền tảng, 1 link hết hạn",
+        "handle": "Nút của nền tảng còn lại vẫn hoạt động bình thường — 2 field độc lập"
+      },
+      {
+        "case": "Mobile đã cài app Facebook",
+        "handle": "OS tự xử lý deep link → mở app Facebook. Không cần code thêm"
+      }
     ],
-
     "notes": [
       "DB: cùng bảng matches với US-AR-003, thêm cột facebook_stream_url riêng",
       "UI: 2 nút YouTube + Facebook hiển thị song song khi trận có cả 2 link",
       "Validate domain backend: facebook.com và fb.watch",
       "Nên làm sau US-AR-003 vì logic tương tự, chỉ khác domain và icon"
     ],
-
     "sprintPlan": {
       "startDate": "13/04/2026",
       "endDate": "18/04/2026",
@@ -1308,9 +2018,24 @@
           "color": "purple",
           "result": "US-AR-004 duyệt xong. Thống nhất UX khi hiển thị 2 nút cùng lúc.",
           "tasks": [
-            { "text": "Review US-AR-004 cùng team, thống nhất layout 2 nút YouTube + Facebook", "tags": ["Team"] },
-            { "text": "Claude thiết kế migration: ALTER TABLE matches ADD COLUMN facebook_stream_url", "tags": ["Claude"] },
-            { "text": "Thống nhất thứ tự hiển thị: YouTube trước hay Facebook trước?", "tags": ["Team"] }
+            {
+              "text": "Review US-AR-004 cùng team, thống nhất layout 2 nút YouTube + Facebook",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Claude thiết kế migration: ALTER TABLE matches ADD COLUMN facebook_stream_url",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thống nhất thứ tự hiển thị: YouTube trước hay Facebook trước?",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -1320,10 +2045,34 @@
           "color": "teal",
           "result": "Migration chạy xong. API hỗ trợ facebook_stream_url. Làm sau US-AR-003 nếu cùng sprint.",
           "tasks": [
-            { "text": "Làm sau khi US-AR-003 done: thêm facebook_stream_url vào cùng nhánh hoặc nhánh mới", "tags": ["Dev", "Claude"] },
-            { "text": "Migration: ADD COLUMN facebook_stream_url vào bảng matches", "tags": ["Dev", "Claude"] },
-            { "text": "Thêm facebook_stream_url vào API PUT /matches/:id và GET /matches", "tags": ["Dev", "Claude"] },
-            { "text": "Validate domain: chỉ facebook.com và fb.watch", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Làm sau khi US-AR-003 done: thêm facebook_stream_url vào cùng nhánh hoặc nhánh mới",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Migration: ADD COLUMN facebook_stream_url vào bảng matches",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thêm facebook_stream_url vào API PUT /matches/:id và GET /matches",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Validate domain: chỉ facebook.com và fb.watch",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -1333,10 +2082,33 @@
           "color": "blue",
           "result": "Nút Facebook hiển thị đúng. Layout 2 nút cùng lúc trông gọn đẹp.",
           "tasks": [
-            { "text": "Admin UI: thêm field 'Link Facebook Live' vào form quản lý trận", "tags": ["Dev", "Claude"] },
-            { "text": "Frontend: hiển thị nút Facebook khi facebook_stream_url != null", "tags": ["Dev", "Claude"] },
-            { "text": "Layout: 2 nút YouTube + Facebook song song, responsive trên mobile", "tags": ["Dev", "Claude"] },
-            { "text": "Commit và push cuối ngày", "tags": ["Git"] }
+            {
+              "text": "Admin UI: thêm field 'Link Facebook Live' vào form quản lý trận",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Frontend: hiển thị nút Facebook khi facebook_stream_url != null",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Layout: 2 nút YouTube + Facebook song song, responsive trên mobile",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Commit và push cuối ngày",
+              "tags": [
+                "Git"
+              ]
+            }
           ]
         },
         {
@@ -1346,10 +2118,33 @@
           "color": "blue",
           "result": "Toàn bộ AC-01 đến AC-06 pass. Layout 2 nút đẹp trên cả desktop và mobile.",
           "tasks": [
-            { "text": "Claude chạy toàn bộ test case TC_001 → TC_011", "tags": ["Dev", "Claude"] },
-            { "text": "Test đặc biệt AC-06: trận có cả 2 link — 2 nút hiển thị đúng và độc lập", "tags": ["Dev", "Claude"] },
-            { "text": "Test mobile: iOS + Android click nút Facebook mở app", "tags": ["Dev"] },
-            { "text": "Sửa lỗi, chạy lại test", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Claude chạy toàn bộ test case TC_001 → TC_011",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Test đặc biệt AC-06: trận có cả 2 link — 2 nút hiển thị đúng và độc lập",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Test mobile: iOS + Android click nút Facebook mở app",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Sửa lỗi, chạy lại test",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -1359,8 +2154,18 @@
           "color": "amber",
           "result": "Code review sạch.",
           "tasks": [
-            { "text": "Tech Lead review: validate domain, layout 2 nút, không conflict với US-AR-003", "tags": ["Team"] },
-            { "text": "Sửa theo góp ý", "tags": ["Dev"] }
+            {
+              "text": "Tech Lead review: validate domain, layout 2 nút, không conflict với US-AR-003",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Sửa theo góp ý",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -1370,14 +2175,28 @@
           "color": "green",
           "result": "Nút Facebook hoạt động trên beta. Trận stream cả 2 nền tảng hiển thị 2 nút.",
           "tasks": [
-            { "text": "Merge vào develop cùng với US-AR-003", "tags": ["Git"] },
-            { "text": "Test smoke: Admin nhập cả 2 link → 2 nút hiển thị → click từng nút mở đúng", "tags": ["Dev"] },
-            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+            {
+              "text": "Merge vào develop cùng với US-AR-003",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Test smoke: Admin nhập cả 2 link → 2 nút hiển thị → click từng nút mở đúng",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Deploy và thông báo team",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -1482,21 +2301,19 @@
   },
   {
     "id": "US-AR-005",
+    "jiraId": "GE-563",
     "project": "Arena Billiard",
     "title": "Căn Chỉnh Giao Diện Danh Sách Cơ Thủ Trong Giải Đấu",
     "module": "Giải đấu & Cơ thủ",
     "author": "Product Team",
     "date": "04/04/2026",
     "status": "Chờ phát triển",
-
     "context": "Màn hình 'Danh sách cơ thủ' trong tab tham gia giải đấu hiển thị các cột: STT, Cờ, Avatar, Tên cơ thủ, Hạng, Profile. Hiện tại khi tên cơ thủ dài hoặc có hậu tố (VD: 'Duy Tân - Boss C+') các cột bị lệch nhau, gây khó đọc và trông thiếu chuyên nghiệp. Cần căn chỉnh layout cố định để bảng luôn đồng đều bất kể độ dài nội dung.",
-
     "userStory": {
       "as": "Cơ thủ sử dụng Arena App xem danh sách người tham gia giải đấu",
       "iWant": "Danh sách cơ thủ hiển thị theo cột thẳng hàng, đồng đều dù tên dài hay ngắn",
       "soThat": "Dễ theo dõi và so sánh thông tin các cơ thủ cùng giải một cách minh bạch"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -1541,16 +2358,25 @@
         "then": "Layout vẫn thẳng hàng với kết quả lọc. Không bị lệch sau khi filter"
       }
     ],
-
     "flow": "[CƠ THỦ]\n    |\n    ▼\nMở giải đấu → Tab 'Danh sách cơ thủ'\n    |\n    ▼\nHệ thống render bảng với layout cố định:\n  | STT | Cờ | Avatar | Tên cơ thủ        | Hạng | Profile |\n  |  1  | 🇻🇳 |  [img] | Danny             |  E   |   [→]   |\n  |  2  | 🇻🇳 |  [img] | Duy Tân - Boss C+ |  G   |   [→]   |\n    |\n    ▼\nTên dài → truncate '...', cột Hạng và Profile không lệch\n    |\n    ▼\n(Tuỳ chọn) Gõ tìm kiếm → lọc danh sách, layout giữ nguyên",
-
     "edgeCases": [
-      { "case": "Tên cơ thủ cực dài (>50 ký tự)", "handle": "Truncate với '...' tại giới hạn cột. Tooltip hiện tên đầy đủ khi tap/hover nếu UX cho phép" },
-      { "case": "Cơ thủ không có cờ quốc gia", "handle": "Ô cờ hiển thị placeholder trống hoặc icon mặc định, giữ kích thước cố định" },
-      { "case": "Danh sách rất dài (96+ cơ thủ như trong ảnh)", "handle": "Virtual scroll hoặc pagination để không render toàn bộ DOM — tránh lag trên mobile cấu hình thấp" },
-      { "case": "Màn hình xoay ngang (landscape)", "handle": "Bảng vẫn căn đều, không bị vỡ layout. Cột Tên có thêm không gian hiển thị" }
+      {
+        "case": "Tên cơ thủ cực dài (>50 ký tự)",
+        "handle": "Truncate với '...' tại giới hạn cột. Tooltip hiện tên đầy đủ khi tap/hover nếu UX cho phép"
+      },
+      {
+        "case": "Cơ thủ không có cờ quốc gia",
+        "handle": "Ô cờ hiển thị placeholder trống hoặc icon mặc định, giữ kích thước cố định"
+      },
+      {
+        "case": "Danh sách rất dài (96+ cơ thủ như trong ảnh)",
+        "handle": "Virtual scroll hoặc pagination để không render toàn bộ DOM — tránh lag trên mobile cấu hình thấp"
+      },
+      {
+        "case": "Màn hình xoay ngang (landscape)",
+        "handle": "Bảng vẫn căn đều, không bị vỡ layout. Cột Tên có thêm không gian hiển thị"
+      }
     ],
-
     "notes": [
       "Đây là bug UI/UX fix, không thay đổi dữ liệu hay API — chỉ sửa CSS/layout component",
       "Ưu tiên dùng CSS table-layout: fixed hoặc flexbox với flex-shrink: 0 cho các cột cố định",
@@ -1558,7 +2384,6 @@
       "Cần test trên ít nhất: iPhone SE (375px), iPhone 14 (390px), Android phổ thông (360px)",
       "Không cần DB migration — pure frontend fix"
     ],
-
     "sprintPlan": {
       "startDate": "13/04/2026",
       "endDate": "18/04/2026",
@@ -1570,10 +2395,31 @@
           "color": "purple",
           "result": "Xác định rõ component cần sửa, thống nhất tỷ lệ cột, có mockup layout mới.",
           "tasks": [
-            { "text": "Tạo US-AR-005, review AC với team", "tags": ["Dev", "Claude"] },
-            { "text": "Xác định component/file chứa danh sách cơ thủ trong codebase", "tags": ["Dev"] },
-            { "text": "Thống nhất tỷ lệ cột: STT 8%, Cờ 8%, Avatar 10%, Tên 50%, Hạng 12%, Profile 12%", "tags": ["Team"] },
-            { "text": "Chụp screenshot hiện trạng bị lệch để so sánh trước/sau", "tags": ["Dev"] }
+            {
+              "text": "Tạo US-AR-005, review AC với team",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Xác định component/file chứa danh sách cơ thủ trong codebase",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Thống nhất tỷ lệ cột: STT 8%, Cờ 8%, Avatar 10%, Tên 50%, Hạng 12%, Profile 12%",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Chụp screenshot hiện trạng bị lệch để so sánh trước/sau",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -1583,11 +2429,39 @@
           "color": "teal",
           "result": "Layout thẳng hàng trên simulator. Truncate tên hoạt động.",
           "tasks": [
-            { "text": "git pull origin develop → tạo nhánh fix/player-list-alignment", "tags": ["Git"] },
-            { "text": "Áp dụng CSS table-layout: fixed hoặc flexbox cố định cho bảng danh sách", "tags": ["Dev", "Claude"] },
-            { "text": "Thêm overflow: hidden + text-overflow: ellipsis cho cột Tên cơ thủ", "tags": ["Dev", "Claude"] },
-            { "text": "Fix avatar placeholder: kích thước cố định khi không có ảnh", "tags": ["Dev", "Claude"] },
-            { "text": "Commit và push cuối ngày", "tags": ["Git"] }
+            {
+              "text": "git pull origin develop → tạo nhánh fix/player-list-alignment",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Áp dụng CSS table-layout: fixed hoặc flexbox cố định cho bảng danh sách",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thêm overflow: hidden + text-overflow: ellipsis cho cột Tên cơ thủ",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Fix avatar placeholder: kích thước cố định khi không có ảnh",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Commit và push cuối ngày",
+              "tags": [
+                "Git"
+              ]
+            }
           ]
         },
         {
@@ -1597,11 +2471,37 @@
           "color": "blue",
           "result": "Layout đúng trên tất cả màn hình test. Tìm kiếm không bị lệch.",
           "tasks": [
-            { "text": "Test trên iPhone SE 375px, iPhone 14 390px, Android 360px", "tags": ["Dev"] },
-            { "text": "Test landscape mode — bảng không bị vỡ", "tags": ["Dev"] },
-            { "text": "Test filter tìm kiếm — layout giữ nguyên khi lọc danh sách", "tags": ["Dev", "Claude"] },
-            { "text": "Test danh sách 96+ cơ thủ — kiểm tra performance scroll", "tags": ["Dev"] },
-            { "text": "So sánh screenshot trước/sau — chụp để demo", "tags": ["Dev"] }
+            {
+              "text": "Test trên iPhone SE 375px, iPhone 14 390px, Android 360px",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Test landscape mode — bảng không bị vỡ",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Test filter tìm kiếm — layout giữ nguyên khi lọc danh sách",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Test danh sách 96+ cơ thủ — kiểm tra performance scroll",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "So sánh screenshot trước/sau — chụp để demo",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -1611,8 +2511,20 @@
           "color": "blue",
           "result": "Toàn bộ AC-01 đến AC-06 pass.",
           "tasks": [
-            { "text": "Claude chạy toàn bộ test case TC_001 → TC_010, xuất báo cáo", "tags": ["Dev", "Claude"] },
-            { "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Claude chạy toàn bộ test case TC_001 → TC_010, xuất báo cáo",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -1622,9 +2534,25 @@
           "color": "amber",
           "result": "Code review sạch. Không có regression trên các màn hình khác.",
           "tasks": [
-            { "text": "Tech Lead review CSS changes — đảm bảo không break layout màn hình khác", "tags": ["Team"] },
-            { "text": "Kiểm tra regression: các tab Thông tin, Lịch thi đấu không bị ảnh hưởng", "tags": ["Dev", "Claude"] },
-            { "text": "Sửa theo góp ý", "tags": ["Dev"] }
+            {
+              "text": "Tech Lead review CSS changes — đảm bảo không break layout màn hình khác",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Kiểm tra regression: các tab Thông tin, Lịch thi đấu không bị ảnh hưởng",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Sửa theo góp ý",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -1634,14 +2562,28 @@
           "color": "green",
           "result": "Layout danh sách cơ thủ thẳng hàng trên beta.",
           "tasks": [
-            { "text": "Merge fix/player-list-alignment vào develop", "tags": ["Git"] },
-            { "text": "Test smoke trên thiết bị thật với giải đấu có 50+ cơ thủ", "tags": ["Dev"] },
-            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+            {
+              "text": "Merge fix/player-list-alignment vào develop",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Test smoke trên thiết bị thật với giải đấu có 50+ cơ thủ",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Deploy và thông báo team",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -1737,21 +2679,19 @@
   },
   {
     "id": "US-AR-006",
+    "jiraId": "GE-560",
     "project": "Arena Billiard",
     "title": "Sửa Nội Dung Thông Báo Sau Khi Cơ Thủ Đã Đăng Ký Giải Đấu",
     "module": "Thông báo & Giải đấu",
     "author": "Product Team",
     "date": "04/04/2026",
     "status": "Chờ phát triển",
-
     "context": "Khi cơ thủ nhận thông báo giải đấu mới mở đăng ký, nội dung có link 'Đăng ký ngay'. Tuy nhiên sau khi cơ thủ đã đăng ký thành công, thông báo vẫn hiển thị 'Đăng ký ngay' — gây nhầm lẫn và thiếu chuyên nghiệp. Cần thay đổi CTA trong thông báo phù hợp với trạng thái đăng ký của từng cơ thủ.",
-
     "userStory": {
       "as": "Cơ thủ đã đăng ký tham gia giải đấu",
       "iWant": "Thông báo hiển thị đúng trạng thái — 'Xem chi tiết' thay vì 'Đăng ký ngay' sau khi đã đăng ký",
       "soThat": "Không bị nhầm lẫn, biết rõ mình đã đăng ký thành công"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -1775,21 +2715,26 @@
         "then": "Chưa đăng ký: mở trang đăng ký giải đấu. Đã đăng ký: mở trang chi tiết giải đấu"
       }
     ],
-
     "flow": "[HỆ THỐNG] Gửi thông báo giải đấu mới\n    |\n    ▼\nKiểm tra trạng thái đăng ký của cơ thủ nhận thông báo\n    |\n    ├─ Chưa đăng ký ────────────────────────────┐\n    │                                             ▼\n    │                           Thông báo với CTA: 'Đăng ký ngay'\n    │\n    └─ Đã đăng ký ──────────────────────────────┐\n                                                  ▼\n                          Thông báo với CTA: 'Xem chi tiết'",
-
     "edgeCases": [
-      { "case": "Cơ thủ đăng ký sau khi đã nhận thông báo (thông báo cũ)", "handle": "Thông báo cũ không cần cập nhật real-time — chấp nhận hiển thị 'Đăng ký ngay' trên thông báo cũ, chỉ fix thông báo mới gửi sau thời điểm đăng ký" },
-      { "case": "Cơ thủ bị huỷ đăng ký (admin loại hoặc tự rút)", "handle": "Thông báo tiếp theo liên quan giải đó quay về CTA 'Đăng ký ngay'" },
-      { "case": "Giải đấu đã đóng đăng ký", "handle": "Không hiển thị CTA đăng ký bất kể trạng thái. Hiển thị 'Xem chi tiết' hoặc ẩn CTA" }
+      {
+        "case": "Cơ thủ đăng ký sau khi đã nhận thông báo (thông báo cũ)",
+        "handle": "Thông báo cũ không cần cập nhật real-time — chấp nhận hiển thị 'Đăng ký ngay' trên thông báo cũ, chỉ fix thông báo mới gửi sau thời điểm đăng ký"
+      },
+      {
+        "case": "Cơ thủ bị huỷ đăng ký (admin loại hoặc tự rút)",
+        "handle": "Thông báo tiếp theo liên quan giải đó quay về CTA 'Đăng ký ngay'"
+      },
+      {
+        "case": "Giải đấu đã đóng đăng ký",
+        "handle": "Không hiển thị CTA đăng ký bất kể trạng thái. Hiển thị 'Xem chi tiết' hoặc ẩn CTA"
+      }
     ],
-
     "notes": [
       "Đây là bug fix nhỏ — chỉ cần kiểm tra trạng thái đăng ký khi sinh nội dung thông báo",
       "Push notification đã gửi không thể cập nhật — chỉ fix cho thông báo in-app và thông báo mới",
       "Cần xác định: kiểm tra trạng thái tại thời điểm gửi hay tại thời điểm mở thông báo?"
     ],
-
     "sprintPlan": {
       "startDate": "13/04/2026",
       "endDate": "18/04/2026",
@@ -1801,8 +2746,18 @@
           "color": "purple",
           "result": "Xác định điểm sinh nội dung thông báo trong code. Thống nhất logic kiểm tra trạng thái.",
           "tasks": [
-            { "text": "Tìm trong codebase nơi tạo nội dung thông báo giải đấu", "tags": ["Dev"] },
-            { "text": "Thống nhất: kiểm tra trạng thái lúc gửi hay lúc render thông báo?", "tags": ["Team"] }
+            {
+              "text": "Tìm trong codebase nơi tạo nội dung thông báo giải đấu",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Thống nhất: kiểm tra trạng thái lúc gửi hay lúc render thông báo?",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -1812,9 +2767,26 @@
           "color": "teal",
           "result": "Logic kiểm tra trạng thái đăng ký hoạt động đúng.",
           "tasks": [
-            { "text": "git pull → tạo nhánh fix/notification-cta", "tags": ["Git"] },
-            { "text": "Sửa logic sinh CTA thông báo dựa trên trạng thái đăng ký của cơ thủ", "tags": ["Dev", "Claude"] },
-            { "text": "Unit test: cơ thủ đã đăng ký → CTA = 'Xem chi tiết'", "tags": ["Dev", "Claude"] }
+            {
+              "text": "git pull → tạo nhánh fix/notification-cta",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Sửa logic sinh CTA thông báo dựa trên trạng thái đăng ký của cơ thủ",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Unit test: cơ thủ đã đăng ký → CTA = 'Xem chi tiết'",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -1824,13 +2796,23 @@
           "color": "blue",
           "result": "Bug fix pass toàn bộ test case. Merge vào develop.",
           "tasks": [
-            { "text": "Chạy toàn bộ test case TC_001 → TC_006", "tags": ["Dev", "Claude"] },
-            { "text": "Merge fix/notification-cta vào develop, deploy beta", "tags": ["Git"] }
+            {
+              "text": "Chạy toàn bộ test case TC_001 → TC_006",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Merge fix/notification-cta vào develop, deploy beta",
+              "tags": [
+                "Git"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -1890,32 +2872,44 @@
   },
   {
     "id": "US-AR-007",
+    "jiraId": "GE-564",
     "project": "Arena Billiard",
     "title": "Tìm Kiếm Club Theo Tên / Địa Chỉ / Số Điện Thoại",
     "module": "Tìm kiếm & Khám phá",
     "author": "Product Team",
     "date": "04/04/2026",
     "status": "Chờ phát triển",
-
     "context": "Hiện tại tính năng 'Tìm club' trên Arena App chỉ hỗ trợ tìm theo tỉnh thành — người dùng phải bấm vào tỉnh rồi lọc trong danh sách dài. Khi nhớ 'manh mối' tên club (VD: 'Nex') nhưng không nhớ tên đầy đủ, không có cách nào tìm nhanh. Cần thêm thanh tìm kiếm full-text hỗ trợ autocomplete theo tên, địa chỉ hoặc số điện thoại.",
-
     "userStory": {
       "as": "Người dùng Arena App muốn tìm một club cụ thể",
       "iWant": "Gõ một phần tên, địa chỉ hoặc số điện thoại và nhận gợi ý club phù hợp ngay lập tức",
       "soThat": "Tìm được club cần tìm nhanh chóng mà không cần biết tỉnh thành hay tên đầy đủ"
     },
-
     "example": {
       "description": "Gõ 'Nex' → gợi ý: Next Billiards, NextGenerations, Nexus Arena",
       "discount": 0,
       "total": 0,
       "items": [
-        { "code": "CL001", "name": "Next Billiards", "qty": 1, "price": 0 },
-        { "code": "CL002", "name": "NextGenerations Billiards", "qty": 1, "price": 0 },
-        { "code": "CL003", "name": "Nexus Arena", "qty": 1, "price": 0 }
+        {
+          "code": "CL001",
+          "name": "Next Billiards",
+          "qty": 1,
+          "price": 0
+        },
+        {
+          "code": "CL002",
+          "name": "NextGenerations Billiards",
+          "qty": 1,
+          "price": 0
+        },
+        {
+          "code": "CL003",
+          "name": "Nexus Arena",
+          "qty": 1,
+          "price": 0
+        }
       ]
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -1960,25 +2954,32 @@
         "then": "Mở trang chi tiết club đó"
       }
     ],
-
     "flow": "[NGƯỜI DÙNG]\n    |\n    ▼\nMở màn hình Tìm club\n    |\n    ▼\nGõ từ khoá vào thanh tìm kiếm (≥ 2 ký tự)\n    |\n    ▼\n[300ms debounce] → Gọi API search clubs\n    |\n    ├─ Có kết quả ──────────────────────────────┐\n    │                                             ▼\n    │                           Hiển thị danh sách gợi ý\n    │                           (tên, địa chỉ, quận/tỉnh)\n    │                                             |\n    │                                        Click vào club\n    │                                             |\n    │                                             ▼\n    │                                    Mở trang chi tiết club\n    │\n    └─ Không có kết quả ─────────────────────────┐\n                                                   ▼\n                           'Không tìm thấy club phù hợp'\n                           Gợi ý tìm theo tỉnh thành",
-
     "dbChanges": "-- Thêm full-text search index nếu dùng SQL\nCREATE INDEX IF NOT EXISTS idx_clubs_search\n  ON clubs USING gin(to_tsvector('simple', name || ' ' || COALESCE(address, '') || ' ' || COALESCE(phone, '')));\n\n-- Hoặc nếu dùng MongoDB: tạo text index\n-- db.clubs.createIndex({ name: 'text', address: 'text', phone: 'text' })\n\n-- API: GET /clubs/search?q=:keyword&limit=10",
-
     "edgeCases": [
-      { "case": "Từ khoá có dấu tiếng Việt (VD: 'Bảng')", "handle": "Tìm kiếm không phân biệt dấu: 'Bang' hoặc 'Bảng' đều ra cùng kết quả. Cần normalize unicode khi index và query" },
-      { "case": "Từ khoá < 2 ký tự", "handle": "Không gọi API, không hiển thị gợi ý. Placeholder: 'Nhập ít nhất 2 ký tự'" },
-      { "case": "Người dùng gõ rất nhanh (spam request)", "handle": "Debounce 300ms — chỉ gọi API sau khi ngừng gõ 300ms" },
-      { "case": "Mạng chậm, API trả về sau khi người dùng đã gõ thêm", "handle": "Cancel request cũ khi có request mới (AbortController). Chỉ hiển thị kết quả của request mới nhất" }
+      {
+        "case": "Từ khoá có dấu tiếng Việt (VD: 'Bảng')",
+        "handle": "Tìm kiếm không phân biệt dấu: 'Bang' hoặc 'Bảng' đều ra cùng kết quả. Cần normalize unicode khi index và query"
+      },
+      {
+        "case": "Từ khoá < 2 ký tự",
+        "handle": "Không gọi API, không hiển thị gợi ý. Placeholder: 'Nhập ít nhất 2 ký tự'"
+      },
+      {
+        "case": "Người dùng gõ rất nhanh (spam request)",
+        "handle": "Debounce 300ms — chỉ gọi API sau khi ngừng gõ 300ms"
+      },
+      {
+        "case": "Mạng chậm, API trả về sau khi người dùng đã gõ thêm",
+        "handle": "Cancel request cũ khi có request mới (AbortController). Chỉ hiển thị kết quả của request mới nhất"
+      }
     ],
-
     "notes": [
       "API endpoint mới: GET /clubs/search?q=keyword&limit=10",
       "Không phân biệt hoa thường, không phân biệt dấu tiếng Việt",
       "Debounce 300ms ở client để tránh gọi API quá nhiều",
       "Giữ nguyên tính năng tìm theo tỉnh thành hiện tại — tìm kiếm text là tính năng bổ sung"
     ],
-
     "sprintPlan": {
       "startDate": "13/04/2026",
       "endDate": "18/04/2026",
@@ -1990,9 +2991,25 @@
           "color": "purple",
           "result": "Thống nhất search scope, index strategy, API spec.",
           "tasks": [
-            { "text": "Review US-AR-007 với team, xác nhận search theo tên + địa chỉ + sđt", "tags": ["Team"] },
-            { "text": "Kiểm tra DB hiện tại: clubs table có đủ field name, address, phone?", "tags": ["Dev"] },
-            { "text": "Thiết kế API: GET /clubs/search?q=&limit=10", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Review US-AR-007 với team, xác nhận search theo tên + địa chỉ + sđt",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Kiểm tra DB hiện tại: clubs table có đủ field name, address, phone?",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Thiết kế API: GET /clubs/search?q=&limit=10",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -2002,10 +3019,33 @@
           "color": "teal",
           "result": "API search clubs hoạt động, hỗ trợ partial match + không dấu.",
           "tasks": [
-            { "text": "git pull → tạo nhánh feature/club-search", "tags": ["Git"] },
-            { "text": "Tạo text index trên DB (PostgreSQL GIN hoặc MongoDB text index)", "tags": ["Dev", "Claude"] },
-            { "text": "Implement GET /clubs/search: partial match, case-insensitive, normalize dấu", "tags": ["Dev", "Claude"] },
-            { "text": "Unit test: 'Nex' → Next Billiards, NextGenerations, Nexus Arena", "tags": ["Dev", "Claude"] }
+            {
+              "text": "git pull → tạo nhánh feature/club-search",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Tạo text index trên DB (PostgreSQL GIN hoặc MongoDB text index)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Implement GET /clubs/search: partial match, case-insensitive, normalize dấu",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Unit test: 'Nex' → Next Billiards, NextGenerations, Nexus Arena",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -2015,10 +3055,34 @@
           "color": "blue",
           "result": "UI search bar hoạt động với debounce, hiển thị gợi ý tức thì.",
           "tasks": [
-            { "text": "Thêm thanh tìm kiếm vào màn hình Tìm club", "tags": ["Dev", "Claude"] },
-            { "text": "Implement debounce 300ms + AbortController cancel request cũ", "tags": ["Dev", "Claude"] },
-            { "text": "UI danh sách gợi ý: tên, địa chỉ, quận/tỉnh", "tags": ["Dev", "Claude"] },
-            { "text": "Empty state: 'Không tìm thấy club phù hợp'", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Thêm thanh tìm kiếm vào màn hình Tìm club",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Implement debounce 300ms + AbortController cancel request cũ",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "UI danh sách gợi ý: tên, địa chỉ, quận/tỉnh",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Empty state: 'Không tìm thấy club phù hợp'",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -2028,9 +3092,25 @@
           "color": "blue",
           "result": "Toàn bộ AC-01 đến AC-06 pass. Search dấu/không dấu hoạt động đúng.",
           "tasks": [
-            { "text": "Claude chạy toàn bộ test case, xuất báo cáo", "tags": ["Dev", "Claude"] },
-            { "text": "Test: gõ có dấu/không dấu cùng ra kết quả", "tags": ["Dev"] },
-            { "text": "Test performance: 1000 clubs, search < 200ms", "tags": ["Dev"] }
+            {
+              "text": "Claude chạy toàn bộ test case, xuất báo cáo",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Test: gõ có dấu/không dấu cùng ra kết quả",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Test performance: 1000 clubs, search < 200ms",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -2040,8 +3120,19 @@
           "color": "amber",
           "result": "Code review sạch. Tìm theo tỉnh thành cũ không bị ảnh hưởng.",
           "tasks": [
-            { "text": "Tech Lead review: index strategy, API design, debounce implementation", "tags": ["Team"] },
-            { "text": "Regression test: tìm theo tỉnh thành vẫn hoạt động bình thường", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Tech Lead review: index strategy, API design, debounce implementation",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Regression test: tìm theo tỉnh thành vẫn hoạt động bình thường",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -2051,13 +3142,22 @@
           "color": "green",
           "result": "Search club theo tên/địa chỉ/sđt hoạt động trên beta.",
           "tasks": [
-            { "text": "Merge feature/club-search vào develop, deploy beta", "tags": ["Git"] },
-            { "text": "Test smoke: gõ 'Hoàng Sao' → ra đúng club", "tags": ["Dev"] }
+            {
+              "text": "Merge feature/club-search vào develop, deploy beta",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Test smoke: gõ 'Hoàng Sao' → ra đúng club",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -2162,21 +3262,19 @@
   },
   {
     "id": "US-AR-008",
+    "jiraId": "GE-565",
     "project": "Arena Billiard",
     "title": "Trang Chi Tiết Giải Đấu Cấu Trúc Chuyên Nghiệp",
     "module": "Giải đấu & Khám phá",
     "author": "Product Team",
     "date": "04/04/2026",
     "status": "Chờ phát triển",
-
     "context": "Hiện tại thông tin giải đấu được trình bày lộn xộn trong một đoạn văn dài — cơ thủ phải đọc kỹ mới hiểu lệ phí, thể thức, giải thưởng. Họ cũng không biết ai đã đăng ký để đánh giá mức độ cạnh tranh, và phải chuyển khoản lệ phí cho tài khoản cá nhân lạ gây mất tin tưởng. Cần cấu trúc lại trang chi tiết giải đấu thành dạng chuyên nghiệp, rõ ràng và tương tác được.",
-
     "userStory": {
       "as": "Cơ thủ muốn tìm hiểu và quyết định đăng ký giải đấu",
       "iWant": "Xem trang chi tiết giải đấu được cấu trúc rõ ràng với thông tin tổng quan, thông tin nhanh, danh sách VĐV và lịch thi đấu",
       "soThat": "Ra quyết định đăng ký nhanh và tự tin mà không cần hỏi BTC"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -2221,24 +3319,35 @@
         "then": "Tên CLB/BTC, logo, lịch sử giải đã tổ chức thành công. Tăng độ tin tưởng trước khi đăng ký"
       }
     ],
-
     "flow": "[CƠ THỦ]\n    |\n    ▼\nMở trang chi tiết giải đấu\n    |\n    ▼\n[KHU VỰC TỔNG QUAN]\nTên giải | Poster | Thời gian | Địa điểm | Trạng thái\n[Đăng ký tham gia] (nếu còn mở)\n    |\n    ▼\n[THANH THÔNG TIN NHANH]\n💰 Lệ phí | 🏆 Giải thưởng | 👥 VĐV (đã/tổng) | 🎱 Thể thức\n    |\n    ▼\n[TABS]\n├─ Điều lệ: Toàn văn quy định\n├─ Vận động viên: Danh sách đã đăng ký + tìm kiếm\n└─ Nhánh đấu & Lịch: Bracket + lịch trận (real-time khi đang diễn ra)\n    |\n    ▼\n[CƠ THỦ QUYẾT ĐỊNH]\n├─ Phù hợp → Nhấn [Đăng ký tham gia]\n└─ Chưa phù hợp → Thoát",
-
     "edgeCases": [
-      { "case": "Giải chưa có poster", "handle": "Hiển thị banner placeholder với màu chủ đạo Arena, không để trắng" },
-      { "case": "Giải chưa có điều lệ", "handle": "Tab Điều lệ hiển thị: 'BTC chưa cập nhật điều lệ. Vui lòng liên hệ CLB để biết thêm'" },
-      { "case": "Nhánh đấu chưa có (giải chưa bắt đầu)", "handle": "Tab Nhánh đấu hiển thị: 'Nhánh đấu sẽ được công bố khi giải bắt đầu'" },
-      { "case": "Giải đã đủ VĐV", "handle": "Nút Đăng ký đổi thành 'Đã đủ VĐV' và disabled. Hiển thị số trong danh sách chờ (nếu có)" },
-      { "case": "Cơ thủ đã đăng ký", "handle": "Nút đổi thành 'Đã đăng ký ✓', disabled. Không cho đăng ký 2 lần" }
+      {
+        "case": "Giải chưa có poster",
+        "handle": "Hiển thị banner placeholder với màu chủ đạo Arena, không để trắng"
+      },
+      {
+        "case": "Giải chưa có điều lệ",
+        "handle": "Tab Điều lệ hiển thị: 'BTC chưa cập nhật điều lệ. Vui lòng liên hệ CLB để biết thêm'"
+      },
+      {
+        "case": "Nhánh đấu chưa có (giải chưa bắt đầu)",
+        "handle": "Tab Nhánh đấu hiển thị: 'Nhánh đấu sẽ được công bố khi giải bắt đầu'"
+      },
+      {
+        "case": "Giải đã đủ VĐV",
+        "handle": "Nút Đăng ký đổi thành 'Đã đủ VĐV' và disabled. Hiển thị số trong danh sách chờ (nếu có)"
+      },
+      {
+        "case": "Cơ thủ đã đăng ký",
+        "handle": "Nút đổi thành 'Đã đăng ký ✓', disabled. Không cho đăng ký 2 lần"
+      }
     ],
-
     "notes": [
       "US lớn — nên tách thành 2-3 sprint: Sprint 1 (Tổng quan + Thông tin nhanh + Tab Điều lệ), Sprint 2 (Tab VĐV + Tab Nhánh đấu)",
       "Tab Nhánh đấu real-time cần WebSocket hoặc polling — đánh giá kỹ trước khi làm",
       "Lệ phí hiển thị nhưng quy trình thanh toán là US riêng biệt",
       "Thông tin BTC: dùng dữ liệu club hiện có trong hệ thống"
     ],
-
     "sprintPlan": {
       "startDate": "20/04/2026",
       "endDate": "25/04/2026",
@@ -2250,10 +3359,31 @@
           "color": "purple",
           "result": "Wireframe trang chi tiết được duyệt. Xác định API cần thêm/sửa.",
           "tasks": [
-            { "text": "Review US-AR-008 với team, tách sprint rõ ràng", "tags": ["Team"] },
-            { "text": "Designer tạo wireframe: layout tổng quan, thanh icons, 3 tabs", "tags": ["Team"] },
-            { "text": "Xác định API hiện có, API cần bổ sung cho từng section", "tags": ["Dev", "Claude"] },
-            { "text": "Thống nhất data model: giải đấu cần thêm field gì (poster, điều lệ, thể thức...)?", "tags": ["Team"] }
+            {
+              "text": "Review US-AR-008 với team, tách sprint rõ ràng",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Designer tạo wireframe: layout tổng quan, thanh icons, 3 tabs",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Xác định API hiện có, API cần bổ sung cho từng section",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thống nhất data model: giải đấu cần thêm field gì (poster, điều lệ, thể thức...)?",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -2263,10 +3393,33 @@
           "color": "teal",
           "result": "API trả về đầy đủ dữ liệu cho trang chi tiết.",
           "tasks": [
-            { "text": "git pull → tạo nhánh feature/tournament-detail", "tags": ["Git"] },
-            { "text": "API GET /tournaments/:id: trả về tổng quan, thông tin nhanh, BTC info", "tags": ["Dev", "Claude"] },
-            { "text": "API GET /tournaments/:id/athletes: danh sách VĐV đã đăng ký", "tags": ["Dev", "Claude"] },
-            { "text": "DB migration nếu cần thêm field: poster_url, regulations, format", "tags": ["Dev", "Claude"] }
+            {
+              "text": "git pull → tạo nhánh feature/tournament-detail",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "API GET /tournaments/:id: trả về tổng quan, thông tin nhanh, BTC info",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "API GET /tournaments/:id/athletes: danh sách VĐV đã đăng ký",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "DB migration nếu cần thêm field: poster_url, regulations, format",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -2276,9 +3429,27 @@
           "color": "blue",
           "result": "3 phần đầu của trang hiển thị đúng và đẹp.",
           "tasks": [
-            { "text": "Build khu vực Tổng quan: poster, tên giải, thời gian, địa điểm, nút Đăng ký", "tags": ["Dev", "Claude"] },
-            { "text": "Build thanh Thông tin Nhanh: 4 icons (lệ phí, giải thưởng, VĐV, thể thức)", "tags": ["Dev", "Claude"] },
-            { "text": "Build tab Điều lệ: render văn bản có cấu trúc", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Build khu vực Tổng quan: poster, tên giải, thời gian, địa điểm, nút Đăng ký",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Build thanh Thông tin Nhanh: 4 icons (lệ phí, giải thưởng, VĐV, thể thức)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Build tab Điều lệ: render văn bản có cấu trúc",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -2288,9 +3459,27 @@
           "color": "blue",
           "result": "Tab VĐV hoàn chỉnh. AC-01 đến AC-04 và AC-06 pass.",
           "tasks": [
-            { "text": "Build tab Vận động viên: danh sách + tìm kiếm theo tên", "tags": ["Dev", "Claude"] },
-            { "text": "Xử lý edge cases: chưa có poster, chưa có điều lệ, đã đủ VĐV", "tags": ["Dev", "Claude"] },
-            { "text": "Claude chạy test case TC_001 → TC_010", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Build tab Vận động viên: danh sách + tìm kiếm theo tên",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Xử lý edge cases: chưa có poster, chưa có điều lệ, đã đủ VĐV",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Claude chạy test case TC_001 → TC_010",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -2300,9 +3489,25 @@
           "color": "amber",
           "result": "Code review sạch. Tab Nhánh đấu static (chưa real-time).",
           "tasks": [
-            { "text": "Tech Lead review toàn bộ trang chi tiết", "tags": ["Team"] },
-            { "text": "Build tab Nhánh đấu: hiển thị bracket tĩnh, real-time để sprint sau", "tags": ["Dev", "Claude"] },
-            { "text": "Sửa theo góp ý", "tags": ["Dev"] }
+            {
+              "text": "Tech Lead review toàn bộ trang chi tiết",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Build tab Nhánh đấu: hiển thị bracket tĩnh, real-time để sprint sau",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Sửa theo góp ý",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -2312,14 +3517,28 @@
           "color": "green",
           "result": "Trang chi tiết giải đấu mới hoạt động trên beta.",
           "tasks": [
-            { "text": "Merge feature/tournament-detail vào develop, deploy beta", "tags": ["Git"] },
-            { "text": "Test smoke với giải đấu thật trên beta", "tags": ["Dev"] },
-            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+            {
+              "text": "Merge feature/tournament-detail vào develop, deploy beta",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Test smoke với giải đấu thật trên beta",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Deploy và thông báo team",
+              "tags": [
+                "Team"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
