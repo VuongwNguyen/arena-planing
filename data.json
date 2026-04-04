@@ -1734,5 +1734,692 @@
         "loai": "Happy Path"
       }
     ]
+  },
+  {
+    "id": "US-AR-006",
+    "project": "Arena Billiard",
+    "title": "Sửa Nội Dung Thông Báo Sau Khi Cơ Thủ Đã Đăng Ký Giải Đấu",
+    "module": "Thông báo & Giải đấu",
+    "author": "Product Team",
+    "date": "04/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Khi cơ thủ nhận thông báo giải đấu mới mở đăng ký, nội dung có link 'Đăng ký ngay'. Tuy nhiên sau khi cơ thủ đã đăng ký thành công, thông báo vẫn hiển thị 'Đăng ký ngay' — gây nhầm lẫn và thiếu chuyên nghiệp. Cần thay đổi CTA trong thông báo phù hợp với trạng thái đăng ký của từng cơ thủ.",
+
+    "userStory": {
+      "as": "Cơ thủ đã đăng ký tham gia giải đấu",
+      "iWant": "Thông báo hiển thị đúng trạng thái — 'Xem chi tiết' thay vì 'Đăng ký ngay' sau khi đã đăng ký",
+      "soThat": "Không bị nhầm lẫn, biết rõ mình đã đăng ký thành công"
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Thông báo chưa đăng ký — hiển thị 'Đăng ký ngay'",
+        "given": "Cơ thủ chưa đăng ký giải đấu được thông báo",
+        "when": "Nhận thông báo giải đấu mới mở đăng ký",
+        "then": "Nội dung thông báo có link/CTA 'Đăng ký ngay' — đúng như hiện tại"
+      },
+      {
+        "id": "AC-02",
+        "title": "Thông báo sau khi đã đăng ký — hiển thị 'Xem chi tiết'",
+        "given": "Cơ thủ đã đăng ký thành công giải đấu",
+        "when": "Mở lại thông báo cũ hoặc nhận thông báo mới liên quan giải đó",
+        "then": "CTA thay thành 'Xem chi tiết' (hoặc không hiển thị CTA đăng ký). Không còn chữ 'Đăng ký ngay'"
+      },
+      {
+        "id": "AC-03",
+        "title": "Click CTA dẫn đến đúng trang",
+        "given": "Cơ thủ click vào link trong thông báo",
+        "when": "Chưa đăng ký → click 'Đăng ký ngay' / Đã đăng ký → click 'Xem chi tiết'",
+        "then": "Chưa đăng ký: mở trang đăng ký giải đấu. Đã đăng ký: mở trang chi tiết giải đấu"
+      }
+    ],
+
+    "flow": "[HỆ THỐNG] Gửi thông báo giải đấu mới\n    |\n    ▼\nKiểm tra trạng thái đăng ký của cơ thủ nhận thông báo\n    |\n    ├─ Chưa đăng ký ────────────────────────────┐\n    │                                             ▼\n    │                           Thông báo với CTA: 'Đăng ký ngay'\n    │\n    └─ Đã đăng ký ──────────────────────────────┐\n                                                  ▼\n                          Thông báo với CTA: 'Xem chi tiết'",
+
+    "edgeCases": [
+      { "case": "Cơ thủ đăng ký sau khi đã nhận thông báo (thông báo cũ)", "handle": "Thông báo cũ không cần cập nhật real-time — chấp nhận hiển thị 'Đăng ký ngay' trên thông báo cũ, chỉ fix thông báo mới gửi sau thời điểm đăng ký" },
+      { "case": "Cơ thủ bị huỷ đăng ký (admin loại hoặc tự rút)", "handle": "Thông báo tiếp theo liên quan giải đó quay về CTA 'Đăng ký ngay'" },
+      { "case": "Giải đấu đã đóng đăng ký", "handle": "Không hiển thị CTA đăng ký bất kể trạng thái. Hiển thị 'Xem chi tiết' hoặc ẩn CTA" }
+    ],
+
+    "notes": [
+      "Đây là bug fix nhỏ — chỉ cần kiểm tra trạng thái đăng ký khi sinh nội dung thông báo",
+      "Push notification đã gửi không thể cập nhật — chỉ fix cho thông báo in-app và thông báo mới",
+      "Cần xác định: kiểm tra trạng thái tại thời điểm gửi hay tại thời điểm mở thông báo?"
+    ],
+
+    "sprintPlan": {
+      "startDate": "13/04/2026",
+      "endDate": "18/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "13/04/2026",
+          "theme": "Chuẩn bị",
+          "color": "purple",
+          "result": "Xác định điểm sinh nội dung thông báo trong code. Thống nhất logic kiểm tra trạng thái.",
+          "tasks": [
+            { "text": "Tìm trong codebase nơi tạo nội dung thông báo giải đấu", "tags": ["Dev"] },
+            { "text": "Thống nhất: kiểm tra trạng thái lúc gửi hay lúc render thông báo?", "tags": ["Team"] }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "14/04/2026",
+          "theme": "Fix bug",
+          "color": "teal",
+          "result": "Logic kiểm tra trạng thái đăng ký hoạt động đúng.",
+          "tasks": [
+            { "text": "git pull → tạo nhánh fix/notification-cta", "tags": ["Git"] },
+            { "text": "Sửa logic sinh CTA thông báo dựa trên trạng thái đăng ký của cơ thủ", "tags": ["Dev", "Claude"] },
+            { "text": "Unit test: cơ thủ đã đăng ký → CTA = 'Xem chi tiết'", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "15/04/2026",
+          "theme": "QA & Merge",
+          "color": "blue",
+          "result": "Bug fix pass toàn bộ test case. Merge vào develop.",
+          "tasks": [
+            { "text": "Chạy toàn bộ test case TC_001 → TC_006", "tags": ["Dev", "Claude"] },
+            { "text": "Merge fix/notification-cta vào develop, deploy beta", "tags": ["Git"] }
+          ]
+        }
+      ]
+    },
+
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Cơ thủ chưa đăng ký — thông báo hiển thị 'Đăng ký ngay'",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có giải đấu mới mở đăng ký\n- Cơ thủ chưa đăng ký giải này",
+        "buoc_thuc_hien": "1. Nhận thông báo giải đấu mới\n2. Mở thông báo\n3. Quan sát CTA",
+        "ket_qua_mong_doi": "- Thông báo có link/nút 'Đăng ký ngay'\n- Click dẫn đến trang đăng ký giải đấu",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Cơ thủ đã đăng ký — thông báo hiển thị 'Xem chi tiết'",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Cơ thủ đã đăng ký thành công giải đấu X",
+        "buoc_thuc_hien": "1. Nhận thông báo mới liên quan giải X\n2. Mở thông báo\n3. Quan sát CTA",
+        "ket_qua_mong_doi": "- Không còn chữ 'Đăng ký ngay'\n- Hiển thị 'Xem chi tiết'\n- Click dẫn đến trang chi tiết giải đấu",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Giải đấu đóng đăng ký — không hiển thị CTA đăng ký",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải đấu đã đóng đăng ký\n- Cơ thủ chưa đăng ký",
+        "buoc_thuc_hien": "1. Mở thông báo giải đã đóng\n2. Quan sát CTA",
+        "ket_qua_mong_doi": "- Không hiển thị 'Đăng ký ngay'\n- Hiển thị 'Xem chi tiết' hoặc không có CTA",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Thông báo cũ (gửi trước khi đăng ký) — chấp nhận vẫn hiện 'Đăng ký ngay'",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Cơ thủ nhận thông báo lúc chưa đăng ký, sau đó mới đăng ký",
+        "buoc_thuc_hien": "1. Mở lại thông báo cũ (trước lúc đăng ký)\n2. Quan sát CTA",
+        "ket_qua_mong_doi": "- Chấp nhận còn hiện 'Đăng ký ngay' (không cần update thông báo cũ)\n- Không crash hay lỗi khi click",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Backend không trả về trạng thái đăng ký — fallback an toàn",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- API kiểm tra trạng thái đăng ký trả về lỗi",
+        "buoc_thuc_hien": "1. Mock API lỗi khi kiểm tra trạng thái\n2. Gửi thông báo\n3. Quan sát CTA",
+        "ket_qua_mong_doi": "- Fallback về CTA mặc định 'Xem chi tiết' (an toàn hơn là 'Đăng ký ngay')\n- Không crash",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "End-to-end: Đăng ký giải → nhận thông báo tiếp theo → CTA đúng",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Môi trường beta\n- Giải đấu đang mở đăng ký",
+        "buoc_thuc_hien": "1. Cơ thủ đăng ký giải đấu thành công\n2. Hệ thống gửi thông báo xác nhận\n3. Mở thông báo\n4. Quan sát CTA",
+        "ket_qua_mong_doi": "- Thông báo xác nhận hiển thị 'Xem chi tiết'\n- Không còn 'Đăng ký ngay'\n- Click dẫn đúng trang chi tiết",
+        "loai": "Happy Path"
+      }
+    ]
+  },
+  {
+    "id": "US-AR-007",
+    "project": "Arena Billiard",
+    "title": "Tìm Kiếm Club Theo Tên / Địa Chỉ / Số Điện Thoại",
+    "module": "Tìm kiếm & Khám phá",
+    "author": "Product Team",
+    "date": "04/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Hiện tại tính năng 'Tìm club' trên Arena App chỉ hỗ trợ tìm theo tỉnh thành — người dùng phải bấm vào tỉnh rồi lọc trong danh sách dài. Khi nhớ 'manh mối' tên club (VD: 'Nex') nhưng không nhớ tên đầy đủ, không có cách nào tìm nhanh. Cần thêm thanh tìm kiếm full-text hỗ trợ autocomplete theo tên, địa chỉ hoặc số điện thoại.",
+
+    "userStory": {
+      "as": "Người dùng Arena App muốn tìm một club cụ thể",
+      "iWant": "Gõ một phần tên, địa chỉ hoặc số điện thoại và nhận gợi ý club phù hợp ngay lập tức",
+      "soThat": "Tìm được club cần tìm nhanh chóng mà không cần biết tỉnh thành hay tên đầy đủ"
+    },
+
+    "example": {
+      "description": "Gõ 'Nex' → gợi ý: Next Billiards, NextGenerations, Nexus Arena",
+      "discount": 0,
+      "total": 0,
+      "items": [
+        { "code": "CL001", "name": "Next Billiards", "qty": 1, "price": 0 },
+        { "code": "CL002", "name": "NextGenerations Billiards", "qty": 1, "price": 0 },
+        { "code": "CL003", "name": "Nexus Arena", "qty": 1, "price": 0 }
+      ]
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Tìm kiếm theo tên club (partial match)",
+        "given": "Người dùng ở màn hình Tìm club",
+        "when": "Gõ ít nhất 2 ký tự vào thanh tìm kiếm",
+        "then": "Danh sách gợi ý hiển thị các club có tên chứa chuỗi tìm kiếm. Không phân biệt hoa thường. Không yêu cầu gõ từ đầu (VD: 'Nex' ra 'Next Billiards')"
+      },
+      {
+        "id": "AC-02",
+        "title": "Tìm kiếm theo địa chỉ",
+        "given": "Người dùng gõ địa chỉ (tên đường, quận, phường)",
+        "when": "Nhập từ khoá địa chỉ",
+        "then": "Trả về club có địa chỉ chứa từ khoá tìm kiếm"
+      },
+      {
+        "id": "AC-03",
+        "title": "Tìm kiếm theo số điện thoại",
+        "given": "Người dùng nhớ một phần số điện thoại club",
+        "when": "Nhập chuỗi số",
+        "then": "Trả về club có số điện thoại chứa chuỗi số đó"
+      },
+      {
+        "id": "AC-04",
+        "title": "Kết quả hiển thị tức thì (debounce)",
+        "given": "Người dùng đang gõ",
+        "when": "Sau mỗi ký tự (có debounce 300ms)",
+        "then": "Danh sách gợi ý cập nhật tức thì, không cần nhấn Enter"
+      },
+      {
+        "id": "AC-05",
+        "title": "Không có kết quả — hiển thị trạng thái rỗng",
+        "given": "Từ khoá không khớp club nào",
+        "when": "Sau khi tìm kiếm",
+        "then": "Hiển thị: 'Không tìm thấy club phù hợp'. Gợi ý thử từ khoá khác hoặc tìm theo tỉnh thành"
+      },
+      {
+        "id": "AC-06",
+        "title": "Click vào kết quả — mở trang club",
+        "given": "Danh sách gợi ý đang hiển thị",
+        "when": "Người dùng click vào 1 club",
+        "then": "Mở trang chi tiết club đó"
+      }
+    ],
+
+    "flow": "[NGƯỜI DÙNG]\n    |\n    ▼\nMở màn hình Tìm club\n    |\n    ▼\nGõ từ khoá vào thanh tìm kiếm (≥ 2 ký tự)\n    |\n    ▼\n[300ms debounce] → Gọi API search clubs\n    |\n    ├─ Có kết quả ──────────────────────────────┐\n    │                                             ▼\n    │                           Hiển thị danh sách gợi ý\n    │                           (tên, địa chỉ, quận/tỉnh)\n    │                                             |\n    │                                        Click vào club\n    │                                             |\n    │                                             ▼\n    │                                    Mở trang chi tiết club\n    │\n    └─ Không có kết quả ─────────────────────────┐\n                                                   ▼\n                           'Không tìm thấy club phù hợp'\n                           Gợi ý tìm theo tỉnh thành",
+
+    "dbChanges": "-- Thêm full-text search index nếu dùng SQL\nCREATE INDEX IF NOT EXISTS idx_clubs_search\n  ON clubs USING gin(to_tsvector('simple', name || ' ' || COALESCE(address, '') || ' ' || COALESCE(phone, '')));\n\n-- Hoặc nếu dùng MongoDB: tạo text index\n-- db.clubs.createIndex({ name: 'text', address: 'text', phone: 'text' })\n\n-- API: GET /clubs/search?q=:keyword&limit=10",
+
+    "edgeCases": [
+      { "case": "Từ khoá có dấu tiếng Việt (VD: 'Bảng')", "handle": "Tìm kiếm không phân biệt dấu: 'Bang' hoặc 'Bảng' đều ra cùng kết quả. Cần normalize unicode khi index và query" },
+      { "case": "Từ khoá < 2 ký tự", "handle": "Không gọi API, không hiển thị gợi ý. Placeholder: 'Nhập ít nhất 2 ký tự'" },
+      { "case": "Người dùng gõ rất nhanh (spam request)", "handle": "Debounce 300ms — chỉ gọi API sau khi ngừng gõ 300ms" },
+      { "case": "Mạng chậm, API trả về sau khi người dùng đã gõ thêm", "handle": "Cancel request cũ khi có request mới (AbortController). Chỉ hiển thị kết quả của request mới nhất" }
+    ],
+
+    "notes": [
+      "API endpoint mới: GET /clubs/search?q=keyword&limit=10",
+      "Không phân biệt hoa thường, không phân biệt dấu tiếng Việt",
+      "Debounce 300ms ở client để tránh gọi API quá nhiều",
+      "Giữ nguyên tính năng tìm theo tỉnh thành hiện tại — tìm kiếm text là tính năng bổ sung"
+    ],
+
+    "sprintPlan": {
+      "startDate": "13/04/2026",
+      "endDate": "18/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "13/04/2026",
+          "theme": "Chuẩn bị & Thống nhất",
+          "color": "purple",
+          "result": "Thống nhất search scope, index strategy, API spec.",
+          "tasks": [
+            { "text": "Review US-AR-007 với team, xác nhận search theo tên + địa chỉ + sđt", "tags": ["Team"] },
+            { "text": "Kiểm tra DB hiện tại: clubs table có đủ field name, address, phone?", "tags": ["Dev"] },
+            { "text": "Thiết kế API: GET /clubs/search?q=&limit=10", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "14/04/2026",
+          "theme": "Backend — Search API",
+          "color": "teal",
+          "result": "API search clubs hoạt động, hỗ trợ partial match + không dấu.",
+          "tasks": [
+            { "text": "git pull → tạo nhánh feature/club-search", "tags": ["Git"] },
+            { "text": "Tạo text index trên DB (PostgreSQL GIN hoặc MongoDB text index)", "tags": ["Dev", "Claude"] },
+            { "text": "Implement GET /clubs/search: partial match, case-insensitive, normalize dấu", "tags": ["Dev", "Claude"] },
+            { "text": "Unit test: 'Nex' → Next Billiards, NextGenerations, Nexus Arena", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "15/04/2026",
+          "theme": "Frontend — Thanh tìm kiếm",
+          "color": "blue",
+          "result": "UI search bar hoạt động với debounce, hiển thị gợi ý tức thì.",
+          "tasks": [
+            { "text": "Thêm thanh tìm kiếm vào màn hình Tìm club", "tags": ["Dev", "Claude"] },
+            { "text": "Implement debounce 300ms + AbortController cancel request cũ", "tags": ["Dev", "Claude"] },
+            { "text": "UI danh sách gợi ý: tên, địa chỉ, quận/tỉnh", "tags": ["Dev", "Claude"] },
+            { "text": "Empty state: 'Không tìm thấy club phù hợp'", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "16/04/2026",
+          "theme": "QA toàn bộ AC",
+          "color": "blue",
+          "result": "Toàn bộ AC-01 đến AC-06 pass. Search dấu/không dấu hoạt động đúng.",
+          "tasks": [
+            { "text": "Claude chạy toàn bộ test case, xuất báo cáo", "tags": ["Dev", "Claude"] },
+            { "text": "Test: gõ có dấu/không dấu cùng ra kết quả", "tags": ["Dev"] },
+            { "text": "Test performance: 1000 clubs, search < 200ms", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "17/04/2026",
+          "theme": "Code review",
+          "color": "amber",
+          "result": "Code review sạch. Tìm theo tỉnh thành cũ không bị ảnh hưởng.",
+          "tasks": [
+            { "text": "Tech Lead review: index strategy, API design, debounce implementation", "tags": ["Team"] },
+            { "text": "Regression test: tìm theo tỉnh thành vẫn hoạt động bình thường", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "18/04/2026",
+          "theme": "Merge & Release Beta",
+          "color": "green",
+          "result": "Search club theo tên/địa chỉ/sđt hoạt động trên beta.",
+          "tasks": [
+            { "text": "Merge feature/club-search vào develop, deploy beta", "tags": ["Git"] },
+            { "text": "Test smoke: gõ 'Hoàng Sao' → ra đúng club", "tags": ["Dev"] }
+          ]
+        }
+      ]
+    },
+
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Tìm theo tên — partial match 'Nex'",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- DB có club: Next Billiards, NextGenerations, Nexus Arena",
+        "buoc_thuc_hien": "1. Mở màn hình Tìm club\n2. Gõ 'Nex' vào thanh tìm kiếm\n3. Quan sát gợi ý",
+        "ket_qua_mong_doi": "- Hiển thị: Next Billiards, NextGenerations, Nexus Arena\n- Không cần gõ tên đầy đủ",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Tìm theo địa chỉ",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có club địa chỉ: '123 Nguyễn Trãi, Q5'",
+        "buoc_thuc_hien": "1. Gõ 'Nguyễn Trãi'\n2. Quan sát kết quả",
+        "ket_qua_mong_doi": "- Club ở Nguyễn Trãi xuất hiện trong gợi ý",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Tìm theo số điện thoại",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Club có sđt: 0901234567",
+        "buoc_thuc_hien": "1. Gõ '090123'\n2. Quan sát kết quả",
+        "ket_qua_mong_doi": "- Club có sđt chứa '090123' xuất hiện trong gợi ý",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Gõ có dấu và không dấu — cùng kết quả",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Club tên: 'Hoàng Sao Billiards'",
+        "buoc_thuc_hien": "1. Gõ 'Hoang Sao'\n2. Gõ 'Hoàng Sao'\n3. So sánh kết quả",
+        "ket_qua_mong_doi": "- Cả 2 cách gõ đều ra 'Hoàng Sao Billiards'",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Không có kết quả — hiển thị empty state",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Không có club nào tên 'xyzabc'",
+        "buoc_thuc_hien": "1. Gõ 'xyzabc'",
+        "ket_qua_mong_doi": "- Hiển thị: 'Không tìm thấy club phù hợp'\n- Gợi ý tìm theo tỉnh thành",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "Gõ < 2 ký tự — không gọi API",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang ở màn hình tìm club",
+        "buoc_thuc_hien": "1. Gõ 1 ký tự 'N'",
+        "ket_qua_mong_doi": "- Không hiển thị gợi ý\n- Không gọi API\n- Placeholder: 'Nhập ít nhất 2 ký tự'",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_007",
+        "ten_testcase": "Gõ nhanh liên tục — chỉ gọi API sau 300ms ngừng gõ",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang ở thanh tìm kiếm",
+        "buoc_thuc_hien": "1. Gõ 'Next Billiards' liên tục nhanh\n2. Quan sát số lần gọi API (DevTools Network)",
+        "ket_qua_mong_doi": "- Chỉ 1 request API được gửi (sau khi ngừng gõ 300ms)\n- Không spam nhiều request",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_008",
+        "ten_testcase": "Tìm kiếm cũ bị hủy khi gõ thêm",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Mạng chậm, API mất > 1 giây",
+        "buoc_thuc_hien": "1. Gõ 'Ne' → API đang chờ\n2. Gõ thêm 'xt' ngay lập tức\n3. Quan sát kết quả hiển thị",
+        "ket_qua_mong_doi": "- Kết quả của 'Next' hiển thị (không phải 'Ne')\n- Request cũ bị cancel, không hiển thị kết quả stale",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_009",
+        "ten_testcase": "API search lỗi — hiển thị thông báo lỗi",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- API GET /clubs/search trả về 500",
+        "buoc_thuc_hien": "1. Mock API lỗi\n2. Gõ từ khoá tìm kiếm",
+        "ket_qua_mong_doi": "- Hiển thị thông báo lỗi thân thiện\n- Không crash app\n- Có thể thử lại",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_010",
+        "ten_testcase": "Regression: Tìm theo tỉnh thành vẫn hoạt động",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã thêm tính năng tìm kiếm text",
+        "buoc_thuc_hien": "1. Không dùng thanh tìm kiếm\n2. Chọn tỉnh thành như cũ\n3. Quan sát kết quả",
+        "ket_qua_mong_doi": "- Tìm theo tỉnh thành vẫn hoạt động bình thường\n- Không bị ảnh hưởng bởi tính năng mới",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_011",
+        "ten_testcase": "End-to-end: Tìm club bằng 'manh mối' tên → vào trang club",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Môi trường beta\n- DB có 50+ clubs với tên, địa chỉ, sđt đầy đủ",
+        "buoc_thuc_hien": "1. Mở màn hình Tìm club\n2. Gõ 'Hoang Sao' (không dấu)\n3. Chọn 'Hoàng Sao Special Billiards' từ gợi ý\n4. Kiểm tra trang chi tiết club",
+        "ket_qua_mong_doi": "- Gợi ý xuất hiện trong < 500ms\n- Tên không dấu vẫn ra đúng club\n- Click vào club mở đúng trang chi tiết",
+        "loai": "Happy Path"
+      }
+    ]
+  },
+  {
+    "id": "US-AR-008",
+    "project": "Arena Billiard",
+    "title": "Trang Chi Tiết Giải Đấu Cấu Trúc Chuyên Nghiệp",
+    "module": "Giải đấu & Khám phá",
+    "author": "Product Team",
+    "date": "04/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Hiện tại thông tin giải đấu được trình bày lộn xộn trong một đoạn văn dài — cơ thủ phải đọc kỹ mới hiểu lệ phí, thể thức, giải thưởng. Họ cũng không biết ai đã đăng ký để đánh giá mức độ cạnh tranh, và phải chuyển khoản lệ phí cho tài khoản cá nhân lạ gây mất tin tưởng. Cần cấu trúc lại trang chi tiết giải đấu thành dạng chuyên nghiệp, rõ ràng và tương tác được.",
+
+    "userStory": {
+      "as": "Cơ thủ muốn tìm hiểu và quyết định đăng ký giải đấu",
+      "iWant": "Xem trang chi tiết giải đấu được cấu trúc rõ ràng với thông tin tổng quan, thông tin nhanh, danh sách VĐV và lịch thi đấu",
+      "soThat": "Ra quyết định đăng ký nhanh và tự tin mà không cần hỏi BTC"
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Khu vực Tổng quan — thông tin cốt lõi nổi bật",
+        "given": "Cơ thủ mở trang chi tiết giải đấu",
+        "when": "Trang tải xong",
+        "then": "Hiển thị ngay: Tên giải, Poster, Thời gian, Địa điểm (CLB), Trạng thái (Mở đăng ký / Đã đóng / Đang diễn ra). Nút 'Đăng ký tham gia' nổi bật nếu còn đăng ký"
+      },
+      {
+        "id": "AC-02",
+        "title": "Thanh Thông tin Nhanh — icons tóm tắt",
+        "given": "Bên dưới khu vực tổng quan",
+        "when": "Hiển thị trang",
+        "then": "Dãy icons tóm tắt: Lệ phí, Cơ cấu giải thưởng, Giới hạn VĐV (đã đăng ký / tổng), Thể thức thi đấu. Mỗi icon có label và giá trị ngắn gọn"
+      },
+      {
+        "id": "AC-03",
+        "title": "Tab Điều lệ — toàn văn quy định",
+        "given": "Người dùng chọn tab Điều lệ",
+        "when": "Nội dung hiển thị",
+        "then": "Toàn bộ nội dung điều lệ, nội quy giải đấu hiển thị dạng văn bản có cấu trúc (có thể cuộn)"
+      },
+      {
+        "id": "AC-04",
+        "title": "Tab Vận động viên — danh sách cơ thủ đã đăng ký",
+        "given": "Người dùng chọn tab Vận động viên",
+        "when": "Danh sách tải xong",
+        "then": "Danh sách cơ thủ đã đăng ký: STT, avatar, tên, hạng. Có thể tìm kiếm theo tên. Số lượng đã đăng ký / giới hạn hiển thị rõ"
+      },
+      {
+        "id": "AC-05",
+        "title": "Tab Nhánh đấu & Lịch thi đấu — cập nhật real-time",
+        "given": "Giải đấu đã bắt đầu",
+        "when": "Người dùng chọn tab này",
+        "then": "Hiển thị sơ đồ nhánh đấu và lịch trận. Kết quả cập nhật theo thời gian thực khi giải đang diễn ra"
+      },
+      {
+        "id": "AC-06",
+        "title": "Hiển thị thông tin BTC minh bạch",
+        "given": "Trên trang chi tiết",
+        "when": "Người dùng xem phần tổ chức",
+        "then": "Tên CLB/BTC, logo, lịch sử giải đã tổ chức thành công. Tăng độ tin tưởng trước khi đăng ký"
+      }
+    ],
+
+    "flow": "[CƠ THỦ]\n    |\n    ▼\nMở trang chi tiết giải đấu\n    |\n    ▼\n[KHU VỰC TỔNG QUAN]\nTên giải | Poster | Thời gian | Địa điểm | Trạng thái\n[Đăng ký tham gia] (nếu còn mở)\n    |\n    ▼\n[THANH THÔNG TIN NHANH]\n💰 Lệ phí | 🏆 Giải thưởng | 👥 VĐV (đã/tổng) | 🎱 Thể thức\n    |\n    ▼\n[TABS]\n├─ Điều lệ: Toàn văn quy định\n├─ Vận động viên: Danh sách đã đăng ký + tìm kiếm\n└─ Nhánh đấu & Lịch: Bracket + lịch trận (real-time khi đang diễn ra)\n    |\n    ▼\n[CƠ THỦ QUYẾT ĐỊNH]\n├─ Phù hợp → Nhấn [Đăng ký tham gia]\n└─ Chưa phù hợp → Thoát",
+
+    "edgeCases": [
+      { "case": "Giải chưa có poster", "handle": "Hiển thị banner placeholder với màu chủ đạo Arena, không để trắng" },
+      { "case": "Giải chưa có điều lệ", "handle": "Tab Điều lệ hiển thị: 'BTC chưa cập nhật điều lệ. Vui lòng liên hệ CLB để biết thêm'" },
+      { "case": "Nhánh đấu chưa có (giải chưa bắt đầu)", "handle": "Tab Nhánh đấu hiển thị: 'Nhánh đấu sẽ được công bố khi giải bắt đầu'" },
+      { "case": "Giải đã đủ VĐV", "handle": "Nút Đăng ký đổi thành 'Đã đủ VĐV' và disabled. Hiển thị số trong danh sách chờ (nếu có)" },
+      { "case": "Cơ thủ đã đăng ký", "handle": "Nút đổi thành 'Đã đăng ký ✓', disabled. Không cho đăng ký 2 lần" }
+    ],
+
+    "notes": [
+      "US lớn — nên tách thành 2-3 sprint: Sprint 1 (Tổng quan + Thông tin nhanh + Tab Điều lệ), Sprint 2 (Tab VĐV + Tab Nhánh đấu)",
+      "Tab Nhánh đấu real-time cần WebSocket hoặc polling — đánh giá kỹ trước khi làm",
+      "Lệ phí hiển thị nhưng quy trình thanh toán là US riêng biệt",
+      "Thông tin BTC: dùng dữ liệu club hiện có trong hệ thống"
+    ],
+
+    "sprintPlan": {
+      "startDate": "20/04/2026",
+      "endDate": "25/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "20/04/2026",
+          "theme": "Chuẩn bị & Thiết kế",
+          "color": "purple",
+          "result": "Wireframe trang chi tiết được duyệt. Xác định API cần thêm/sửa.",
+          "tasks": [
+            { "text": "Review US-AR-008 với team, tách sprint rõ ràng", "tags": ["Team"] },
+            { "text": "Designer tạo wireframe: layout tổng quan, thanh icons, 3 tabs", "tags": ["Team"] },
+            { "text": "Xác định API hiện có, API cần bổ sung cho từng section", "tags": ["Dev", "Claude"] },
+            { "text": "Thống nhất data model: giải đấu cần thêm field gì (poster, điều lệ, thể thức...)?", "tags": ["Team"] }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "21/04/2026",
+          "theme": "Backend — API chi tiết giải đấu",
+          "color": "teal",
+          "result": "API trả về đầy đủ dữ liệu cho trang chi tiết.",
+          "tasks": [
+            { "text": "git pull → tạo nhánh feature/tournament-detail", "tags": ["Git"] },
+            { "text": "API GET /tournaments/:id: trả về tổng quan, thông tin nhanh, BTC info", "tags": ["Dev", "Claude"] },
+            { "text": "API GET /tournaments/:id/athletes: danh sách VĐV đã đăng ký", "tags": ["Dev", "Claude"] },
+            { "text": "DB migration nếu cần thêm field: poster_url, regulations, format", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "22/04/2026",
+          "theme": "Frontend — Tổng quan + Thông tin nhanh + Tab Điều lệ",
+          "color": "blue",
+          "result": "3 phần đầu của trang hiển thị đúng và đẹp.",
+          "tasks": [
+            { "text": "Build khu vực Tổng quan: poster, tên giải, thời gian, địa điểm, nút Đăng ký", "tags": ["Dev", "Claude"] },
+            { "text": "Build thanh Thông tin Nhanh: 4 icons (lệ phí, giải thưởng, VĐV, thể thức)", "tags": ["Dev", "Claude"] },
+            { "text": "Build tab Điều lệ: render văn bản có cấu trúc", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "23/04/2026",
+          "theme": "Frontend — Tab VĐV + QA",
+          "color": "blue",
+          "result": "Tab VĐV hoàn chỉnh. AC-01 đến AC-04 và AC-06 pass.",
+          "tasks": [
+            { "text": "Build tab Vận động viên: danh sách + tìm kiếm theo tên", "tags": ["Dev", "Claude"] },
+            { "text": "Xử lý edge cases: chưa có poster, chưa có điều lệ, đã đủ VĐV", "tags": ["Dev", "Claude"] },
+            { "text": "Claude chạy test case TC_001 → TC_010", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "24/04/2026",
+          "theme": "Code review + Tab Nhánh đấu (scope nhỏ)",
+          "color": "amber",
+          "result": "Code review sạch. Tab Nhánh đấu static (chưa real-time).",
+          "tasks": [
+            { "text": "Tech Lead review toàn bộ trang chi tiết", "tags": ["Team"] },
+            { "text": "Build tab Nhánh đấu: hiển thị bracket tĩnh, real-time để sprint sau", "tags": ["Dev", "Claude"] },
+            { "text": "Sửa theo góp ý", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "25/04/2026",
+          "theme": "Merge & Release Beta",
+          "color": "green",
+          "result": "Trang chi tiết giải đấu mới hoạt động trên beta.",
+          "tasks": [
+            { "text": "Merge feature/tournament-detail vào develop, deploy beta", "tags": ["Git"] },
+            { "text": "Test smoke với giải đấu thật trên beta", "tags": ["Dev"] },
+            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+          ]
+        }
+      ]
+    },
+
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Trang chi tiết tải đầy đủ 3 vùng chính",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải đấu có đầy đủ thông tin: poster, thời gian, địa điểm, lệ phí, giải thưởng",
+        "buoc_thuc_hien": "1. Mở trang chi tiết giải đấu\n2. Quan sát layout",
+        "ket_qua_mong_doi": "- Hiển thị: Tổng quan (poster, tên, thời gian, địa điểm, nút Đăng ký)\n- Thanh icons: lệ phí, giải thưởng, VĐV, thể thức\n- 3 tab: Điều lệ, Vận động viên, Nhánh đấu",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Nút Đăng ký hiển thị khi giải còn mở",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải đấu đang mở đăng ký\n- Cơ thủ chưa đăng ký",
+        "buoc_thuc_hien": "1. Mở trang chi tiết giải đấu đang mở\n2. Quan sát nút CTA",
+        "ket_qua_mong_doi": "- Nút 'Đăng ký tham gia' hiển thị nổi bật\n- Có thể nhấn được",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Tab Điều lệ hiển thị toàn văn quy định",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải có nội dung điều lệ",
+        "buoc_thuc_hien": "1. Mở tab Điều lệ\n2. Đọc nội dung",
+        "ket_qua_mong_doi": "- Nội dung điều lệ hiển thị đầy đủ, có thể cuộn\n- Định dạng dễ đọc, có cấu trúc",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Tab Vận động viên hiển thị danh sách đăng ký",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải có 20 cơ thủ đã đăng ký",
+        "buoc_thuc_hien": "1. Mở tab Vận động viên\n2. Quan sát danh sách",
+        "ket_qua_mong_doi": "- Danh sách 20 cơ thủ: STT, avatar, tên, hạng\n- Hiển thị: 20/50 VĐV đã đăng ký",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Tìm kiếm trong tab VĐV",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Tab VĐV đang hiển thị danh sách",
+        "buoc_thuc_hien": "1. Gõ tên cơ thủ vào ô tìm kiếm\n2. Quan sát kết quả",
+        "ket_qua_mong_doi": "- Lọc đúng cơ thủ theo tên\n- Layout danh sách không bị lệch khi lọc",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "Cơ thủ đã đăng ký — nút đổi thành 'Đã đăng ký'",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Cơ thủ đã đăng ký giải này",
+        "buoc_thuc_hien": "1. Mở trang chi tiết giải đó",
+        "ket_qua_mong_doi": "- Nút hiển thị 'Đã đăng ký ✓'\n- Nút disabled, không thể nhấn để đăng ký lại",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_007",
+        "ten_testcase": "Giải đã đủ VĐV — nút disabled 'Đã đủ VĐV'",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải đã đủ số lượng VĐV tối đa",
+        "buoc_thuc_hien": "1. Mở trang chi tiết giải đã đủ VĐV",
+        "ket_qua_mong_doi": "- Nút 'Đã đủ VĐV' disabled\n- Không thể đăng ký thêm",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_008",
+        "ten_testcase": "Giải chưa có poster — hiển thị placeholder",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải chưa upload poster",
+        "buoc_thuc_hien": "1. Mở trang chi tiết giải không có poster",
+        "ket_qua_mong_doi": "- Hiển thị banner placeholder với màu Arena\n- Không để trắng hay lỗi ảnh",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_009",
+        "ten_testcase": "Giải chưa có điều lệ — tab Điều lệ thông báo rõ",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải chưa cập nhật điều lệ",
+        "buoc_thuc_hien": "1. Mở tab Điều lệ",
+        "ket_qua_mong_doi": "- Hiển thị: 'BTC chưa cập nhật điều lệ. Vui lòng liên hệ CLB để biết thêm'\n- Không để trống hoàn toàn",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_010",
+        "ten_testcase": "API giải đấu lỗi — hiển thị thông báo lỗi",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- API GET /tournaments/:id trả về 500",
+        "buoc_thuc_hien": "1. Mock API lỗi\n2. Mở trang chi tiết giải đấu",
+        "ket_qua_mong_doi": "- Hiển thị thông báo lỗi thân thiện\n- Nút thử lại\n- Không crash",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_011",
+        "ten_testcase": "End-to-end: Xem chi tiết giải → đọc điều lệ → xem VĐV → đăng ký",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Môi trường beta\n- Giải đấu có đầy đủ thông tin: poster, điều lệ, 10 VĐV đã đăng ký\n- Cơ thủ test chưa đăng ký giải này",
+        "buoc_thuc_hien": "1. Mở trang chi tiết giải đấu\n2. Đọc thông tin tổng quan và thanh icons\n3. Mở tab Điều lệ, đọc nội dung\n4. Mở tab Vận động viên, xem danh sách\n5. Nhấn [Đăng ký tham gia]\n6. Hoàn tất đăng ký\n7. Quay lại trang chi tiết, quan sát nút",
+        "ket_qua_mong_doi": "- Toàn bộ thông tin hiển thị đúng và đầy đủ\n- Tab chuyển đổi mượt mà\n- Đăng ký thành công\n- Nút đổi thành 'Đã đăng ký ✓'\n- VĐV count tăng lên 11",
+        "loai": "Happy Path"
+      }
+    ]
   }
 ]
