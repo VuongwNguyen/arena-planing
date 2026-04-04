@@ -1575,7 +1575,7 @@
     ],
     "sprintPlan": {
       "startDate": "13/04/2026",
-      "endDate": "18/04/2026",
+      "endDate": "19/04/2026",
       "days": [
         {
           "day": "Thứ 2",
@@ -2008,12 +2008,12 @@
       "Nên làm sau US-AR-003 vì logic tương tự, chỉ khác domain và icon"
     ],
     "sprintPlan": {
-      "startDate": "13/04/2026",
-      "endDate": "18/04/2026",
+      "startDate": "20/04/2026",
+      "endDate": "26/04/2026",
       "days": [
         {
           "day": "Thứ 2",
-          "date": "13/04/2026",
+          "date": "20/04/2026",
           "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
           "result": "US-AR-004 duyệt xong. Thống nhất UX khi hiển thị 2 nút cùng lúc.",
@@ -2040,7 +2040,7 @@
         },
         {
           "day": "Thứ 3",
-          "date": "14/04/2026",
+          "date": "21/04/2026",
           "theme": "Phân rã task & Tạo nhánh",
           "color": "teal",
           "result": "Migration chạy xong. API hỗ trợ facebook_stream_url. Làm sau US-AR-003 nếu cùng sprint.",
@@ -2077,7 +2077,7 @@
         },
         {
           "day": "Thứ 4",
-          "date": "15/04/2026",
+          "date": "22/04/2026",
           "theme": "Frontend — Nút Facebook + Layout 2 nút",
           "color": "blue",
           "result": "Nút Facebook hiển thị đúng. Layout 2 nút cùng lúc trông gọn đẹp.",
@@ -2113,7 +2113,7 @@
         },
         {
           "day": "Thứ 5",
-          "date": "16/04/2026",
+          "date": "23/04/2026",
           "theme": "QA toàn bộ AC",
           "color": "blue",
           "result": "Toàn bộ AC-01 đến AC-06 pass. Layout 2 nút đẹp trên cả desktop và mobile.",
@@ -2149,7 +2149,7 @@
         },
         {
           "day": "Thứ 6",
-          "date": "17/04/2026",
+          "date": "24/04/2026",
           "theme": "Code review",
           "color": "amber",
           "result": "Code review sạch.",
@@ -2170,7 +2170,7 @@
         },
         {
           "day": "Thứ 7",
-          "date": "18/04/2026",
+          "date": "25/04/2026",
           "theme": "Merge & Release Beta",
           "color": "green",
           "result": "Nút Facebook hoạt động trên beta. Trận stream cả 2 nền tảng hiển thị 2 nút.",
@@ -2385,12 +2385,12 @@
       "Không cần DB migration — pure frontend fix"
     ],
     "sprintPlan": {
-      "startDate": "13/04/2026",
-      "endDate": "18/04/2026",
+      "startDate": "06/04/2026",
+      "endDate": "12/04/2026",
       "days": [
         {
           "day": "Thứ 2",
-          "date": "13/04/2026",
+          "date": "06/04/2026",
           "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
           "result": "Xác định rõ component cần sửa, thống nhất tỷ lệ cột, có mockup layout mới.",
@@ -2424,7 +2424,7 @@
         },
         {
           "day": "Thứ 3",
-          "date": "14/04/2026",
+          "date": "07/04/2026",
           "theme": "Fix layout",
           "color": "teal",
           "result": "Layout thẳng hàng trên simulator. Truncate tên hoạt động.",
@@ -2466,7 +2466,7 @@
         },
         {
           "day": "Thứ 4",
-          "date": "15/04/2026",
+          "date": "08/04/2026",
           "theme": "Test đa thiết bị",
           "color": "blue",
           "result": "Layout đúng trên tất cả màn hình test. Tìm kiếm không bị lệch.",
@@ -2506,7 +2506,7 @@
         },
         {
           "day": "Thứ 5",
-          "date": "16/04/2026",
+          "date": "09/04/2026",
           "theme": "QA toàn bộ AC",
           "color": "blue",
           "result": "Toàn bộ AC-01 đến AC-06 pass.",
@@ -2529,7 +2529,7 @@
         },
         {
           "day": "Thứ 6",
-          "date": "17/04/2026",
+          "date": "10/04/2026",
           "theme": "Code review",
           "color": "amber",
           "result": "Code review sạch. Không có regression trên các màn hình khác.",
@@ -2557,7 +2557,7 @@
         },
         {
           "day": "Thứ 7",
-          "date": "18/04/2026",
+          "date": "11/04/2026",
           "theme": "Merge & Release Beta",
           "color": "green",
           "result": "Layout danh sách cơ thủ thẳng hàng trên beta.",
@@ -2736,12 +2736,12 @@
       "Cần xác định: kiểm tra trạng thái tại thời điểm gửi hay tại thời điểm mở thông báo?"
     ],
     "sprintPlan": {
-      "startDate": "13/04/2026",
-      "endDate": "18/04/2026",
+      "startDate": "06/04/2026",
+      "endDate": "12/04/2026",
       "days": [
         {
           "day": "Thứ 2",
-          "date": "13/04/2026",
+          "date": "06/04/2026",
           "theme": "Chuẩn bị",
           "color": "purple",
           "result": "Xác định điểm sinh nội dung thông báo trong code. Thống nhất logic kiểm tra trạng thái.",
@@ -2762,7 +2762,7 @@
         },
         {
           "day": "Thứ 3",
-          "date": "14/04/2026",
+          "date": "07/04/2026",
           "theme": "Fix bug",
           "color": "teal",
           "result": "Logic kiểm tra trạng thái đăng ký hoạt động đúng.",
@@ -2791,7 +2791,7 @@
         },
         {
           "day": "Thứ 4",
-          "date": "15/04/2026",
+          "date": "08/04/2026",
           "theme": "QA & Merge",
           "color": "blue",
           "result": "Bug fix pass toàn bộ test case. Merge vào develop.",
@@ -2982,7 +2982,7 @@
     ],
     "sprintPlan": {
       "startDate": "13/04/2026",
-      "endDate": "18/04/2026",
+      "endDate": "19/04/2026",
       "days": [
         {
           "day": "Thứ 2",
@@ -3350,7 +3350,7 @@
     ],
     "sprintPlan": {
       "startDate": "20/04/2026",
-      "endDate": "25/04/2026",
+      "endDate": "26/04/2026",
       "days": [
         {
           "day": "Thứ 2",
