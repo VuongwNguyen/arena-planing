@@ -50,6 +50,10 @@ function buildHeader(item) {
   const badges = el('div', { className: 'badges' });
   badges.appendChild(el('span', { className: 'badge ' + badgeClass, textContent: item.status }));
   badges.appendChild(el('span', { className: 'badge badge-gray', textContent: item.id }));
+  if (item.jiraId) {
+    const jiraLink = el('a', { className: 'badge badge-jira', textContent: '🔗 ' + item.jiraId, href: 'https://arena-platform.atlassian.net/browse/' + item.jiraId, target: '_blank' });
+    badges.appendChild(jiraLink);
+  }
   wrap.appendChild(badges);
   return wrap;
 }
