@@ -1966,12 +1966,12 @@
       "Nên làm sau US-AR-003 vì logic tương tự, chỉ khác domain và icon"
     ],
     "sprintPlan": {
-      "startDate": "20/04/2026",
-      "endDate": "26/04/2026",
+      "startDate": "13/04/2026",
+      "endDate": "19/04/2026",
       "days": [
         {
           "day": "Thứ 2",
-          "date": "20/04/2026",
+          "date": "13/04/2026",
           "color": "purple",
           "theme": "Chuẩn bị + Thiết kế",
           "result": "Tổng (cả W4 Thứ 2): 7h — Thống nhất layout 2 nút, thiết kế migration",
@@ -1999,7 +1999,7 @@
         },
         {
           "day": "Thứ 3",
-          "date": "21/04/2026",
+          "date": "14/04/2026",
           "color": "teal",
           "theme": "Backend API + Migration",
           "result": "Tổng (cả W4 Thứ 3): 8h — API backend 2 US xong",
@@ -2035,7 +2035,7 @@
         },
         {
           "day": "Thứ 4",
-          "date": "22/04/2026",
+          "date": "15/04/2026",
           "color": "blue",
           "theme": "Frontend — Nút FB + Layout 2 nút",
           "result": "Tổng (cả W4 Thứ 4): 8h — 2 nút hiển thị song song, responsive mobile",
@@ -2072,7 +2072,7 @@
         },
         {
           "day": "Thứ 5",
-          "date": "23/04/2026",
+          "date": "16/04/2026",
           "color": "blue",
           "theme": "QA toàn bộ testcase",
           "result": "Tổng (cả W4 Thứ 5): 8h — TC_001→TC_011 xanh, 2 nút hoàn toàn độc lập",
@@ -2108,7 +2108,7 @@
         },
         {
           "day": "Thứ 6",
-          "date": "24/04/2026",
+          "date": "17/04/2026",
           "color": "amber",
           "theme": "Code review",
           "result": "Tổng (cả W4 Thứ 6): 6h — Review xong, không conflict với US-AR-003",
@@ -2129,7 +2129,7 @@
         },
         {
           "day": "Thứ 7",
-          "date": "25/04/2026",
+          "date": "18/04/2026",
           "color": "green",
           "theme": "Merge & Deploy beta",
           "result": "Tổng (cả W4 Thứ 7): 3h — Cả 2 US merge xong, deploy beta",
@@ -3031,12 +3031,12 @@
       "Giữ nguyên tính năng tìm theo tỉnh thành hiện tại — tìm kiếm text là tính năng bổ sung"
     ],
     "sprintPlan": {
-      "startDate": "13/04/2026",
-      "endDate": "19/04/2026",
+      "startDate": "20/04/2026",
+      "endDate": "26/04/2026",
       "days": [
         {
           "day": "Thứ 2",
-          "date": "13/04/2026",
+          "date": "20/04/2026",
           "color": "purple",
           "theme": "Chuẩn bị + Thiết kế API",
           "result": "Tổng (cả W3 Thứ 2): 7h — Xác định DB schema, thiết kế API search",
@@ -3064,7 +3064,7 @@
         },
         {
           "day": "Thứ 3",
-          "date": "14/04/2026",
+          "date": "21/04/2026",
           "color": "teal",
           "theme": "Backend — Search API + Text index",
           "result": "Tổng (cả W3 Thứ 3): 8h — API search hoạt động, text index tạo xong",
@@ -3108,7 +3108,7 @@
         },
         {
           "day": "Thứ 4",
-          "date": "15/04/2026",
+          "date": "22/04/2026",
           "color": "blue",
           "theme": "Frontend — Thanh tìm kiếm + UI gợi ý",
           "result": "Tổng (cả W3 Thứ 4): 8h — Thanh search debounce, danh sách gợi ý hiển thị đúng",
@@ -3145,7 +3145,7 @@
         },
         {
           "day": "Thứ 5",
-          "date": "16/04/2026",
+          "date": "23/04/2026",
           "color": "blue",
           "theme": "QA toàn bộ testcase + Performance",
           "result": "Tổng (cả W3 Thứ 5): 8h — TC_001→TC_011 xanh, search < 200ms với 1000 clubs",
@@ -3180,7 +3180,7 @@
         },
         {
           "day": "Thứ 6",
-          "date": "17/04/2026",
+          "date": "24/04/2026",
           "color": "amber",
           "theme": "Code review + Regression",
           "result": "Tổng (cả W3 Thứ 6): 6h — Review xong, tìm theo tỉnh thành vẫn hoạt động",
@@ -3208,7 +3208,7 @@
         },
         {
           "day": "Thứ 7",
-          "date": "18/04/2026",
+          "date": "25/04/2026",
           "color": "green",
           "theme": "Merge & Deploy beta",
           "result": "Tổng (cả W3 Thứ 7): 4h — Cả 2 US merge xong, deploy beta",
