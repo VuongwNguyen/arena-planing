@@ -1580,33 +1580,33 @@
         {
           "day": "Thứ 2",
           "date": "13/04/2026",
-          "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
-          "result": "US, AC đã duyệt. Thống nhất whitelist domain, UX nút, và cách hiển thị sau khi stream kết thúc.",
+          "theme": "Chuẩn bị + Thiết kế migration",
+          "result": "Tổng (cả W3 Thứ 2): 7h — Team duyệt 2 US, xác định API và migration",
           "tasks": [
             {
-              "text": "Tạo US-AR-003 với đầy đủ AC-01 đến AC-06",
+              "text": "Review US-AR-003: xác nhận whitelist YouTube domain (youtube.com, youtu.be) — 1h",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Thống nhất vị trí nút: danh sách trận + trang chi tiết trận — 0.5h",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Thiết kế migration: ALTER TABLE matches ADD COLUMN youtube_stream_url VARCHAR(500) — 0.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Họp team: whitelist chỉ YouTube/Facebook hay mọi URL? Hiển thị nút khi stream kết thúc không?",
+              "text": "Tạo API key YouTube Data API v3 trên GCP, test kết nối cơ bản — 1.5h",
               "tags": [
-                "Team"
-              ]
-            },
-            {
-              "text": "Xác định vị trí hiển thị nút trên UI: danh sách trận hay chỉ trang chi tiết trận?",
-              "tags": [
-                "Team"
-              ]
-            },
-            {
-              "text": "Claude thiết kế migration: ALTER TABLE matches ADD COLUMN stream_url",
-              "tags": [
-                "Claude"
+                "Dev"
               ]
             }
           ]
@@ -1614,39 +1614,32 @@
         {
           "day": "Thứ 3",
           "date": "14/04/2026",
-          "theme": "Phân rã task & Tạo nhánh",
           "color": "teal",
-          "result": "Nhánh feature tạo xong. Migration chạy trên dev. API admin nhập link hoạt động.",
+          "theme": "Backend API + Migration",
+          "result": "Tổng (cả W3 Thứ 3): 8h — API backend 2 US xong, có thể test Postman",
           "tasks": [
             {
-              "text": "git pull origin develop → tạo nhánh feature/match-livestream",
+              "text": "git pull → tạo nhánh feature/match-youtube-livestream — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Chạy migration: thêm cột stream_url vào bảng matches",
+              "text": "Chạy migration ADD COLUMN youtube_stream_url — 0.5h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Thêm youtube_stream_url vào API PUT /matches/:id (admin update) + validate domain — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Thêm field stream_url vào API PUT /matches/:id (admin update trận)",
-              "tags": [
-                "Dev",
-                "Claude"
-              ]
-            },
-            {
-              "text": "Validate URL ở backend: kiểm tra format hợp lệ, whitelist domain nếu cần",
-              "tags": [
-                "Dev",
-                "Claude"
-              ]
-            },
-            {
-              "text": "Thêm stream_url vào response GET /matches và GET /matches/:id",
+              "text": "Thêm youtube_stream_url vào response GET /matches và GET /matches/:id — 1h",
               "tags": [
                 "Dev",
                 "Claude"
@@ -1657,40 +1650,35 @@
         {
           "day": "Thứ 4",
           "date": "15/04/2026",
-          "theme": "Frontend — Admin UI + Hiển thị nút",
           "color": "blue",
-          "result": "Admin nhập được link. Nút Livestream hiển thị đúng trên trang người dùng.",
+          "theme": "Frontend — Admin UI + Nút người dùng",
+          "result": "Tổng (cả W3 Thứ 4): 8h — Admin nhập link được, nút YouTube hiển thị đúng",
           "tasks": [
             {
-              "text": "git pull origin develop — kiểm tra conflict",
-              "tags": [
-                "Git"
-              ]
-            },
-            {
-              "text": "Admin UI: thêm input field 'Link Livestream' vào form quản lý trận đấu",
+              "text": "Admin UI: thêm input field \"Link YouTube Live\" vào form quản lý trận đấu — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Frontend người dùng: hiển thị nút Livestream/Play khi stream_url != null, ẩn khi null",
+              "text": "Frontend người dùng: hiển thị nút icon YouTube khi youtube_stream_url != null — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Logic nhận diện icon: youtube.com/youtu.be → icon YouTube, facebook.com/fb.watch → icon Facebook",
+              "text": "Logic mở link: target=\"_blank\", không redirect trang Arena — 0.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Commit và push cuối ngày",
+              "text": "Commit và push cuối ngày — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             }
@@ -1699,38 +1687,32 @@
         {
           "day": "Thứ 5",
           "date": "16/04/2026",
-          "theme": "QA toàn bộ AC",
           "color": "blue",
-          "result": "Toàn bộ AC-01 đến AC-06 pass. Edge cases đã xử lý.",
+          "theme": "QA toàn bộ testcase",
+          "result": "Tổng (cả W3 Thứ 5): 8h — TC_001→TC_011 xanh, test mobile OK",
           "tasks": [
             {
-              "text": "git pull origin develop — cập nhật code mới nhất",
-              "tags": [
-                "Git"
-              ]
-            },
-            {
-              "text": "Claude chạy toàn bộ test case TC_001 → TC_012, xuất báo cáo",
+              "text": "Claude chạy TC_001 → TC_011 cho US-AR-003, xuất báo cáo — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Test trên mobile: iOS + Android — click nút mở đúng app YouTube/Facebook",
+              "text": "Test mobile iOS + Android: click nút YouTube mở đúng app/tab — 1.5h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Test edge case: URL rút gọn youtu.be, URL Facebook live, URL không hợp lệ",
+              "text": "Test edge case: URL youtu.be rút gọn, URL không hợp lệ bị từ chối — 0.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết",
+              "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết — 0.5h",
               "tags": [
                 "Dev",
                 "Claude"
@@ -1741,31 +1723,25 @@
         {
           "day": "Thứ 6",
           "date": "17/04/2026",
-          "theme": "Code review + Impact analysis",
           "color": "amber",
-          "result": "Code review sạch. Xác nhận không ảnh hưởng các tính năng quản lý trận khác.",
+          "theme": "Code review + Impact analysis",
+          "result": "Tổng (cả W3 Thứ 6): 6h — Review xong, không có lỗ hổng open redirect",
           "tasks": [
             {
-              "text": "git pull origin develop — lần cuối trước review",
-              "tags": [
-                "Git"
-              ]
-            },
-            {
-              "text": "Claude phân tích ảnh hưởng: thêm stream_url có ảnh hưởng API lịch thi đấu, báo cáo giải đấu không?",
+              "text": "Claude phân tích impact: youtube_stream_url ảnh hưởng API lịch thi đấu, báo cáo giải đấu? — 1h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Tech Lead review: validate URL, security (open redirect?), UX nút",
+              "text": "Tech Lead review: validate URL, bảo mật open redirect, UX nút — 1.5h",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Sửa theo góp ý, chạy lại test",
+              "text": "Sửa theo góp ý, chạy lại test — 0.5h",
               "tags": [
                 "Dev"
               ]
@@ -1775,43 +1751,25 @@
         {
           "day": "Thứ 7",
           "date": "18/04/2026",
-          "theme": "Merge & Release Beta",
           "color": "green",
-          "result": "Tính năng nút Livestream hoạt động trên beta. Admin nhập link → người dùng click → mở stream.",
+          "theme": "Merge & Deploy beta",
+          "result": "Tổng (cả W3 Thứ 7): 4h — Cả 2 US merge xong, deploy beta",
           "tasks": [
             {
-              "text": "Pull code mới nhất từ develop → giải quyết conflict cuối",
-              "tags": [
-                "Git"
-              ]
-            },
-            {
-              "text": "Chạy toàn bộ test lần cuối sau merge",
+              "text": "Merge feature/match-youtube-livestream → develop — 0.5h",
               "tags": [
                 "Dev",
-                "Claude"
-              ]
-            },
-            {
-              "text": "Merge feature/match-livestream vào develop",
-              "tags": [
                 "Git"
               ]
             },
             {
-              "text": "Chạy migration trên môi trường beta",
+              "text": "Chạy migration trên beta, smoke test: Admin nhập link → nút hiện → click OK — 1h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Test smoke: Admin nhập link YouTube → khán giả thấy nút → click → mở stream",
-              "tags": [
-                "Dev"
-              ]
-            },
-            {
-              "text": "Deploy và thông báo team",
+              "text": "Deploy và thông báo team — 0.5h",
               "tags": [
                 "Team"
               ]
@@ -2014,24 +1972,25 @@
         {
           "day": "Thứ 2",
           "date": "20/04/2026",
-          "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
-          "result": "US-AR-004 duyệt xong. Thống nhất UX khi hiển thị 2 nút cùng lúc.",
+          "theme": "Chuẩn bị + Thiết kế",
+          "result": "Tổng (cả W4 Thứ 2): 7h — Thống nhất layout 2 nút, thiết kế migration",
           "tasks": [
             {
-              "text": "Review US-AR-004 cùng team, thống nhất layout 2 nút YouTube + Facebook",
+              "text": "Review US-AR-004: thống nhất layout 2 nút YT + FB, thứ tự hiển thị — 1h",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Claude thiết kế migration: ALTER TABLE matches ADD COLUMN facebook_stream_url",
+              "text": "Thiết kế migration: ALTER TABLE matches ADD COLUMN facebook_stream_url VARCHAR(500) — 0.5h",
               "tags": [
+                "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Thống nhất thứ tự hiển thị: YouTube trước hay Facebook trước?",
+              "text": "Xác nhận domain whitelist: facebook.com và fb.watch — 0.5h",
               "tags": [
                 "Team"
               ]
@@ -2041,33 +2000,32 @@
         {
           "day": "Thứ 3",
           "date": "21/04/2026",
-          "theme": "Phân rã task & Tạo nhánh",
           "color": "teal",
-          "result": "Migration chạy xong. API hỗ trợ facebook_stream_url. Làm sau US-AR-003 nếu cùng sprint.",
+          "theme": "Backend API + Migration",
+          "result": "Tổng (cả W4 Thứ 3): 8h — API backend 2 US xong",
           "tasks": [
             {
-              "text": "Làm sau khi US-AR-003 done: thêm facebook_stream_url vào cùng nhánh hoặc nhánh mới",
+              "text": "git pull từ feature/match-youtube-livestream (nếu đã merge) hoặc tạo nhánh feature/match-facebook-livestream — 0.5h",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy migration ADD COLUMN facebook_stream_url — 0.5h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Thêm facebook_stream_url vào API PUT /matches/:id, validate domain facebook.com | fb.watch — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Migration: ADD COLUMN facebook_stream_url vào bảng matches",
-              "tags": [
-                "Dev",
-                "Claude"
-              ]
-            },
-            {
-              "text": "Thêm facebook_stream_url vào API PUT /matches/:id và GET /matches",
-              "tags": [
-                "Dev",
-                "Claude"
-              ]
-            },
-            {
-              "text": "Validate domain: chỉ facebook.com và fb.watch",
+              "text": "Thêm facebook_stream_url vào response GET /matches và GET /matches/:id — 1h",
               "tags": [
                 "Dev",
                 "Claude"
@@ -2078,34 +2036,35 @@
         {
           "day": "Thứ 4",
           "date": "22/04/2026",
-          "theme": "Frontend — Nút Facebook + Layout 2 nút",
           "color": "blue",
-          "result": "Nút Facebook hiển thị đúng. Layout 2 nút cùng lúc trông gọn đẹp.",
+          "theme": "Frontend — Nút FB + Layout 2 nút",
+          "result": "Tổng (cả W4 Thứ 4): 8h — 2 nút hiển thị song song, responsive mobile",
           "tasks": [
             {
-              "text": "Admin UI: thêm field 'Link Facebook Live' vào form quản lý trận",
+              "text": "Admin UI: thêm input field \"Link Facebook Live\" vào form quản lý trận — 1h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Frontend: hiển thị nút Facebook khi facebook_stream_url != null",
+              "text": "Frontend: hiển thị nút icon Facebook khi facebook_stream_url != null — 1h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Layout: 2 nút YouTube + Facebook song song, responsive trên mobile",
+              "text": "Layout 2 nút YT + FB song song: flexbox responsive, không chồng lên nhau — 1h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Commit và push cuối ngày",
+              "text": "Commit và push — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             }
@@ -2114,32 +2073,32 @@
         {
           "day": "Thứ 5",
           "date": "23/04/2026",
-          "theme": "QA toàn bộ AC",
           "color": "blue",
-          "result": "Toàn bộ AC-01 đến AC-06 pass. Layout 2 nút đẹp trên cả desktop và mobile.",
+          "theme": "QA toàn bộ testcase",
+          "result": "Tổng (cả W4 Thứ 5): 8h — TC_001→TC_011 xanh, 2 nút hoàn toàn độc lập",
           "tasks": [
             {
-              "text": "Claude chạy toàn bộ test case TC_001 → TC_011",
+              "text": "Claude chạy TC_001 → TC_011, đặc biệt TC_004 (2 nút hiển thị đồng thời) — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Test đặc biệt AC-06: trận có cả 2 link — 2 nút hiển thị đúng và độc lập",
-              "tags": [
-                "Dev",
-                "Claude"
-              ]
-            },
-            {
-              "text": "Test mobile: iOS + Android click nút Facebook mở app",
+              "text": "Test mobile iOS + Android: click FB nút mở đúng app Facebook — 1h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Sửa lỗi, chạy lại test",
+              "text": "Test xoá link FB → nút FB biến mất, nút YT vẫn còn (2 nút độc lập) — 0.5h",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Sửa lỗi phát sinh — 0.5h",
               "tags": [
                 "Dev",
                 "Claude"
@@ -2150,18 +2109,18 @@
         {
           "day": "Thứ 6",
           "date": "24/04/2026",
-          "theme": "Code review",
           "color": "amber",
-          "result": "Code review sạch.",
+          "theme": "Code review",
+          "result": "Tổng (cả W4 Thứ 6): 6h — Review xong, không conflict với US-AR-003",
           "tasks": [
             {
-              "text": "Tech Lead review: validate domain, layout 2 nút, không conflict với US-AR-003",
+              "text": "Tech Lead review: validate domain, layout 2 nút, không conflict với US-AR-003 (YT) — 1.5h",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Sửa theo góp ý",
+              "text": "Sửa theo góp ý — 0.5h",
               "tags": [
                 "Dev"
               ]
@@ -2171,24 +2130,25 @@
         {
           "day": "Thứ 7",
           "date": "25/04/2026",
-          "theme": "Merge & Release Beta",
           "color": "green",
-          "result": "Nút Facebook hoạt động trên beta. Trận stream cả 2 nền tảng hiển thị 2 nút.",
+          "theme": "Merge & Deploy beta",
+          "result": "Tổng (cả W4 Thứ 7): 3h — Cả 2 US merge xong, deploy beta",
           "tasks": [
             {
-              "text": "Merge vào develop cùng với US-AR-003",
+              "text": "Merge feature/match-facebook-livestream → develop — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Test smoke: Admin nhập cả 2 link → 2 nút hiển thị → click từng nút mở đúng",
+              "text": "Smoke test: Admin nhập cả 2 link YT + FB → 2 nút hiển thị → click từng nút đúng — 0.5h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Deploy và thông báo team",
+              "text": "Deploy và thông báo team — 0.5h",
               "tags": [
                 "Team"
               ]
@@ -2391,33 +2351,46 @@
         {
           "day": "Thứ 2",
           "date": "06/04/2026",
-          "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
-          "result": "Xác định rõ component cần sửa, thống nhất tỷ lệ cột, có mockup layout mới.",
+          "theme": "Chuẩn bị + Review US-LF-001",
+          "result": "Tổng: 6h — Xác định component bị lệch, ghi nhận bug quiz LF-001",
           "tasks": [
             {
-              "text": "Tạo US-AR-005, review AC với team",
+              "text": "Xác định component/file danh sách cơ thủ trong codebase — 1h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Thống nhất tỷ lệ cột: STT 8% / Cờ 8% / Avatar 10% / Tên 50% / Hạng 12% / Profile 12% — 0.5h",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Chụp screenshot hiện trạng bị lệch để so sánh trước/sau — 0.5h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Test thủ công luồng quiz hiện tại: Host gửi câu → play → reveal → leaderboard — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Xác định component/file chứa danh sách cơ thủ trong codebase",
+              "text": "[Support US-LF-001] Ghi lại danh sách bug/thiếu so với AC-01 → AC-07 — 1h",
               "tags": [
-                "Dev"
+                "Dev",
+                "Claude"
               ]
             },
             {
-              "text": "Thống nhất tỷ lệ cột: STT 8%, Cờ 8%, Avatar 10%, Tên 50%, Hạng 12%, Profile 12%",
+              "text": "[Support US-LF-001] Chuẩn bị thêm câu hỏi Tết (hiện có 5, cần ít nhất 10) — 1h",
               "tags": [
                 "Team"
-              ]
-            },
-            {
-              "text": "Chụp screenshot hiện trạng bị lệch để so sánh trước/sau",
-              "tags": [
-                "Dev"
               ]
             }
           ]
@@ -2425,41 +2398,63 @@
         {
           "day": "Thứ 3",
           "date": "07/04/2026",
-          "theme": "Fix layout",
           "color": "teal",
-          "result": "Layout thẳng hàng trên simulator. Truncate tên hoạt động.",
+          "theme": "Fix CSS + Fix quiz LF-001",
+          "result": "Tổng: 7.5h — Bảng cơ thủ thẳng hàng, bug quiz LF-001 fix xong",
           "tasks": [
             {
-              "text": "git pull origin develop → tạo nhánh fix/player-list-alignment",
+              "text": "git pull → tạo nhánh fix/player-list-alignment — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Áp dụng CSS table-layout: fixed hoặc flexbox cố định cho bảng danh sách",
+              "text": "Áp dụng CSS table-layout: fixed, set tỷ lệ % từng cột — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Thêm overflow: hidden + text-overflow: ellipsis cho cột Tên cơ thủ",
+              "text": "overflow: hidden + text-overflow: ellipsis cho cột Tên cơ thủ — 1h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Fix avatar placeholder: kích thước cố định khi không có ảnh",
+              "text": "Fix avatar placeholder: width/height cố định, object-fit: cover — 0.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Commit và push cuối ngày",
+              "text": "[Support US-LF-001] git pull → nhánh feature/quiz-improvements — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Fix AC-06: socket reconnect về đúng phase ANSWERING/REVEAL — 1.5h",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Thêm 5 câu hỏi Tết vào QUIZ_QUESTIONS (tổng 10 câu) — 1h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Kiểm tra race condition: nhiều player submit cùng lúc — 1h",
+              "tags": [
+                "Dev",
+                "Claude"
               ]
             }
           ]
@@ -2467,39 +2462,46 @@
         {
           "day": "Thứ 4",
           "date": "08/04/2026",
-          "theme": "Test đa thiết bị",
           "color": "blue",
-          "result": "Layout đúng trên tất cả màn hình test. Tìm kiếm không bị lệch.",
+          "theme": "Test đa thiết bị + Stress test quiz",
+          "result": "Tổng: 7h — Layout pass 3 thiết bị, stress test 20 players OK",
           "tasks": [
             {
-              "text": "Test trên iPhone SE 375px, iPhone 14 390px, Android 360px",
+              "text": "Test layout: iPhone SE 375px, iPhone 14 390px, Android 360px — 2h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Test landscape mode — bảng không bị vỡ",
+              "text": "Test landscape mode — bảng không vỡ — 0.5h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Test filter tìm kiếm — layout giữ nguyên khi lọc danh sách",
+              "text": "Test filter tìm kiếm + scroll 96 cơ thủ, không lag — 1h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Stress test: simulate 20 người chơi join + trả lời đồng thời — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Test danh sách 96+ cơ thủ — kiểm tra performance scroll",
+              "text": "[Support US-LF-001] Kiểm tra leaderboard update đúng sau mỗi reveal — 1h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "So sánh screenshot trước/sau — chụp để demo",
+              "text": "[Support US-LF-001] Sửa lỗi phát sinh từ stress test — 0.5h",
               "tags": [
-                "Dev"
+                "Dev",
+                "Claude"
               ]
             }
           ]
@@ -2507,19 +2509,33 @@
         {
           "day": "Thứ 5",
           "date": "09/04/2026",
-          "theme": "QA toàn bộ AC",
           "color": "blue",
-          "result": "Toàn bộ AC-01 đến AC-06 pass.",
+          "theme": "QA US-AR-005 + QA LF-001",
+          "result": "Tổng: 7h — TC_001→TC_010 US-AR-005 xanh, TC_001→TC_012 LF-001 xanh",
           "tasks": [
             {
-              "text": "Claude chạy toàn bộ test case TC_001 → TC_010, xuất báo cáo",
+              "text": "Claude chạy TC_001 → TC_010 cho US-AR-005, xuất báo cáo — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết",
+              "text": "Sửa lỗi phát sinh từ QA US-AR-005 — 1.5h",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Chạy TC_001 → TC_012 cho US-LF-001, ghi kết quả — 2h",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Sửa lỗi phát sinh từ QA — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
@@ -2530,25 +2546,37 @@
         {
           "day": "Thứ 6",
           "date": "10/04/2026",
-          "theme": "Code review",
           "color": "amber",
-          "result": "Code review sạch. Không có regression trên các màn hình khác.",
+          "theme": "Code review cả 2 US",
+          "result": "Tổng: 6h — Review xong US-AR-005 + US-LF-001",
           "tasks": [
             {
-              "text": "Tech Lead review CSS changes — đảm bảo không break layout màn hình khác",
+              "text": "Code review CSS changes US-AR-005: không break layout màn hình khác — 1.5h",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Kiểm tra regression: các tab Thông tin, Lịch thi đấu không bị ảnh hưởng",
+              "text": "Regression: tab Thông tin + Lịch thi đấu không bị ảnh hưởng — 1h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Sửa theo góp ý",
+              "text": "Sửa theo góp ý US-AR-005 — 0.5h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Tech Lead review: socket events, scoring logic, reconnect handling — 2h",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Test end-to-end trên môi trường production (fly.toml) — 1h",
               "tags": [
                 "Dev"
               ]
@@ -2558,24 +2586,38 @@
         {
           "day": "Thứ 7",
           "date": "11/04/2026",
-          "theme": "Merge & Release Beta",
           "color": "green",
-          "result": "Layout danh sách cơ thủ thẳng hàng trên beta.",
+          "theme": "Merge & Deploy cả 2 US",
+          "result": "Tổng: 4h — US-AR-005 + US-LF-001 merge xong, deploy beta + production",
           "tasks": [
             {
-              "text": "Merge fix/player-list-alignment vào develop",
+              "text": "Merge fix/player-list-alignment → develop — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Test smoke trên thiết bị thật với giải đấu có 50+ cơ thủ",
+              "text": "Test smoke thiết bị thật, giải đấu 50+ cơ thủ — 1h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Deploy và thông báo team",
+              "text": "[Support US-LF-001] Merge feature/quiz-improvements → main — 0.5h",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            },
+            {
+              "text": "[Support US-LF-001] Deploy Fly.io (BE) + FE, smoke test production: Host tạo match → quiz 3 câu — 1.5h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Thông báo team, viết release note ngắn — 0.5h",
               "tags": [
                 "Team"
               ]
@@ -2742,20 +2784,26 @@
         {
           "day": "Thứ 2",
           "date": "06/04/2026",
-          "theme": "Chuẩn bị",
           "color": "purple",
-          "result": "Xác định điểm sinh nội dung thông báo trong code. Thống nhất logic kiểm tra trạng thái.",
+          "theme": "Phân tích bug & Thống nhất",
+          "result": "Tổng: 2h — Xác định rõ nơi tạo CTA thông báo, thống nhất hướng fix",
           "tasks": [
             {
-              "text": "Tìm trong codebase nơi tạo nội dung thông báo giải đấu",
+              "text": "Tìm hàm/file tạo push notification payload trong codebase — 1h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Thống nhất: kiểm tra trạng thái lúc gửi hay lúc render thông báo?",
+              "text": "Thống nhất: kiểm tra trạng thái đăng ký lúc gửi thông báo hay lúc render — 0.5h",
               "tags": [
                 "Team"
+              ]
+            },
+            {
+              "text": "Claude vẽ decision tree: registered? → CTA=Xem chi tiết : CTA=Đăng ký ngay — 0.5h",
+              "tags": [
+                "Claude"
               ]
             }
           ]
@@ -2763,25 +2811,26 @@
         {
           "day": "Thứ 3",
           "date": "07/04/2026",
-          "theme": "Fix bug",
           "color": "teal",
-          "result": "Logic kiểm tra trạng thái đăng ký hoạt động đúng.",
+          "theme": "Code fix & Unit test",
+          "result": "Tổng: 3h — Fix xong logic CTA, unit test pass",
           "tasks": [
             {
-              "text": "git pull → tạo nhánh fix/notification-cta",
+              "text": "git pull → tạo nhánh fix/notification-cta — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Sửa logic sinh CTA thông báo dựa trên trạng thái đăng ký của cơ thủ",
+              "text": "Sửa logic sinh CTA: query bảng registrations trước khi build payload — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Unit test: cơ thủ đã đăng ký → CTA = 'Xem chi tiết'",
+              "text": "Unit test: TC_001 (chưa đăng ký → Đăng ký ngay) + TC_002 (đã đăng ký → Xem chi tiết) — 1h",
               "tags": [
                 "Dev",
                 "Claude"
@@ -2792,20 +2841,21 @@
         {
           "day": "Thứ 4",
           "date": "08/04/2026",
-          "theme": "QA & Merge",
           "color": "blue",
-          "result": "Bug fix pass toàn bộ test case. Merge vào develop.",
+          "theme": "QA & Merge",
+          "result": "Tổng: 1h — Toàn bộ 6 testcase xanh, merge xong",
           "tasks": [
             {
-              "text": "Chạy toàn bộ test case TC_001 → TC_006",
+              "text": "Chạy TC_001 → TC_006 đủ 6 testcase, ghi kết quả — 0.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Merge fix/notification-cta vào develop, deploy beta",
+              "text": "Merge fix/notification-cta → develop, deploy beta, smoke test — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             }
@@ -2987,24 +3037,24 @@
         {
           "day": "Thứ 2",
           "date": "13/04/2026",
-          "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
-          "result": "Thống nhất search scope, index strategy, API spec.",
+          "theme": "Chuẩn bị + Thiết kế API",
+          "result": "Tổng (cả W3 Thứ 2): 7h — Xác định DB schema, thiết kế API search",
           "tasks": [
             {
-              "text": "Review US-AR-007 với team, xác nhận search theo tên + địa chỉ + sđt",
+              "text": "Review US-AR-007: xác nhận tìm theo tên + địa chỉ + sđt — 0.5h",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Kiểm tra DB hiện tại: clubs table có đủ field name, address, phone?",
+              "text": "Kiểm tra DB: bảng clubs có đủ field name, address, phone chưa? — 1h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Thiết kế API: GET /clubs/search?q=&limit=10",
+              "text": "Thiết kế API: GET /clubs/search?q=&limit=10, response schema — 1h",
               "tags": [
                 "Dev",
                 "Claude"
@@ -3015,32 +3065,40 @@
         {
           "day": "Thứ 3",
           "date": "14/04/2026",
-          "theme": "Backend — Search API",
           "color": "teal",
-          "result": "API search clubs hoạt động, hỗ trợ partial match + không dấu.",
+          "theme": "Backend — Search API + Text index",
+          "result": "Tổng (cả W3 Thứ 3): 8h — API search hoạt động, text index tạo xong",
           "tasks": [
             {
-              "text": "git pull → tạo nhánh feature/club-search",
+              "text": "git pull → tạo nhánh feature/club-search — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Tạo text index trên DB (PostgreSQL GIN hoặc MongoDB text index)",
+              "text": "Tạo GIN text index trên PostgreSQL (hoặc text index MongoDB) cho fields name, address, phone — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Implement GET /clubs/search: partial match, case-insensitive, normalize dấu",
+              "text": "Implement GET /clubs/search: partial match, case-insensitive, normalize bỏ dấu — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Unit test: 'Nex' → Next Billiards, NextGenerations, Nexus Arena",
+              "text": "Unit test: \"Nex\" → [Next Billiards, NextGenerations], \"090123\" → club có SĐT đó — 0.5h",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Bỏ qua nếu < 2 ký tự, trả về [] — 0.5h",
               "tags": [
                 "Dev",
                 "Claude"
@@ -3051,33 +3109,33 @@
         {
           "day": "Thứ 4",
           "date": "15/04/2026",
-          "theme": "Frontend — Thanh tìm kiếm",
           "color": "blue",
-          "result": "UI search bar hoạt động với debounce, hiển thị gợi ý tức thì.",
+          "theme": "Frontend — Thanh tìm kiếm + UI gợi ý",
+          "result": "Tổng (cả W3 Thứ 4): 8h — Thanh search debounce, danh sách gợi ý hiển thị đúng",
           "tasks": [
             {
-              "text": "Thêm thanh tìm kiếm vào màn hình Tìm club",
+              "text": "Thêm thanh tìm kiếm vào màn hình Tìm club — 1h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Implement debounce 300ms + AbortController cancel request cũ",
+              "text": "Implement debounce 300ms + AbortController cancel request cũ — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "UI danh sách gợi ý: tên, địa chỉ, quận/tỉnh",
+              "text": "UI danh sách gợi ý: tên club, địa chỉ, quận/tỉnh — 1h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Empty state: 'Không tìm thấy club phù hợp'",
+              "text": "Empty state: \"Không tìm thấy club phù hợp\" — 0.5h",
               "tags": [
                 "Dev",
                 "Claude"
@@ -3088,27 +3146,34 @@
         {
           "day": "Thứ 5",
           "date": "16/04/2026",
-          "theme": "QA toàn bộ AC",
           "color": "blue",
-          "result": "Toàn bộ AC-01 đến AC-06 pass. Search dấu/không dấu hoạt động đúng.",
+          "theme": "QA toàn bộ testcase + Performance",
+          "result": "Tổng (cả W3 Thứ 5): 8h — TC_001→TC_011 xanh, search < 200ms với 1000 clubs",
           "tasks": [
             {
-              "text": "Claude chạy toàn bộ test case, xuất báo cáo",
+              "text": "Claude chạy TC_001 → TC_011 cho US-AR-007, xuất báo cáo — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Test: gõ có dấu/không dấu cùng ra kết quả",
+              "text": "Test gõ có dấu \"Hoàng Sao\" và không dấu \"Hoang Sao\" → cùng kết quả — 1h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Test performance: 1000 clubs, search < 200ms",
+              "text": "Performance test: 1000 clubs trong DB, search response < 200ms — 1h",
               "tags": [
                 "Dev"
+              ]
+            },
+            {
+              "text": "Sửa lỗi phát sinh — 0.5h",
+              "tags": [
+                "Dev",
+                "Claude"
               ]
             }
           ]
@@ -3116,21 +3181,27 @@
         {
           "day": "Thứ 6",
           "date": "17/04/2026",
-          "theme": "Code review",
           "color": "amber",
-          "result": "Code review sạch. Tìm theo tỉnh thành cũ không bị ảnh hưởng.",
+          "theme": "Code review + Regression",
+          "result": "Tổng (cả W3 Thứ 6): 6h — Review xong, tìm theo tỉnh thành vẫn hoạt động",
           "tasks": [
             {
-              "text": "Tech Lead review: index strategy, API design, debounce implementation",
+              "text": "Tech Lead review: index strategy, API design, debounce implementation — 1.5h",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Regression test: tìm theo tỉnh thành vẫn hoạt động bình thường",
+              "text": "Regression test: tìm theo tỉnh thành vẫn hoạt động bình thường — 1h",
               "tags": [
                 "Dev",
                 "Claude"
+              ]
+            },
+            {
+              "text": "Sửa theo góp ý — 0.5h",
+              "tags": [
+                "Dev"
               ]
             }
           ]
@@ -3138,20 +3209,27 @@
         {
           "day": "Thứ 7",
           "date": "18/04/2026",
-          "theme": "Merge & Release Beta",
           "color": "green",
-          "result": "Search club theo tên/địa chỉ/sđt hoạt động trên beta.",
+          "theme": "Merge & Deploy beta",
+          "result": "Tổng (cả W3 Thứ 7): 4h — Cả 2 US merge xong, deploy beta",
           "tasks": [
             {
-              "text": "Merge feature/club-search vào develop, deploy beta",
+              "text": "Merge feature/club-search → develop — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Test smoke: gõ 'Hoàng Sao' → ra đúng club",
+              "text": "Smoke test: gõ \"Hoang Sao\" → ra \"Hoàng Sao Special Billiards\" đúng — 0.5h",
               "tags": [
                 "Dev"
+              ]
+            },
+            {
+              "text": "Deploy và thông báo team — 0.5h",
+              "tags": [
+                "Team"
               ]
             }
           ]
@@ -3355,31 +3433,31 @@
         {
           "day": "Thứ 2",
           "date": "20/04/2026",
-          "theme": "Chuẩn bị & Thiết kế",
           "color": "purple",
-          "result": "Wireframe trang chi tiết được duyệt. Xác định API cần thêm/sửa.",
+          "theme": "Chuẩn bị + Thiết kế cấu trúc trang",
+          "result": "Tổng (cả W4 Thứ 2): 7h — Wireframe duyệt xong, API thiếu xác định rõ",
           "tasks": [
             {
-              "text": "Review US-AR-008 với team, tách sprint rõ ràng",
+              "text": "Review US-AR-008 với team, phân rõ 3 vùng: Tổng quan / Thông tin nhanh / 3 Tab — 1h",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Designer tạo wireframe: layout tổng quan, thanh icons, 3 tabs",
+              "text": "Vẽ wireframe nhanh: layout tổng quan, thanh 4 icons, tab Điều lệ / VĐV / Nhánh đấu — 1.5h",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Xác định API hiện có, API cần bổ sung cho từng section",
+              "text": "Xác định API thiếu cần bổ sung: poster_url, regulations, format, athlete_count — 1h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Thống nhất data model: giải đấu cần thêm field gì (poster, điều lệ, thể thức...)?",
+              "text": "Thống nhất data model: field nào thêm vào DB, field nào tính từ data hiện có — 1h",
               "tags": [
                 "Team"
               ]
@@ -3389,35 +3467,42 @@
         {
           "day": "Thứ 3",
           "date": "21/04/2026",
-          "theme": "Backend — API chi tiết giải đấu",
           "color": "teal",
-          "result": "API trả về đầy đủ dữ liệu cho trang chi tiết.",
+          "theme": "Backend — API chi tiết giải đấu",
+          "result": "Tổng (cả W4 Thứ 3): 8h — API /tournaments/:id + /athletes trả đúng data",
           "tasks": [
             {
-              "text": "git pull → tạo nhánh feature/tournament-detail",
+              "text": "git pull → tạo nhánh feature/tournament-detail — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             },
             {
-              "text": "API GET /tournaments/:id: trả về tổng quan, thông tin nhanh, BTC info",
+              "text": "DB migration nếu cần: ADD COLUMN poster_url, regulations TEXT, format — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "API GET /tournaments/:id/athletes: danh sách VĐV đã đăng ký",
+              "text": "Hoàn thiện API GET /tournaments/:id: trả về tổng quan + thông tin nhanh (fee, prize, athlete_count, format) — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "DB migration nếu cần thêm field: poster_url, regulations, format",
+              "text": "API GET /tournaments/:id/athletes: danh sách VĐV đã đăng ký, có phân trang — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
+              ]
+            },
+            {
+              "text": "Test API bằng Postman: kiểm tra đủ fields, không lỗi 500 — 0.5h",
+              "tags": [
+                "Dev"
               ]
             }
           ]
@@ -3425,29 +3510,43 @@
         {
           "day": "Thứ 4",
           "date": "22/04/2026",
-          "theme": "Frontend — Tổng quan + Thông tin nhanh + Tab Điều lệ",
           "color": "blue",
-          "result": "3 phần đầu của trang hiển thị đúng và đẹp.",
+          "theme": "Frontend — Tổng quan + Thông tin nhanh + Tab Điều lệ",
+          "result": "Tổng (cả W4 Thứ 4): 8h — 3 component chính dựng xong",
           "tasks": [
             {
-              "text": "Build khu vực Tổng quan: poster, tên giải, thời gian, địa điểm, nút Đăng ký",
+              "text": "Build section Tổng quan: poster (hoặc placeholder), tên giải, thời gian, địa điểm — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Build thanh Thông tin Nhanh: 4 icons (lệ phí, giải thưởng, VĐV, thể thức)",
+              "text": "Nút Đăng ký: active nếu còn mở + chưa đăng ký; disabled \"Đã đăng ký ✓\" nếu đã đăng ký; disabled \"Đã đủ VĐV\" nếu full — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Build tab Điều lệ: render văn bản có cấu trúc",
+              "text": "Build thanh Thông tin Nhanh: 4 icons (lệ phí, giải thưởng, số VĐV, thể thức) — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
+              ]
+            },
+            {
+              "text": "Build tab Điều lệ: render văn bản có cấu trúc, fallback \"BTC chưa cập nhật điều lệ\" nếu trống — 1.5h",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Commit và push — 0.5h",
+              "tags": [
+                "Dev",
+                "Git"
               ]
             }
           ]
@@ -3455,29 +3554,42 @@
         {
           "day": "Thứ 5",
           "date": "23/04/2026",
-          "theme": "Frontend — Tab VĐV + QA",
           "color": "blue",
-          "result": "Tab VĐV hoàn chỉnh. AC-01 đến AC-04 và AC-06 pass.",
+          "theme": "Frontend — Tab VĐV + QA toàn bộ",
+          "result": "Tổng (cả W4 Thứ 5): 8h — Tab VĐV xong, TC_001→TC_010 xanh",
           "tasks": [
             {
-              "text": "Build tab Vận động viên: danh sách + tìm kiếm theo tên",
+              "text": "Build tab Vận động viên: danh sách STT/avatar/tên/hạng + tìm kiếm theo tên — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Xử lý edge cases: chưa có poster, chưa có điều lệ, đã đủ VĐV",
+              "text": "Xử lý edge cases: no poster → placeholder màu Arena, no điều lệ → fallback text, full VĐV → nút disabled — 1.5h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Claude chạy test case TC_001 → TC_010",
+              "text": "Claude chạy TC_001 → TC_010 cho US-AR-008, xuất báo cáo — 2h",
               "tags": [
                 "Dev",
                 "Claude"
+              ]
+            },
+            {
+              "text": "Sửa lỗi phát sinh — 1.5h",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "So sánh với wireframe đã duyệt, điều chỉnh nếu lệch — 0.5h",
+              "tags": [
+                "Dev"
               ]
             }
           ]
@@ -3485,25 +3597,31 @@
         {
           "day": "Thứ 6",
           "date": "24/04/2026",
-          "theme": "Code review + Tab Nhánh đấu (scope nhỏ)",
           "color": "amber",
-          "result": "Code review sạch. Tab Nhánh đấu static (chưa real-time).",
+          "theme": "Code review + Tab Nhánh đấu (scope nhỏ)",
+          "result": "Tổng (cả W4 Thứ 6): 6h — Review xong, tab Nhánh đấu hiển thị bracket tĩnh",
           "tasks": [
             {
-              "text": "Tech Lead review toàn bộ trang chi tiết",
+              "text": "Tech Lead review toàn bộ trang chi tiết: API, component structure, edge cases — 2h",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Build tab Nhánh đấu: hiển thị bracket tĩnh, real-time để sprint sau",
+              "text": "Build tab Nhánh đấu: hiển thị bracket tĩnh từ pkBracket data (real-time để sprint sau) — 2h",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Sửa theo góp ý",
+              "text": "Sửa theo góp ý code review — 1h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Kiểm tra tab switching mượt, không re-fetch không cần thiết — 0.5h",
               "tags": [
                 "Dev"
               ]
@@ -3513,24 +3631,31 @@
         {
           "day": "Thứ 7",
           "date": "25/04/2026",
-          "theme": "Merge & Release Beta",
           "color": "green",
-          "result": "Trang chi tiết giải đấu mới hoạt động trên beta.",
+          "theme": "Merge & Deploy beta",
+          "result": "Tổng (cả W4 Thứ 7): 3h — Cả 2 US merge xong, deploy beta",
           "tasks": [
             {
-              "text": "Merge feature/tournament-detail vào develop, deploy beta",
+              "text": "Merge feature/tournament-detail → develop — 0.5h",
               "tags": [
+                "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Test smoke với giải đấu thật trên beta",
+              "text": "Chạy migration trên beta — 0.5h",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Deploy và thông báo team",
+              "text": "Smoke test với giải đấu thật: đọc điều lệ → xem VĐV → nhấn Đăng ký — 1h",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Deploy và thông báo team — 0.5h",
               "tags": [
                 "Team"
               ]
