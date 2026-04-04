@@ -3768,7 +3768,7 @@
   },
   {
     "id": "US-AR-009",
-    "jiraId": "",
+    "jiraId": "GE-618",
     "project": "Arena Billiard",
     "title": "Tìm & Lọc Giải Đấu Theo Nhiều Tiêu Chí",
     "module": "Giải đấu",
@@ -3870,12 +3870,12 @@
       "Bộ lọc 'Gần tôi' (dùng GPS) là tính năng nâng cao, có thể làm phase 2"
     ],
     "sprintPlan": {
-      "startDate": "27/04/2026",
-      "endDate": "03/05/2026",
+      "startDate": "13/04/2026",
+      "endDate": "19/04/2026",
       "days": [
         {
           "day": "Thứ 2",
-          "date": "27/04/2026",
+          "date": "13/04/2026",
           "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
           "result": "US-AR-009 được duyệt, AC rõ ràng, team thống nhất scope",
@@ -3903,7 +3903,7 @@
         },
         {
           "day": "Thứ 3",
-          "date": "28/04/2026",
+          "date": "14/04/2026",
           "theme": "Phân rã & Chuẩn bị",
           "color": "teal",
           "result": "Nhánh feature tạo xong, API endpoint xác nhận, tasks được phân công",
@@ -3932,7 +3932,7 @@
         },
         {
           "day": "Thứ 4",
-          "date": "29/04/2026",
+          "date": "15/04/2026",
           "theme": "Code core logic",
           "color": "blue",
           "result": "SearchBar + FilterPanel hoạt động, gọi API được",
@@ -3960,7 +3960,7 @@
         },
         {
           "day": "Thứ 5",
-          "date": "30/04/2026",
+          "date": "16/04/2026",
           "theme": "Hoàn thiện & QA",
           "color": "blue",
           "result": "Empty state, lưu trạng thái bộ lọc, toàn bộ test case pass",
@@ -3988,7 +3988,7 @@
         },
         {
           "day": "Thứ 6",
-          "date": "02/05/2026",
+          "date": "17/04/2026",
           "theme": "Review & Impact Analysis",
           "color": "amber",
           "result": "Code review hoàn tất, không có regression trên màn hình danh sách giải đấu",
@@ -4015,7 +4015,7 @@
         },
         {
           "day": "Thứ 7",
-          "date": "03/05/2026",
+          "date": "18/04/2026",
           "theme": "Merge & Deploy Beta",
           "color": "green",
           "result": "Tính năng tìm & lọc giải đấu live trên môi trường beta",
