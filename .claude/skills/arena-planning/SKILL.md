@@ -177,3 +177,63 @@ Mỗi US **phải có** field `testcases[]` với đầy đủ các nhóm:
 - `dbChanges` — bỏ qua nếu không đổi DB
 - `edgeCases` — nên có ít nhất 3-4 cases
 - `sprintPlan` — bỏ qua nếu chỉ cần user story đơn thuần
+
+---
+
+## Jira Integration (BẮT BUỘC khi user yêu cầu tạo task/US trên Jira)
+
+### Thông tin kết nối
+- **Base URL**: `https://arena-platform.atlassian.net`
+- **Auth**: `nguyenvuongw134@gmail.com` + API token (hỏi user nếu chưa có)
+- **Project key**: `GE`
+- **Board ID**: `139`
+- **Assignee mặc định**: Vương Nguyễn — accountId `712020:e0eb35cf-7071-44d9-b977-cee60f7dcba4`
+
+### Issue type IDs
+| Type | ID |
+|------|----|
+| Story | 10006 |
+| Sub-task | 10009 |
+| Bug | 10010 |
+| Task | 10008 |
+
+### Quy trình tạo US trên Jira (theo thứ tự)
+
+1. **Tạo Story** (issuetype 10006) với summary `[US-AR-XXX] Tên tính năng`
+2. **Description** gồm link planning: `https://vuongwnguyen.github.io/arena-planing/?id=US-AR-XXX`
+3. **Assign** cho Vương Nguyễn
+4. **Đưa vào Backlog**: `POST /rest/agile/1.0/backlog/issue`
+5. **Đưa vào Sprint** nếu user yêu cầu: `POST /rest/agile/1.0/sprint/{sprintId}/issue`
+6. **Tạo Sub-tasks** (issuetype 10009) với `parent.key = GE-XXX`
+7. **Set estimate** (giờ tròn: 2h, 3h, 4h, 6h, 8h) + **due date** theo ngày trong sprint
+8. **Set estimate cho parent story** = tổng giờ các sub-tasks
+
+### Quy tắc Sub-task (theo mẫu GE-294)
+- Summary: **ngắn gọn, không ghi giờ trong tên** (giờ lưu trong Original Estimate)
+- Estimate: **giờ tròn** — 2h, 3h, 4h, 6h, 8h (không dùng 0.5h, 1.5h, 3.5h)
+- Số lượng: **7–10 sub-tasks** mỗi story, không quá nhỏ lẻ
+- Due date: phân bổ theo ngày trong tuần sprint (Thứ 2 → Thứ 7)
+- **Tổng estimate ≥ 40h/tuần** (cộng tất cả stories trong sprint đó)
+
+### Lấy danh sách Sprint hiện tại
+```bash
+GET /rest/agile/1.0/board/139/sprint?state=active,future
+```
+
+### API pattern chuẩn
+```bash
+# Tạo issue
+curl -u "email:token" -H "Content-Type: application/json" \
+  -X POST "https://arena-platform.atlassian.net/rest/api/3/issue" \
+  -d '{"fields": {"project": {"key": "GE"}, "summary": "...", "issuetype": {"id": "10006"}, "assignee": {"accountId": "..."}}}'
+
+# Set estimate + due date
+curl -u "email:token" -H "Content-Type: application/json" \
+  -X PUT "https://arena-platform.atlassian.net/rest/api/3/issue/GE-XXX" \
+  -d '{"fields": {"timetracking": {"originalEstimate": "4h"}, "duedate": "2026-04-15"}}'
+
+# Search issues (API mới)
+curl -u "email:token" -H "Content-Type: application/json" \
+  -X POST "https://arena-platform.atlassian.net/rest/api/3/search/jql" \
+  -d '{"jql": "project=GE ORDER BY created DESC", "maxResults": 50}'
+```
