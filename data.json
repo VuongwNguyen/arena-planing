@@ -1580,33 +1580,27 @@
         {
           "day": "Thứ 2",
           "date": "13/04/2026",
+          "theme": "Duyệt scope + Thiết kế migration",
           "color": "purple",
-          "theme": "Chuẩn bị + Thiết kế migration",
-          "result": "Tổng (cả W3 Thứ 2): 7h — Team duyệt 2 US, xác định API và migration",
+          "result": "Team thống nhất scope 3 US, migration DB thiết kế xong, sẵn sàng code Thứ 3",
           "tasks": [
             {
-              "text": "Review US-AR-003: xác nhận whitelist YouTube domain (youtube.com, youtu.be) — 1h",
+              "text": "Duyệt US-AR-003 + US-AR-004: xác nhận flow nhập link thủ công, không cần API YouTube/Facebook",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Thống nhất vị trí nút: danh sách trận + trang chi tiết trận — 0.5h",
-              "tags": [
-                "Team"
-              ]
-            },
-            {
-              "text": "Thiết kế migration: ALTER TABLE matches ADD COLUMN youtube_stream_url VARCHAR(500) — 0.5h",
+              "text": "Thiết kế migration: ADD COLUMN youtube_stream_url + facebook_stream_url vào bảng matches",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Tạo API key YouTube Data API v3 trên GCP, test kết nối cơ bản — 1.5h",
+              "text": "Thống nhất UI: vị trí nút, icon YT/FB, layout 2 nút song song trên mobile",
               "tags": [
-                "Dev"
+                "Team"
               ]
             }
           ]
@@ -1614,32 +1608,33 @@
         {
           "day": "Thứ 3",
           "date": "14/04/2026",
+          "theme": "Backend cả 2 livestream US",
           "color": "teal",
-          "theme": "Backend API + Migration",
-          "result": "Tổng (cả W3 Thứ 3): 8h — API backend 2 US xong, có thể test Postman",
+          "result": "API PUT/GET /matches đã hỗ trợ cả youtube_stream_url và facebook_stream_url, test Postman OK",
           "tasks": [
             {
-              "text": "git pull → tạo nhánh feature/match-youtube-livestream — 0.5h",
+              "text": "Tạo nhánh feature/match-livestream-urls, chạy 2 migration cùng 1 lần",
               "tags": [
                 "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Chạy migration ADD COLUMN youtube_stream_url — 0.5h",
-              "tags": [
-                "Dev"
-              ]
-            },
-            {
-              "text": "Thêm youtube_stream_url vào API PUT /matches/:id (admin update) + validate domain — 1.5h",
+              "text": "API PUT /matches/:id: thêm 2 field, validate URL format (regex youtube.com|youtu.be và facebook.com|fb.watch)",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Thêm youtube_stream_url vào response GET /matches và GET /matches/:id — 1h",
+              "text": "API GET /matches và GET /matches/:id: trả về 2 field mới",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Viết unit test validate URL: link hợp lệ, link sai domain, link rỗng",
               "tags": [
                 "Dev",
                 "Claude"
@@ -1650,36 +1645,35 @@
         {
           "day": "Thứ 4",
           "date": "15/04/2026",
+          "theme": "Admin UI + Frontend hiển thị nút",
           "color": "blue",
-          "theme": "Frontend — Admin UI + Nút người dùng",
-          "result": "Tổng (cả W3 Thứ 4): 8h — Admin nhập link được, nút YouTube hiển thị đúng",
+          "result": "Admin nhập 2 link được, nút YT + FB hiển thị đúng trên app người dùng",
           "tasks": [
             {
-              "text": "Admin UI: thêm input field \"Link YouTube Live\" vào form quản lý trận đấu — 1.5h",
+              "text": "Admin UI: thêm 2 input field 'Link YouTube Live' + 'Link Facebook Live' vào form quản lý trận",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Frontend người dùng: hiển thị nút icon YouTube khi youtube_stream_url != null — 1.5h",
+              "text": "Frontend người dùng: hiển thị nút icon YT khi youtube_stream_url != null",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Logic mở link: target=\"_blank\", không redirect trang Arena — 0.5h",
+              "text": "Frontend người dùng: hiển thị nút icon FB khi facebook_stream_url != null, layout 2 nút flexbox responsive",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Commit và push cuối ngày — 0.5h",
+              "text": "Logic mở link: target=_blank, không redirect trang Arena; test click mobile",
               "tags": [
-                "Dev",
-                "Git"
+                "Dev"
               ]
             }
           ]
@@ -1687,32 +1681,25 @@
         {
           "day": "Thứ 5",
           "date": "16/04/2026",
+          "theme": "QA livestream + bàn giao sang US-AR-009",
           "color": "blue",
-          "theme": "QA toàn bộ testcase",
-          "result": "Tổng (cả W3 Thứ 5): 8h — TC_001→TC_011 xanh, test mobile OK",
+          "result": "TC_001→TC_010 (US-AR-003+004) xanh, bắt đầu kết nối API US-AR-009",
           "tasks": [
             {
-              "text": "Claude chạy TC_001 → TC_011 cho US-AR-003, xuất báo cáo — 2h",
+              "text": "Chạy test case US-AR-003 + US-AR-004: happy path, URL sai domain, xoá link, 2 nút độc lập",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Test mobile iOS + Android: click nút YouTube mở đúng app/tab — 1.5h",
+              "text": "Test mobile iOS + Android: click YT/FB mở đúng app",
               "tags": [
                 "Dev"
               ]
             },
             {
-              "text": "Test edge case: URL youtu.be rút gọn, URL không hợp lệ bị từ chối — 0.5h",
-              "tags": [
-                "Dev",
-                "Claude"
-              ]
-            },
-            {
-              "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết — 0.5h",
+              "text": "Kết nối FilterPanel US-AR-009 với API GET /tournaments?search=&province=&level=&fee=",
               "tags": [
                 "Dev",
                 "Claude"
@@ -1723,27 +1710,28 @@
         {
           "day": "Thứ 6",
           "date": "17/04/2026",
+          "theme": "QA US-AR-009 + Code review toàn W3",
           "color": "amber",
-          "theme": "Code review + Impact analysis",
-          "result": "Tổng (cả W3 Thứ 6): 6h — Review xong, không có lỗ hổng open redirect",
+          "result": "US-AR-009 empty state + filter xong, code review toàn bộ 3 US không có blocker",
           "tasks": [
             {
-              "text": "Claude phân tích impact: youtube_stream_url ảnh hưởng API lịch thi đấu, báo cáo giải đấu? — 1h",
+              "text": "Hoàn thiện US-AR-009: empty state, lưu trạng thái filter khi back",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Tech Lead review: validate URL, bảo mật open redirect, UX nút — 1.5h",
+              "text": "Chạy test case US-AR-009: TC_001→TC_011",
               "tags": [
-                "Team"
+                "Dev",
+                "Claude"
               ]
             },
             {
-              "text": "Sửa theo góp ý, chạy lại test — 0.5h",
+              "text": "Code review chéo cả 3 US: validate URL, AND logic filter, không có open redirect",
               "tags": [
-                "Dev"
+                "Team"
               ]
             }
           ]
@@ -1751,25 +1739,33 @@
         {
           "day": "Thứ 7",
           "date": "18/04/2026",
+          "theme": "Merge cả 3 US & Deploy beta",
           "color": "green",
-          "theme": "Merge & Deploy beta",
-          "result": "Tổng (cả W3 Thứ 7): 4h — Cả 2 US merge xong, deploy beta",
+          "result": "3 US merge vào develop, deploy beta, smoke test toàn bộ",
           "tasks": [
             {
-              "text": "Merge feature/match-youtube-livestream → develop — 0.5h",
+              "text": "Merge feature/match-livestream-urls → develop",
               "tags": [
                 "Dev",
                 "Git"
               ]
             },
             {
-              "text": "Chạy migration trên beta, smoke test: Admin nhập link → nút hiện → click OK — 1h",
+              "text": "Merge feature/US-AR-009-tournament-filter → develop",
               "tags": [
-                "Dev"
+                "Dev",
+                "Git"
               ]
             },
             {
-              "text": "Deploy và thông báo team — 0.5h",
+              "text": "Smoke test: Admin nhập 2 link → 2 nút hiện → click đúng; tìm/lọc giải đấu chạy OK",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            },
+            {
+              "text": "Deploy beta và thông báo team",
               "tags": [
                 "Team"
               ]
@@ -1972,27 +1968,21 @@
         {
           "day": "Thứ 2",
           "date": "13/04/2026",
+          "theme": "Duyệt scope + Thiết kế migration",
           "color": "purple",
-          "theme": "Chuẩn bị + Thiết kế",
-          "result": "Tổng (cả W4 Thứ 2): 7h — Thống nhất layout 2 nút, thiết kế migration",
+          "result": "Gộp chung với US-AR-003 — 2 US livestream phát triển song song trong cùng nhánh",
           "tasks": [
             {
-              "text": "Review US-AR-004: thống nhất layout 2 nút YT + FB, thứ tự hiển thị — 1h",
+              "text": "Duyệt US-AR-004 cùng US-AR-003: thống nhất whitelist domain facebook.com + fb.watch",
               "tags": [
                 "Team"
               ]
             },
             {
-              "text": "Thiết kế migration: ALTER TABLE matches ADD COLUMN facebook_stream_url VARCHAR(500) — 0.5h",
+              "text": "Xác nhận migration schema: facebook_stream_url VARCHAR(500) cùng lần migrate với youtube_stream_url",
               "tags": [
                 "Dev",
                 "Claude"
-              ]
-            },
-            {
-              "text": "Xác nhận domain whitelist: facebook.com và fb.watch — 0.5h",
-              "tags": [
-                "Team"
               ]
             }
           ]
@@ -2000,32 +1990,19 @@
         {
           "day": "Thứ 3",
           "date": "14/04/2026",
+          "theme": "Backend (gộp với US-AR-003)",
           "color": "teal",
-          "theme": "Backend API + Migration",
-          "result": "Tổng (cả W4 Thứ 3): 8h — API backend 2 US xong",
+          "result": "API hỗ trợ cả 2 URL trong cùng request PUT /matches/:id",
           "tasks": [
             {
-              "text": "git pull từ feature/match-youtube-livestream (nếu đã merge) hoặc tạo nhánh feature/match-facebook-livestream — 0.5h",
-              "tags": [
-                "Dev",
-                "Git"
-              ]
-            },
-            {
-              "text": "Chạy migration ADD COLUMN facebook_stream_url — 0.5h",
-              "tags": [
-                "Dev"
-              ]
-            },
-            {
-              "text": "Thêm facebook_stream_url vào API PUT /matches/:id, validate domain facebook.com | fb.watch — 1.5h",
+              "text": "Thêm facebook_stream_url vào API PUT /matches/:id, validate domain facebook.com | fb.watch",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Thêm facebook_stream_url vào response GET /matches và GET /matches/:id — 1h",
+              "text": "Thêm facebook_stream_url vào response GET /matches và GET /matches/:id",
               "tags": [
                 "Dev",
                 "Claude"
@@ -2036,36 +2013,28 @@
         {
           "day": "Thứ 4",
           "date": "15/04/2026",
+          "theme": "Frontend (gộp với US-AR-003)",
           "color": "blue",
-          "theme": "Frontend — Nút FB + Layout 2 nút",
-          "result": "Tổng (cả W4 Thứ 4): 8h — 2 nút hiển thị song song, responsive mobile",
+          "result": "Nút Facebook Live hiển thị đúng, layout 2 nút responsive",
           "tasks": [
             {
-              "text": "Admin UI: thêm input field \"Link Facebook Live\" vào form quản lý trận — 1h",
+              "text": "Admin UI: input 'Link Facebook Live' + validation client-side",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Frontend: hiển thị nút icon Facebook khi facebook_stream_url != null — 1h",
+              "text": "Frontend: nút FB xuất hiện độc lập khi facebook_stream_url != null, biến mất khi null",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Layout 2 nút YT + FB song song: flexbox responsive, không chồng lên nhau — 1h",
+              "text": "Test xoá link FB → nút FB ẩn, nút YT vẫn còn (2 nút hoàn toàn độc lập)",
               "tags": [
-                "Dev",
-                "Claude"
-              ]
-            },
-            {
-              "text": "Commit và push — 0.5h",
-              "tags": [
-                "Dev",
-                "Git"
+                "Dev"
               ]
             }
           ]
@@ -2073,35 +2042,21 @@
         {
           "day": "Thứ 5",
           "date": "16/04/2026",
+          "theme": "QA cùng US-AR-003",
           "color": "blue",
-          "theme": "QA toàn bộ testcase",
-          "result": "Tổng (cả W4 Thứ 5): 8h — TC_001→TC_011 xanh, 2 nút hoàn toàn độc lập",
+          "result": "2 nút hoàn toàn độc lập, test mobile pass",
           "tasks": [
             {
-              "text": "Claude chạy TC_001 → TC_011, đặc biệt TC_004 (2 nút hiển thị đồng thời) — 2h",
+              "text": "Test đồng thời 2 nút: cả 2 link có / chỉ 1 / không có link nào",
               "tags": [
                 "Dev",
                 "Claude"
               ]
             },
             {
-              "text": "Test mobile iOS + Android: click FB nút mở đúng app Facebook — 1h",
+              "text": "Test mobile: click FB mở đúng app Facebook, không redirect trang Arena",
               "tags": [
                 "Dev"
-              ]
-            },
-            {
-              "text": "Test xoá link FB → nút FB biến mất, nút YT vẫn còn (2 nút độc lập) — 0.5h",
-              "tags": [
-                "Dev",
-                "Claude"
-              ]
-            },
-            {
-              "text": "Sửa lỗi phát sinh — 0.5h",
-              "tags": [
-                "Dev",
-                "Claude"
               ]
             }
           ]
@@ -2109,20 +2064,14 @@
         {
           "day": "Thứ 6",
           "date": "17/04/2026",
+          "theme": "Code review chéo",
           "color": "amber",
-          "theme": "Code review",
-          "result": "Tổng (cả W4 Thứ 6): 6h — Review xong, không conflict với US-AR-003",
+          "result": "Không có conflict giữa US-AR-003 và US-AR-004",
           "tasks": [
             {
-              "text": "Tech Lead review: validate domain, layout 2 nút, không conflict với US-AR-003 (YT) — 1.5h",
+              "text": "Review: validate domain, 2 nút layout, không open redirect, không conflict code với US-AR-003",
               "tags": [
                 "Team"
-              ]
-            },
-            {
-              "text": "Sửa theo góp ý — 0.5h",
-              "tags": [
-                "Dev"
               ]
             }
           ]
@@ -2130,27 +2079,14 @@
         {
           "day": "Thứ 7",
           "date": "18/04/2026",
+          "theme": "Merge cùng US-AR-003",
           "color": "green",
-          "theme": "Merge & Deploy beta",
-          "result": "Tổng (cả W4 Thứ 7): 3h — Cả 2 US merge xong, deploy beta",
+          "result": "Feature/match-livestream-urls gộp cả 2 US, merge 1 lần duy nhất",
           "tasks": [
             {
-              "text": "Merge feature/match-facebook-livestream → develop — 0.5h",
-              "tags": [
-                "Dev",
-                "Git"
-              ]
-            },
-            {
-              "text": "Smoke test: Admin nhập cả 2 link YT + FB → 2 nút hiển thị → click từng nút đúng — 0.5h",
+              "text": "Smoke test: Admin nhập FB link → nút FB hiện → click mở FB đúng",
               "tags": [
                 "Dev"
-              ]
-            },
-            {
-              "text": "Deploy và thông báo team — 0.5h",
-              "tags": [
-                "Team"
               ]
             }
           ]
