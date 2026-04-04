@@ -1479,5 +1479,260 @@
         "loai": "Happy Path"
       }
     ]
+  },
+  {
+    "id": "US-AR-005",
+    "project": "Arena Billiard",
+    "title": "Căn Chỉnh Giao Diện Danh Sách Cơ Thủ Trong Giải Đấu",
+    "module": "Giải đấu & Cơ thủ",
+    "author": "Product Team",
+    "date": "04/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Màn hình 'Danh sách cơ thủ' trong tab tham gia giải đấu hiển thị các cột: STT, Cờ, Avatar, Tên cơ thủ, Hạng, Profile. Hiện tại khi tên cơ thủ dài hoặc có hậu tố (VD: 'Duy Tân - Boss C+') các cột bị lệch nhau, gây khó đọc và trông thiếu chuyên nghiệp. Cần căn chỉnh layout cố định để bảng luôn đồng đều bất kể độ dài nội dung.",
+
+    "userStory": {
+      "as": "Cơ thủ sử dụng Arena App xem danh sách người tham gia giải đấu",
+      "iWant": "Danh sách cơ thủ hiển thị theo cột thẳng hàng, đồng đều dù tên dài hay ngắn",
+      "soThat": "Dễ theo dõi và so sánh thông tin các cơ thủ cùng giải một cách minh bạch"
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Các cột luôn thẳng hàng bất kể độ dài tên",
+        "given": "Danh sách có cơ thủ với tên ngắn (VD: 'Danny') và tên dài (VD: 'Duy Tân - Boss C+')",
+        "when": "Người dùng xem màn hình Danh sách cơ thủ",
+        "then": "Cột STT, Cờ, Avatar, Tên, Hạng, Profile thẳng hàng theo chiều dọc. Không có cột nào bị đẩy lệch"
+      },
+      {
+        "id": "AC-02",
+        "title": "Tên cơ thủ dài bị cắt gọn (truncate) thay vì đẩy cột khác",
+        "given": "Tên cơ thủ quá dài vượt độ rộng cột",
+        "when": "Hiển thị trong bảng",
+        "then": "Tên bị cắt với dấu '...' ở cuối. Các cột Hạng và Profile không bị đẩy sang phải"
+      },
+      {
+        "id": "AC-03",
+        "title": "Độ rộng cột cố định, không co giãn theo nội dung",
+        "given": "Bảng danh sách đang hiển thị",
+        "when": "Nội dung các ô thay đổi (tên dài/ngắn, có/không có avatar)",
+        "then": "Độ rộng mỗi cột giữ nguyên: STT (nhỏ cố định), Cờ (nhỏ), Avatar (vuông cố định), Tên (chiếm phần lớn), Hạng (nhỏ cố định), Profile (nhỏ cố định)"
+      },
+      {
+        "id": "AC-04",
+        "title": "Hiển thị đúng trên các kích thước màn hình phổ biến",
+        "given": "Người dùng dùng điện thoại màn hình nhỏ (320px) hoặc lớn (428px+)",
+        "when": "Xem danh sách cơ thủ",
+        "then": "Bảng không bị tràn ngang, không cần scroll ngang. Tỷ lệ cột hợp lý trên cả 2 kích thước"
+      },
+      {
+        "id": "AC-05",
+        "title": "Avatar thiếu không làm lệch hàng",
+        "given": "Một số cơ thủ chưa có ảnh đại diện",
+        "when": "Hiển thị hàng không có avatar",
+        "then": "Placeholder avatar (icon mặc định hoặc chữ cái đầu) giữ đúng kích thước ô, không làm lệch các cột khác"
+      },
+      {
+        "id": "AC-06",
+        "title": "Thanh tìm kiếm lọc tên hoạt động đúng sau khi fix layout",
+        "given": "Người dùng gõ tên vào ô 'Nhập tên cơ thủ...'",
+        "when": "Danh sách lọc theo kết quả tìm kiếm",
+        "then": "Layout vẫn thẳng hàng với kết quả lọc. Không bị lệch sau khi filter"
+      }
+    ],
+
+    "flow": "[CƠ THỦ]\n    |\n    ▼\nMở giải đấu → Tab 'Danh sách cơ thủ'\n    |\n    ▼\nHệ thống render bảng với layout cố định:\n  | STT | Cờ | Avatar | Tên cơ thủ        | Hạng | Profile |\n  |  1  | 🇻🇳 |  [img] | Danny             |  E   |   [→]   |\n  |  2  | 🇻🇳 |  [img] | Duy Tân - Boss C+ |  G   |   [→]   |\n    |\n    ▼\nTên dài → truncate '...', cột Hạng và Profile không lệch\n    |\n    ▼\n(Tuỳ chọn) Gõ tìm kiếm → lọc danh sách, layout giữ nguyên",
+
+    "edgeCases": [
+      { "case": "Tên cơ thủ cực dài (>50 ký tự)", "handle": "Truncate với '...' tại giới hạn cột. Tooltip hiện tên đầy đủ khi tap/hover nếu UX cho phép" },
+      { "case": "Cơ thủ không có cờ quốc gia", "handle": "Ô cờ hiển thị placeholder trống hoặc icon mặc định, giữ kích thước cố định" },
+      { "case": "Danh sách rất dài (96+ cơ thủ như trong ảnh)", "handle": "Virtual scroll hoặc pagination để không render toàn bộ DOM — tránh lag trên mobile cấu hình thấp" },
+      { "case": "Màn hình xoay ngang (landscape)", "handle": "Bảng vẫn căn đều, không bị vỡ layout. Cột Tên có thêm không gian hiển thị" }
+    ],
+
+    "notes": [
+      "Đây là bug UI/UX fix, không thay đổi dữ liệu hay API — chỉ sửa CSS/layout component",
+      "Ưu tiên dùng CSS table-layout: fixed hoặc flexbox với flex-shrink: 0 cho các cột cố định",
+      "Tên cơ thủ: overflow: hidden + text-overflow: ellipsis + white-space: nowrap",
+      "Cần test trên ít nhất: iPhone SE (375px), iPhone 14 (390px), Android phổ thông (360px)",
+      "Không cần DB migration — pure frontend fix"
+    ],
+
+    "sprintPlan": {
+      "startDate": "13/04/2026",
+      "endDate": "18/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "13/04/2026",
+          "theme": "Chuẩn bị & Thống nhất",
+          "color": "purple",
+          "result": "Xác định rõ component cần sửa, thống nhất tỷ lệ cột, có mockup layout mới.",
+          "tasks": [
+            { "text": "Tạo US-AR-005, review AC với team", "tags": ["Dev", "Claude"] },
+            { "text": "Xác định component/file chứa danh sách cơ thủ trong codebase", "tags": ["Dev"] },
+            { "text": "Thống nhất tỷ lệ cột: STT 8%, Cờ 8%, Avatar 10%, Tên 50%, Hạng 12%, Profile 12%", "tags": ["Team"] },
+            { "text": "Chụp screenshot hiện trạng bị lệch để so sánh trước/sau", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "14/04/2026",
+          "theme": "Fix layout",
+          "color": "teal",
+          "result": "Layout thẳng hàng trên simulator. Truncate tên hoạt động.",
+          "tasks": [
+            { "text": "git pull origin develop → tạo nhánh fix/player-list-alignment", "tags": ["Git"] },
+            { "text": "Áp dụng CSS table-layout: fixed hoặc flexbox cố định cho bảng danh sách", "tags": ["Dev", "Claude"] },
+            { "text": "Thêm overflow: hidden + text-overflow: ellipsis cho cột Tên cơ thủ", "tags": ["Dev", "Claude"] },
+            { "text": "Fix avatar placeholder: kích thước cố định khi không có ảnh", "tags": ["Dev", "Claude"] },
+            { "text": "Commit và push cuối ngày", "tags": ["Git"] }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "15/04/2026",
+          "theme": "Test đa thiết bị",
+          "color": "blue",
+          "result": "Layout đúng trên tất cả màn hình test. Tìm kiếm không bị lệch.",
+          "tasks": [
+            { "text": "Test trên iPhone SE 375px, iPhone 14 390px, Android 360px", "tags": ["Dev"] },
+            { "text": "Test landscape mode — bảng không bị vỡ", "tags": ["Dev"] },
+            { "text": "Test filter tìm kiếm — layout giữ nguyên khi lọc danh sách", "tags": ["Dev", "Claude"] },
+            { "text": "Test danh sách 96+ cơ thủ — kiểm tra performance scroll", "tags": ["Dev"] },
+            { "text": "So sánh screenshot trước/sau — chụp để demo", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "16/04/2026",
+          "theme": "QA toàn bộ AC",
+          "color": "blue",
+          "result": "Toàn bộ AC-01 đến AC-06 pass.",
+          "tasks": [
+            { "text": "Claude chạy toàn bộ test case TC_001 → TC_010, xuất báo cáo", "tags": ["Dev", "Claude"] },
+            { "text": "Sửa lỗi phát sinh, chạy lại đến khi xanh hết", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "17/04/2026",
+          "theme": "Code review",
+          "color": "amber",
+          "result": "Code review sạch. Không có regression trên các màn hình khác.",
+          "tasks": [
+            { "text": "Tech Lead review CSS changes — đảm bảo không break layout màn hình khác", "tags": ["Team"] },
+            { "text": "Kiểm tra regression: các tab Thông tin, Lịch thi đấu không bị ảnh hưởng", "tags": ["Dev", "Claude"] },
+            { "text": "Sửa theo góp ý", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "18/04/2026",
+          "theme": "Merge & Release Beta",
+          "color": "green",
+          "result": "Layout danh sách cơ thủ thẳng hàng trên beta.",
+          "tasks": [
+            { "text": "Merge fix/player-list-alignment vào develop", "tags": ["Git"] },
+            { "text": "Test smoke trên thiết bị thật với giải đấu có 50+ cơ thủ", "tags": ["Dev"] },
+            { "text": "Deploy và thông báo team", "tags": ["Team"] }
+          ]
+        }
+      ]
+    },
+
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Tên ngắn — các cột thẳng hàng",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải đấu có cơ thủ tên ngắn (VD: 'Danny')\n- Đang ở tab Danh sách cơ thủ",
+        "buoc_thuc_hien": "1. Mở giải đấu → tab Danh sách cơ thủ\n2. Quan sát hàng có tên ngắn",
+        "ket_qua_mong_doi": "- STT, Cờ, Avatar, Tên, Hạng, Profile thẳng hàng theo chiều dọc\n- Không có cột nào lệch",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Tên dài — bị truncate, cột Hạng và Profile không lệch",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có cơ thủ tên dài VD: 'Duy Tân - Boss C+'\n- Đang xem danh sách",
+        "buoc_thuc_hien": "1. Tìm hàng cơ thủ có tên dài\n2. Quan sát cột Tên, Hạng, Profile",
+        "ket_qua_mong_doi": "- Tên bị cắt với '...' trong giới hạn cột\n- Cột Hạng và Profile không bị đẩy sang phải\n- Hàng cao bằng các hàng khác",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Danh sách hỗn hợp tên ngắn và dài — toàn bộ bảng thẳng hàng",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Danh sách có cả tên ngắn và tên dài xen kẽ",
+        "buoc_thuc_hien": "1. Scroll qua toàn bộ danh sách\n2. Quan sát sự thẳng hàng của các cột",
+        "ket_qua_mong_doi": "- Tất cả hàng đều thẳng hàng theo từng cột\n- Không có hàng nào bị lệch so với hàng khác",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Tìm kiếm lọc tên — layout vẫn thẳng sau khi filter",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang xem danh sách đầy đủ",
+        "buoc_thuc_hien": "1. Gõ 'Minh' vào ô tìm kiếm\n2. Quan sát danh sách lọc",
+        "ket_qua_mong_doi": "- Kết quả lọc hiển thị đúng\n- Layout bảng vẫn thẳng hàng sau khi filter\n- Xoá từ khoá → danh sách đầy đủ, layout vẫn đúng",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Cơ thủ không có avatar — placeholder giữ đúng kích thước",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có ít nhất 1 cơ thủ chưa đặt ảnh đại diện",
+        "buoc_thuc_hien": "1. Tìm hàng cơ thủ không có avatar\n2. Quan sát ô Avatar và các cột xung quanh",
+        "ket_qua_mong_doi": "- Ô Avatar hiển thị placeholder (icon hoặc chữ cái đầu)\n- Kích thước ô giữ nguyên, không co lại\n- Các cột Tên, Hạng không bị dịch chuyển",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "Màn hình nhỏ 360px — không scroll ngang",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Thiết bị Android màn hình 360px width",
+        "buoc_thuc_hien": "1. Mở danh sách cơ thủ trên thiết bị 360px\n2. Thử scroll ngang",
+        "ket_qua_mong_doi": "- Bảng vừa khít màn hình, không cần scroll ngang\n- Tất cả cột vẫn hiển thị (có thể thu nhỏ)\n- Tên dài vẫn truncate đúng",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_007",
+        "ten_testcase": "Danh sách 96+ cơ thủ — scroll mượt, không lag",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giải đấu có 96 cơ thủ (như trong ảnh)",
+        "buoc_thuc_hien": "1. Mở danh sách 96 cơ thủ\n2. Scroll từ đầu xuống cuối liên tục\n3. Quan sát độ mượt",
+        "ket_qua_mong_doi": "- Scroll không bị giật lag\n- Layout vẫn thẳng ở mọi vị trí scroll\n- FPS không giảm đột ngột",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_008",
+        "ten_testcase": "Xoay màn hình landscape — layout không vỡ",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang xem danh sách ở portrait",
+        "buoc_thuc_hien": "1. Xoay điện thoại sang landscape\n2. Quan sát bảng danh sách",
+        "ket_qua_mong_doi": "- Bảng không bị vỡ layout\n- Các cột vẫn thẳng hàng\n- Cột Tên có thêm không gian hiển thị nhiều hơn",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_009",
+        "ten_testcase": "Regression: Tab Thông tin và Lịch thi đấu không bị ảnh hưởng",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã áp dụng fix layout cho tab Danh sách cơ thủ",
+        "buoc_thuc_hien": "1. Chuyển sang tab Thông tin\n2. Chuyển sang tab Lịch thi đấu\n3. Quan sát layout 2 tab này",
+        "ket_qua_mong_doi": "- Tab Thông tin hiển thị bình thường, không bị ảnh hưởng\n- Tab Lịch thi đấu hiển thị bình thường\n- Không có regression từ thay đổi CSS",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_010",
+        "ten_testcase": "End-to-end: Xem danh sách giải đấu thật với 50+ cơ thủ trên thiết bị thật",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Môi trường beta\n- Giải đấu thật có 50+ cơ thủ, hỗn hợp tên dài/ngắn, có/không có avatar\n- Thiết bị thật: 1 iPhone + 1 Android",
+        "buoc_thuc_hien": "1. Mở Arena App trên thiết bị thật\n2. Vào giải đấu → tab Danh sách cơ thủ\n3. Scroll toàn bộ danh sách\n4. Tìm kiếm theo tên\n5. Xoay màn hình\n6. Chuyển qua lại các tab",
+        "ket_qua_mong_doi": "- Bảng thẳng hàng trên cả iPhone và Android\n- Không scroll ngang\n- Tìm kiếm hoạt động, layout không lệch\n- Landscape không vỡ\n- Tab khác không bị ảnh hưởng\n- Không có bug xuất hiện trong suốt flow",
+        "loai": "Happy Path"
+      }
+    ]
   }
 ]
