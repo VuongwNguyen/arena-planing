@@ -206,7 +206,7 @@ Mỗi US **phải có** field `testcases[]` với đầy đủ các nhóm:
 5. **Đưa vào Sprint** nếu user yêu cầu: `POST /rest/agile/1.0/sprint/{sprintId}/issue`
 6. **Tạo Sub-tasks** (issuetype 10009) với `parent.key = GE-XXX`
 7. **Set estimate** (giờ tròn: 2h, 3h, 4h, 6h, 8h) + **due date** theo ngày trong sprint
-8. **Set estimate cho parent story** = tổng giờ các sub-tasks
+8. **KHÔNG set estimate cho parent story** — chỉ sub-tasks mới cần estimate
 
 ### Quy tắc Sub-task (theo mẫu GE-294)
 - Summary: **ngắn gọn, không ghi giờ trong tên** (giờ lưu trong Original Estimate)
