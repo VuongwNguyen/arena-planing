@@ -3765,5 +3765,386 @@
         "loai": "Happy Path"
       }
     ]
+  },
+  {
+    "id": "US-AR-009",
+    "jiraId": "",
+    "project": "Arena Billiard",
+    "title": "Tìm & Lọc Giải Đấu Theo Nhiều Tiêu Chí",
+    "module": "Giải đấu",
+    "author": "Product Team",
+    "date": "04/04/2026",
+    "status": "Chờ phát triển",
+    "context": "Hiện tại người dùng chỉ có thể cuộn danh sách giải đấu mà không có bộ lọc nào. Khi số lượng giải đấu tăng lên (vị trí, cấp độ, thời gian, phí tham dự...), người dùng mất nhiều thời gian tìm giải phù hợp. Cần xây dựng chức năng tìm kiếm & lọc đa tiêu chí để người dùng nhanh chóng tìm được giải đấu phù hợp với nhu cầu.",
+    "userStory": {
+      "as": "Cơ thủ muốn tham gia giải đấu",
+      "iWant": "Tìm kiếm và lọc giải đấu theo nhiều tiêu chí (địa điểm, thời gian, cấp độ, phí, giải thưởng)",
+      "soThat": "Nhanh chóng tìm được giải đấu phù hợp mà không cần cuộn qua toàn bộ danh sách"
+    },
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Thanh tìm kiếm theo tên giải đấu",
+        "given": "Người dùng ở màn hình danh sách giải đấu",
+        "when": "Người dùng nhập từ khoá vào thanh tìm kiếm",
+        "then": "Danh sách lọc realtime, chỉ hiển thị giải đấu có tên chứa từ khoá (không phân biệt hoa/thường, có dấu/không dấu)"
+      },
+      {
+        "id": "AC-02",
+        "title": "Lọc theo tỉnh/thành phố",
+        "given": "Người dùng mở bộ lọc",
+        "when": "Người dùng chọn 1 hoặc nhiều tỉnh/thành",
+        "then": "Chỉ hiển thị giải đấu diễn ra tại tỉnh/thành đã chọn"
+      },
+      {
+        "id": "AC-03",
+        "title": "Lọc theo khoảng thời gian",
+        "given": "Người dùng mở bộ lọc ngày",
+        "when": "Người dùng chọn ngày bắt đầu và/hoặc ngày kết thúc",
+        "then": "Chỉ hiển thị giải đấu có thời gian tổ chức nằm trong khoảng đã chọn"
+      },
+      {
+        "id": "AC-04",
+        "title": "Lọc theo cấp độ / hạng mục",
+        "given": "Người dùng mở bộ lọc cấp độ",
+        "when": "Người dùng chọn cấp độ (Mở rộng, Chuyên nghiệp, Nghiệp dư, v.v.)",
+        "then": "Chỉ hiển thị giải đấu thuộc cấp độ đã chọn"
+      },
+      {
+        "id": "AC-05",
+        "title": "Lọc theo phí tham dự",
+        "given": "Người dùng mở bộ lọc phí",
+        "when": "Người dùng chọn 'Miễn phí' hoặc khoảng phí cụ thể",
+        "then": "Chỉ hiển thị giải đấu có mức phí tương ứng"
+      },
+      {
+        "id": "AC-06",
+        "title": "Lọc theo giải thưởng tối thiểu",
+        "given": "Người dùng mở bộ lọc giải thưởng",
+        "when": "Người dùng nhập hoặc chọn mức giải thưởng tối thiểu",
+        "then": "Chỉ hiển thị giải đấu có tổng giải thưởng >= mức đã chọn"
+      },
+      {
+        "id": "AC-07",
+        "title": "Kết hợp nhiều bộ lọc cùng lúc (AND logic)",
+        "given": "Người dùng đã chọn nhiều tiêu chí lọc",
+        "when": "Áp dụng bộ lọc",
+        "then": "Kết quả là giao của tất cả điều kiện (AND logic); hiển thị số lượng kết quả tìm được"
+      },
+      {
+        "id": "AC-08",
+        "title": "Màn hình trống khi không có kết quả",
+        "given": "Bộ lọc không có giải đấu nào khớp",
+        "when": "Hiển thị kết quả",
+        "then": "Hiển thị thông báo 'Không tìm thấy giải đấu phù hợp' kèm nút 'Xoá bộ lọc'"
+      }
+    ],
+    "flow": "[Người dùng]\n    |\n    ▼\nMàn hình Home / Tab Giải Đấu\n    |\n    ▼\nNhập từ khoá vào thanh tìm kiếm (tuỳ chọn)\n    |\n    ▼\nMở panel Bộ Lọc → chọn: tỉnh/thành, ngày, cấp độ, phí, giải thưởng\n    |\n    ▼\nNhấn 'Áp dụng'\n    |\n    ▼\nDanh sách giải đấu cập nhật theo điều kiện lọc\n    |              \\\n    ▼               ▼\nChọn giải đấu   Không có kết quả → hiển thị empty state\n    |\n    ▼\nChuyển sang US-AR-008 (Trang chi tiết giải đấu)",
+    "edgeCases": [
+      {
+        "case": "Từ khoá tìm kiếm có dấu/không dấu khác nhau (vd: 'bida' vs 'bída')",
+        "handle": "Normalize cả input lẫn dữ liệu về không dấu trước khi so sánh"
+      },
+      {
+        "case": "Khoảng ngày lọc bao phủ một phần thời gian giải đấu",
+        "handle": "Hiển thị giải đấu nếu ngày diễn ra có giao với khoảng lọc"
+      },
+      {
+        "case": "Người dùng xoá toàn bộ bộ lọc",
+        "handle": "Hiển thị lại toàn bộ danh sách giải đấu như ban đầu"
+      },
+      {
+        "case": "Giải đấu không có thông tin phí hoặc giải thưởng",
+        "handle": "Ẩn khỏi kết quả khi người dùng đang lọc theo tiêu chí đó"
+      },
+      {
+        "case": "Mạng chậm, kết quả tải lâu",
+        "handle": "Hiển thị skeleton loading, không block UI"
+      }
+    ],
+    "notes": [
+      "Tìm kiếm realtime nên debounce 300ms để tránh quá nhiều request",
+      "Lưu trạng thái bộ lọc khi người dùng quay lại màn hình (không reset khi back)",
+      "Số lượng kết quả nên hiển thị ngay trên nút Áp dụng trước khi người dùng nhấn",
+      "Cần đồng bộ với backend API — thêm query params: ?search=&province=&from=&to=&level=&fee=&prize=",
+      "Bộ lọc 'Gần tôi' (dùng GPS) là tính năng nâng cao, có thể làm phase 2"
+    ],
+    "sprintPlan": {
+      "startDate": "27/04/2026",
+      "endDate": "03/05/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "27/04/2026",
+          "theme": "Chuẩn bị & Thống nhất",
+          "color": "purple",
+          "result": "US-AR-009 được duyệt, AC rõ ràng, team thống nhất scope",
+          "tasks": [
+            {
+              "text": "Đọc US-AR-009, duyệt AC và flow với team",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Thiết kế UI/UX màn hình tìm kiếm + bộ lọc",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Xác nhận query params API với backend (search, province, from, to, level, fee, prize)",
+              "tags": [
+                "Team"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "28/04/2026",
+          "theme": "Phân rã & Chuẩn bị",
+          "color": "teal",
+          "result": "Nhánh feature tạo xong, API endpoint xác nhận, tasks được phân công",
+          "tasks": [
+            {
+              "text": "Tạo nhánh feature/US-AR-009-tournament-filter",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            },
+            {
+              "text": "Backend: thêm query params vào API GET /tournaments",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Frontend: tạo skeleton component FilterPanel + SearchBar",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "29/04/2026",
+          "theme": "Code core logic",
+          "color": "blue",
+          "result": "SearchBar + FilterPanel hoạt động, gọi API được",
+          "tasks": [
+            {
+              "text": "Implement SearchBar với debounce 300ms",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement FilterPanel: tỉnh/thành, ngày, cấp độ, phí, giải thưởng",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Kết nối FilterPanel với API, xử lý AND logic",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "30/04/2026",
+          "theme": "Hoàn thiện & QA",
+          "color": "blue",
+          "result": "Empty state, lưu trạng thái bộ lọc, toàn bộ test case pass",
+          "tasks": [
+            {
+              "text": "Implement empty state + nút Xoá bộ lọc",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Lưu trạng thái bộ lọc khi back (navigation state)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Chạy toàn bộ test case TC_001 ~ TC_011",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "02/05/2026",
+          "theme": "Review & Impact Analysis",
+          "color": "amber",
+          "result": "Code review hoàn tất, không có regression trên màn hình danh sách giải đấu",
+          "tasks": [
+            {
+              "text": "Impact analysis: kiểm tra màn hình danh sách giải đấu hiện tại",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Code review chéo FilterPanel + SearchBar",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Sửa feedback từ review",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "03/05/2026",
+          "theme": "Merge & Deploy Beta",
+          "color": "green",
+          "result": "Tính năng tìm & lọc giải đấu live trên môi trường beta",
+          "tasks": [
+            {
+              "text": "Pull latest develop, resolve conflict (nếu có)",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            },
+            {
+              "text": "Merge feature/US-AR-009 vào develop",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            },
+            {
+              "text": "Deploy beta, smoke test trên thiết bị thật",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Tìm kiếm giải đấu theo tên đúng",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã đăng nhập\n- Có ít nhất 3 giải đấu trong hệ thống",
+        "buoc_thuc_hien": "1. Mở màn hình Giải đấu\n2. Nhập từ khoá đúng tên giải đấu vào thanh tìm kiếm\n3. Đợi debounce 300ms",
+        "ket_qua_mong_doi": "- Danh sách lọc chỉ hiển thị giải đấu có tên chứa từ khoá\n- Kết quả xuất hiện sau ~300ms",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Tìm kiếm không phân biệt dấu",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có giải đấu tên chứa từ 'Bida'",
+        "buoc_thuc_hien": "1. Mở màn hình Giải đấu\n2. Nhập 'bida' (không dấu) vào thanh tìm kiếm",
+        "ket_qua_mong_doi": "- Hiển thị giải đấu có chứa 'Bida' hoặc 'bida'\n- Không bỏ sót kết quả do khác dấu/hoa/thường",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Lọc giải đấu theo tỉnh/thành",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có giải đấu ở nhiều tỉnh thành khác nhau",
+        "buoc_thuc_hien": "1. Mở bộ lọc\n2. Chọn tỉnh/thành 'TP. Hồ Chí Minh'\n3. Nhấn Áp dụng",
+        "ket_qua_mong_doi": "- Chỉ hiển thị giải đấu tại TP. HCM\n- Số lượng kết quả hiển thị đúng",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Lọc kết hợp nhiều tiêu chí",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có đủ dữ liệu giải đấu đa dạng",
+        "buoc_thuc_hien": "1. Chọn tỉnh 'Hà Nội'\n2. Chọn cấp độ 'Chuyên nghiệp'\n3. Nhấn Áp dụng",
+        "ket_qua_mong_doi": "- Chỉ hiển thị giải chuyên nghiệp tại Hà Nội (AND logic)\n- Không hiển thị giải ở tỉnh khác hoặc cấp độ khác",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Lọc theo phí miễn phí",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có cả giải miễn phí và có phí",
+        "buoc_thuc_hien": "1. Mở bộ lọc phí\n2. Chọn 'Miễn phí'\n3. Nhấn Áp dụng",
+        "ket_qua_mong_doi": "- Chỉ hiển thị giải đấu không có phí tham dự\n- Giải có phí bị ẩn",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "Xoá bộ lọc để quay lại toàn bộ danh sách",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang áp dụng bộ lọc",
+        "buoc_thuc_hien": "1. Nhấn nút 'Xoá bộ lọc'\n2. Hoặc xoá từ khoá tìm kiếm",
+        "ket_qua_mong_doi": "- Hiển thị lại toàn bộ danh sách giải đấu\n- Không có bộ lọc nào được áp dụng",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_007",
+        "ten_testcase": "Không có giải đấu khớp bộ lọc",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Bộ lọc được đặt sao cho không có giải nào khớp",
+        "buoc_thuc_hien": "1. Chọn tỉnh không có giải đấu nào\n2. Nhấn Áp dụng",
+        "ket_qua_mong_doi": "- Hiển thị thông báo 'Không tìm thấy giải đấu phù hợp'\n- Có nút 'Xoá bộ lọc'",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_008",
+        "ten_testcase": "Giải đấu thiếu thông tin phí khi lọc phí",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có giải đấu không có field phí trong dữ liệu",
+        "buoc_thuc_hien": "1. Lọc theo khoảng phí cụ thể\n2. Nhấn Áp dụng",
+        "ket_qua_mong_doi": "- Giải đấu thiếu thông tin phí bị ẩn khỏi kết quả\n- Không crash app",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_009",
+        "ten_testcase": "Mạng chậm khi tải kết quả lọc",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Giả lập mạng 3G chậm (throttle)",
+        "buoc_thuc_hien": "1. Áp dụng bộ lọc với mạng chậm\n2. Quan sát UI trong lúc chờ",
+        "ket_qua_mong_doi": "- Hiển thị skeleton loading\n- UI không bị đơ/blank\n- Kết quả hiển thị khi data về",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_010",
+        "ten_testcase": "Mất kết nối mạng khi tìm kiếm",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang dùng app, tắt mạng",
+        "buoc_thuc_hien": "1. Nhập từ khoá tìm kiếm\n2. Tắt WiFi/dữ liệu di động",
+        "ket_qua_mong_doi": "- Hiển thị thông báo lỗi mạng\n- Không crash app\n- Có nút thử lại",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_011",
+        "ten_testcase": "E2E: Tìm & lọc → vào chi tiết giải đấu",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Đã đăng nhập\n- Có giải đấu tại TP. HCM, cấp độ Mở rộng, miễn phí",
+        "buoc_thuc_hien": "1. Mở màn hình Giải đấu\n2. Nhập từ khoá\n3. Chọn tỉnh TP. HCM\n4. Chọn cấp độ Mở rộng\n5. Chọn phí Miễn phí\n6. Nhấn Áp dụng\n7. Chọn một giải từ kết quả\n8. Kiểm tra trang chi tiết (US-AR-008)",
+        "ket_qua_mong_doi": "- Kết quả lọc đúng\n- Trang chi tiết giải đấu mở đúng\n- Tất cả thông tin hiển thị đầy đủ",
+        "loai": "Happy Path"
+      }
+    ]
   }
 ]
