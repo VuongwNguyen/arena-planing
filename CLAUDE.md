@@ -103,7 +103,7 @@ Mỗi item trong array `data.json` theo đúng cấu trúc sau:
 
 **testcases[].loai:** `Happy Path` | `Edge Case` | `Error Case`
 
-**testcases[].nhom:** `Arena App` | `Backend` | `WebAdmin` | `End-to-end` | tên module khác phù hợp
+**testcases[].nhom:** `Arena App` | `Arena Club Manage` | `Backend` | `WebAdmin` | `End-to-end` | tên module khác phù hợp
 
 ## Quy tắc sinh testcase (BẮT BUỘC)
 

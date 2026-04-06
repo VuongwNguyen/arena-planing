@@ -120,7 +120,7 @@ Số thứ tự 3 chữ số, tăng dần **trong từng project** độc lập.
 
 **testcases[].loai:** `Happy Path` | `Edge Case` | `Error Case`
 
-**testcases[].nhom:** `Arena App` | `Backend` | `WebAdmin` | `End-to-end` | tên module khác phù hợp
+**testcases[].nhom:** `Arena App` | `Arena Club Manage` | `Backend` | `WebAdmin` | `End-to-end` | tên module khác phù hợp
 
 ## Quy tắc sinh testcase (BẮT BUỘC)
 
