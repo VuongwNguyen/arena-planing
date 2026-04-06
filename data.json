@@ -4086,17 +4086,17 @@
   {
     "id": "US-AR-010",
     "project": "Arena Billiard",
-    "title": "Tối ưu import hàng hoá",
+    "title": "Tối ưu import & chỉnh sửa hàng loạt hàng hoá",
     "module": "Quản lý kho",
     "jiraId": "GE-703",
     "author": "Product Team",
     "date": "06/04/2026",
     "status": "Chờ phát triển",
-    "context": "Hiện tại quy trình import hàng hoá vào hệ thống còn thủ công, dễ xảy ra lỗi nhập liệu và mất nhiều thời gian. Cần tối ưu luồng import để tăng tốc độ nhập kho, giảm sai sót, hỗ trợ import số lượng lớn hàng hoá cùng lúc qua file Excel/CSV.",
+    "context": "Quy trình import hàng hoá qua Excel/CSV đã được tối ưu, giúp nhập kho nhanh hơn. Tuy nhiên sau import dễ xảy ra sai sót hàng loạt (sai giá, sai loại, sai nhà cung cấp). Cần bổ sung tính năng chọn và chỉnh sửa/xoá hàng loạt — lọc theo loại, tên, nhà cung cấp — để người dùng sửa sai nhanh mà không cần xử lý từng dòng.",
     "userStory": {
       "as": "Nhân viên kho / Quản lý",
-      "iWant": "Import danh sách hàng hoá hàng loạt từ file Excel/CSV với validation tức thời",
-      "soThat": "Tiết kiệm thời gian nhập liệu, giảm sai sót và cập nhật kho nhanh hơn"
+      "iWant": "Import hàng hoá hàng loạt từ file Excel/CSV và có thể chỉnh sửa hoặc xoá hàng loạt sau đó theo loại, tên, nhà cung cấp",
+      "soThat": "Nhập kho nhanh và dễ dàng sửa sai hàng loạt mà không tốn thời gian chỉnh từng dòng"
     },
     "acceptanceCriteria": [
       {
@@ -4133,9 +4133,30 @@
         "given": "Người dùng upload file vượt 5MB hoặc quá 5000 dòng",
         "when": "Hệ thống nhận file",
         "then": "Hiển thị thông báo lỗi rõ ràng, không tiến hành import"
+      },
+      {
+        "id": "AC-06",
+        "title": "Chọn hàng loạt theo bộ lọc",
+        "given": "Người dùng ở màn hình danh sách hàng hoá",
+        "when": "Lọc theo loại / tên / nhà cung cấp rồi bấm Chọn tất cả kết quả",
+        "then": "Toàn bộ hàng hoá khớp bộ lọc được chọn, hiển thị số lượng đã chọn và thanh action hàng loạt"
+      },
+      {
+        "id": "AC-07",
+        "title": "Sửa hàng loạt",
+        "given": "Người dùng đã chọn nhiều hàng hoá",
+        "when": "Bấm Sửa hàng loạt và chọn trường cần cập nhật (giá nhập, đơn vị, loại, nhà cung cấp)",
+        "then": "Hệ thống cập nhật đúng trường đó cho toàn bộ hàng hoá được chọn, hiển thị kết quả: X cập nhật thành công"
+      },
+      {
+        "id": "AC-08",
+        "title": "Xoá hàng loạt",
+        "given": "Người dùng đã chọn nhiều hàng hoá",
+        "when": "Bấm Xoá hàng loạt và xác nhận",
+        "then": "Hệ thống xoá toàn bộ hàng hoá được chọn, cập nhật danh sách, hiển thị: X hàng hoá đã xoá"
       }
     ],
-    "flow": "[Nhân viên kho]\n    |\n    ▼\nTruy cập màn hình Import hàng hoá\n    |\n    ▼\nTải file template Excel về\n    |\n    ▼\nĐiền dữ liệu hàng hoá vào template\n    |\n    ▼\nUpload file lên hệ thống\n    |\n    ▼\nHệ thống validate & hiển thị preview\n    |\n    +--[Có lỗi]--→ Đánh dấu dòng lỗi\n    |                    |\n    |              Người dùng sửa hoặc\n    |              chọn 'Bỏ qua lỗi'\n    |                    |\n    +--[Hợp lệ]----------+\n    |\n    ▼\nXác nhận Import\n    |\n    ▼\nHệ thống import & cập nhật tồn kho\n    |\n    ▼\nHiển thị báo cáo kết quả (X thành công / Y bỏ qua)\n    |\n    ▼\n[Xuất file lỗi nếu có]",
+    "flow": "[Nhân viên kho]\n    |\n    ▼\n== LUỒNG IMPORT ==\nTruy cập màn hình Import hàng hoá\n    |\n    ▼\nTải template → Điền data → Upload file\n    |\n    ▼\nHệ thống validate & hiển thị preview\n    |\n    +--[Có lỗi]--→ Đánh dấu dòng lỗi → Sửa hoặc bỏ qua\n    |\n    ▼\nXác nhận Import → Cập nhật tồn kho\n    |\n    ▼\nBáo cáo kết quả (X thành công / Y bỏ qua)\n    |\n    ▼\n== LUỒNG SỬA SAI SAU IMPORT ==\nVào danh sách hàng hoá\n    |\n    ▼\nLọc theo loại / tên / nhà cung cấp\n    |\n    ▼\nChọn tất cả kết quả (hoặc tick thủ công)\n    |\n    +--[Sửa hàng loạt]--→ Chọn trường → Nhập giá trị mới → Xác nhận\n    |\n    +--[Xoá hàng loạt]--→ Xác nhận → Cập nhật danh sách\n    |\n    ▼\nHiển thị kết quả: X cập nhật / X đã xoá",
     "edgeCases": [
       {
         "case": "File Excel có sheet ẩn hoặc nhiều sheet",
@@ -4156,13 +4177,28 @@
       {
         "case": "File 5000 dòng — thời gian xử lý lâu",
         "handle": "Hiển thị progress bar, xử lý background, thông báo khi xong"
+      },
+      {
+        "case": "Chọn hàng loạt > 1000 dòng để sửa/xoá",
+        "handle": "Xử lý background, hiển thị progress, thông báo khi xong"
+      },
+      {
+        "case": "Hàng hoá đang có trong order mở bị xoá hàng loạt",
+        "handle": "Cảnh báo: X hàng hoá đang dùng trong order, không thể xoá — bỏ qua các hàng này"
+      },
+      {
+        "case": "Sửa hàng loạt với giá trị không hợp lệ (giá âm, tên rỗng)",
+        "handle": "Validate trước khi submit, hiển thị lỗi inline, không cho xác nhận"
       }
     ],
     "notes": [
       "Template phải có row header cố định, không được thay đổi tên cột",
       "Cần transaction DB: nếu import thất bại giữa chừng thì rollback toàn bộ batch",
       "Log lịch sử import: ai import, lúc nào, bao nhiêu dòng thành công/lỗi",
-      "Hỗ trợ cả .xlsx và .csv (delimiter dấu phẩy và dấu chấm phẩy)"
+      "Hỗ trợ cả .xlsx và .csv (delimiter dấu phẩy và dấu chấm phẩy)",
+      "Bulk edit chỉ cho phép sửa 1 trường tại 1 thời điểm để tránh nhầm lẫn",
+      "Bulk delete cần confirm 2 bước khi số lượng > 50",
+      "Cần audit log cho bulk edit/delete: ai thực hiện, bao nhiêu dòng, giá trị cũ/mới"
     ],
     "testcases": [
       {
@@ -4289,6 +4325,78 @@
         "dieu_kien_tien_quyet": "- Đăng nhập với quyền quản lý kho\n- Kho chưa có hàng hoá nào",
         "buoc_thuc_hien": "1. Tải file template\n2. Điền 20 dòng hàng hoá (18 hợp lệ, 2 lỗi)\n3. Upload file\n4. Xem preview, kiểm tra dòng lỗi được đánh dấu\n5. Chọn Import dòng hợp lệ, bỏ qua lỗi\n6. Xác nhận import\n7. Kiểm tra danh sách hàng hoá\n8. Kiểm tra tồn kho\n9. Tải file báo cáo lỗi",
         "ket_qua_mong_doi": "- 18 hàng hoá xuất hiện trong danh sách\n- Tồn kho cập nhật đúng theo số lượng đã import\n- File báo cáo lỗi chứa 2 dòng bị bỏ qua với lý do\n- Log lịch sử ghi nhận đúng thông tin người import",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_015",
+        "ten_testcase": "Lọc theo loại và chọn tất cả kết quả",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Có 20 hàng hoá loại Đồ uống trong danh sách",
+        "buoc_thuc_hien": "1. Vào danh sách hàng hoá\n2. Lọc theo loại Đồ uống\n3. Bấm Chọn tất cả kết quả",
+        "ket_qua_mong_doi": "- 20 hàng hoá được chọn\n- Thanh action hàng loạt xuất hiện: Sửa hàng loạt, Xoá hàng loạt\n- Hiển thị: Đã chọn 20 hàng hoá",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_016",
+        "ten_testcase": "Sửa hàng loạt — cập nhật giá nhập",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Đã chọn 10 hàng hoá",
+        "buoc_thuc_hien": "1. Bấm Sửa hàng loạt\n2. Chọn trường Giá nhập\n3. Nhập giá mới 50.000đ\n4. Xác nhận",
+        "ket_qua_mong_doi": "- 10 hàng hoá cập nhật giá nhập thành 50.000đ\n- Thông báo: 10 cập nhật thành công\n- Danh sách hiển thị giá mới ngay",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_017",
+        "ten_testcase": "Sửa hàng loạt — cập nhật nhà cung cấp",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Đã chọn 5 hàng hoá cùng nhà cung cấp cũ",
+        "buoc_thuc_hien": "1. Bấm Sửa hàng loạt\n2. Chọn trường Nhà cung cấp\n3. Chọn nhà cung cấp mới\n4. Xác nhận",
+        "ket_qua_mong_doi": "- 5 hàng hoá cập nhật nhà cung cấp mới\n- Thông báo: 5 cập nhật thành công",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_018",
+        "ten_testcase": "Xoá hàng loạt thành công",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Đã chọn 5 hàng hoá không có trong order nào",
+        "buoc_thuc_hien": "1. Bấm Xoá hàng loạt\n2. Xác nhận trong hộp thoại",
+        "ket_qua_mong_doi": "- 5 hàng hoá bị xoá khỏi danh sách\n- Thông báo: 5 hàng hoá đã xoá\n- Tồn kho cập nhật",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_019",
+        "ten_testcase": "Xoá hàng loạt hàng hoá đang có trong order mở",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Chọn 5 hàng hoá, trong đó 2 đang có trong order chưa đóng",
+        "buoc_thuc_hien": "1. Bấm Xoá hàng loạt\n2. Xác nhận",
+        "ket_qua_mong_doi": "- Cảnh báo: 2 hàng hoá đang dùng trong order, không thể xoá\n- Chỉ 3 hàng không vướng order được xoá\n- Thông báo rõ số lượng xoá được / bỏ qua",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_020",
+        "ten_testcase": "Sửa hàng loạt với giá trị không hợp lệ",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Đã chọn 5 hàng hoá",
+        "buoc_thuc_hien": "1. Bấm Sửa hàng loạt → chọn Giá nhập\n2. Nhập giá -1000",
+        "ket_qua_mong_doi": "- Inline error: Giá nhập không được âm\n- Nút Xác nhận bị disable\n- Không có hàng hoá nào bị thay đổi",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_021",
+        "ten_testcase": "Bulk edit/delete hơn 1000 hàng hoá",
+        "nhom": "WebAdmin",
+        "dieu_kien_tien_quyet": "- Có hơn 1000 hàng hoá cùng loại",
+        "buoc_thuc_hien": "1. Lọc theo loại → Chọn tất cả\n2. Bấm Sửa hàng loạt → cập nhật giá\n3. Xác nhận",
+        "ket_qua_mong_doi": "- Hiển thị progress bar\n- Xử lý background\n- Thông báo khi hoàn tất",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_022",
+        "ten_testcase": "End-to-end: Import → sửa hàng loạt → xoá sai",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Đăng nhập quyền quản lý kho\n- Kho đang trống",
+        "buoc_thuc_hien": "1. Import 50 hàng hoá loại Đồ uống (giá nhập sai)\n2. Vào danh sách → lọc loại Đồ uống\n3. Chọn tất cả 50 hàng → Sửa hàng loạt giá nhập\n4. Tick thủ công 5 hàng sai tên → Xoá hàng loạt\n5. Kiểm tra danh sách cuối cùng",
+        "ket_qua_mong_doi": "- 50 hàng import thành công\n- 50 hàng cập nhật giá đúng\n- 5 hàng sai tên bị xoá\n- Danh sách còn 45 hàng với thông tin chính xác\n- Audit log ghi đủ 2 thao tác bulk",
         "loai": "Happy Path"
       }
     ]
@@ -4504,15 +4612,12 @@
     "author": "Product Team",
     "date": "06/04/2026",
     "status": "Chờ phát triển",
-
     "context": "Hiện tại các order bị huỷ không được lưu lại thành báo cáo riêng, gây khó khăn trong việc theo dõi tỷ lệ huỷ, phân tích nguyên nhân và kiểm soát thất thoát doanh thu. Cần tạo màn hình Report lọc danh sách order theo status Huỷ để quản lý nắm bắt và xử lý kịp thời.",
-
     "userStory": {
       "as": "Quản lý / Nhân viên thu ngân",
       "iWant": "Xem danh sách order đã bị huỷ được lọc riêng theo status, kèm thông tin chi tiết",
       "soThat": "Theo dõi tỷ lệ huỷ, phân tích nguyên nhân và kiểm soát thất thoát doanh thu"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -4550,23 +4655,31 @@
         "then": "Tải về file Excel hoặc PDF chứa toàn bộ dữ liệu theo bộ lọc hiện tại"
       }
     ],
-
     "flow": "[Quản lý / Thu ngân]\n    |\n    ▼\nVào màn hình Report Order Huỷ\n    |\n    ▼\nHệ thống query danh sách order status = Huỷ\n    |\n    ▼\nHiển thị thống kê tổng hợp (số order, tổng tiền, tỷ lệ)\n    |\n    ▼\nHiển thị danh sách order huỷ\n    |\n    +--[Lọc thời gian]--→ Chọn khoảng → Danh sách cập nhật\n    |\n    +--[Xem chi tiết]---→ Bấm 1 dòng → Mở popup/màn chi tiết\n    |\n    +--[Xuất báo cáo]---→ Chọn Excel/PDF → Tải về\n    |\n    ▼\n[Kết thúc]",
-
     "edgeCases": [
-      { "case": "Không có order huỷ trong khoảng thời gian chọn", "handle": "Hiển thị empty state: Không có order huỷ trong khoảng này" },
-      { "case": "Order huỷ không có lý do (lý do rỗng)", "handle": "Hiển thị '—' hoặc 'Không có lý do' thay vì để trống" },
-      { "case": "Số lượng order huỷ rất lớn (>1000)", "handle": "Phân trang, mỗi trang 20–50 dòng; xuất file xử lý background" },
-      { "case": "Mất mạng khi đang xem report", "handle": "Giữ dữ liệu đã load, hiển thị banner offline" }
+      {
+        "case": "Không có order huỷ trong khoảng thời gian chọn",
+        "handle": "Hiển thị empty state: Không có order huỷ trong khoảng này"
+      },
+      {
+        "case": "Order huỷ không có lý do (lý do rỗng)",
+        "handle": "Hiển thị '—' hoặc 'Không có lý do' thay vì để trống"
+      },
+      {
+        "case": "Số lượng order huỷ rất lớn (>1000)",
+        "handle": "Phân trang, mỗi trang 20–50 dòng; xuất file xử lý background"
+      },
+      {
+        "case": "Mất mạng khi đang xem report",
+        "handle": "Giữ dữ liệu đã load, hiển thị banner offline"
+      }
     ],
-
     "notes": [
       "Đây là màn hình lọc từ bảng order hiện có — KHÔNG tạo bảng mới, chỉ filter theo status = Huỷ",
       "Cần index DB trên cột status + created_at để query nhanh",
       "Lý do huỷ lấy từ field cancel_reason trong bảng order",
       "Quyền xem report: Manager trở lên; quyền xuất file: Manager trở lên"
     ],
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
