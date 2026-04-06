@@ -4399,7 +4399,181 @@
         "ket_qua_mong_doi": "- 50 hàng import thành công\n- 50 hàng cập nhật giá đúng\n- 5 hàng sai tên bị xoá\n- Danh sách còn 45 hàng với thông tin chính xác\n- Audit log ghi đủ 2 thao tác bulk",
         "loai": "Happy Path"
       }
-    ]
+    ],
+    "sprintPlan": {
+      "startDate": "06/04/2026",
+      "endDate": "11/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "06/04/2026",
+          "theme": "Kick-off & Chuẩn bị",
+          "color": "purple",
+          "result": "Team hiểu rõ scope US-AR-010, nhánh feature được tạo",
+          "tasks": [
+            {
+              "text": "Đọc US-AR-010, review AC và flow với team",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Confirm scope bulk edit/delete — loại trường nào được sửa",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Tạo nhánh feature/GE-703-import-bulk",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "07/04/2026",
+          "theme": "Thiết kế UI",
+          "color": "teal",
+          "result": "UI màn hình import và danh sách hàng hoá được thiết kế xong",
+          "tasks": [
+            {
+              "text": "Thiết kế UI màn hình import: upload, preview, bảng validation (GE-740)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thiết kế UI thanh action bulk (Sửa hàng loạt / Xoá hàng loạt)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Review UI với team, confirm trước khi code",
+              "tags": [
+                "Team"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "08/04/2026",
+          "theme": "Code API Import",
+          "color": "blue",
+          "result": "API upload/validate và API import hàng loạt hoạt động",
+          "tasks": [
+            {
+              "text": "API upload file Excel/CSV + validation từng dòng (GE-741)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "API import hàng loạt với transaction & rollback (GE-742)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Unit test cho 2 API trên",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "09/04/2026",
+          "theme": "Code Bulk Edit/Delete",
+          "color": "blue",
+          "result": "Tính năng chọn hàng loạt, sửa và xoá hoạt động đúng",
+          "tasks": [
+            {
+              "text": "UI danh sách hàng hoá + bộ lọc loại/tên/NCC (GE-743)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "API bulk edit — cập nhật 1 trường cho nhiều hàng hoá (GE-744)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Tích hợp UI bulk action với API",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "10/04/2026",
+          "theme": "Hoàn thiện & Review",
+          "color": "amber",
+          "result": "Toàn bộ tính năng hoàn chỉnh, đã review",
+          "tasks": [
+            {
+              "text": "API bulk delete + guard hàng đang có trong order (GE-745)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Audit log cho bulk edit/delete (GE-746)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Code review chéo, impact analysis",
+              "tags": [
+                "Team"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "11/04/2026",
+          "theme": "QA & Merge",
+          "color": "green",
+          "result": "Merge vào develop, deploy beta thành công",
+          "tasks": [
+            {
+              "text": "Chạy toàn bộ test case (TC_001–TC_022) (GE-747)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Fix bug phát sinh",
+              "tags": [
+                "Dev",
+                "Khẩn cấp"
+              ]
+            },
+            {
+              "text": "Merge nhánh feature vào develop, deploy beta",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "US-AR-011",
@@ -4570,7 +4744,181 @@
         "ket_qua_mong_doi": "- Tất cả module báo cáo khớp App vs Web\n- Không có điểm lệch nào\n- Manager xác nhận và sign-off",
         "loai": "Happy Path"
       }
-    ]
+    ],
+    "sprintPlan": {
+      "startDate": "06/04/2026",
+      "endDate": "11/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "06/04/2026",
+          "theme": "Kick-off & Phân tích",
+          "color": "purple",
+          "result": "Có danh sách cụ thể các điểm lệch App vs Web cần fix",
+          "tasks": [
+            {
+              "text": "Đọc US-AR-011, mở song song App và Web, ghi nhận điểm lệch",
+              "tags": [
+                "Team",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Liệt kê sơ bộ: lệch ở module nào, field nào, bao nhiêu % (GE-766)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Tạo nhánh feature/GE-316-sync-report",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "07/04/2026",
+          "theme": "Phân tích sâu nguyên nhân",
+          "color": "teal",
+          "result": "Xác định rõ root cause: API khác, timezone sai, hay logic tính lệch",
+          "tasks": [
+            {
+              "text": "So sánh API endpoint App vs Web — inspect network call (GE-757)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "So sánh params gửi lên và response trả về",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Lập danh sách fix cụ thể, estimate từng điểm",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "08/04/2026",
+          "theme": "Fix API & Timezone",
+          "color": "blue",
+          "result": "App gọi đúng API chuẩn, timezone UTC+7 nhất quán",
+          "tasks": [
+            {
+              "text": "Migrate App sang API báo cáo chuẩn của Web (GE-758)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Đồng nhất timezone UTC+7 & logic cắt ngày 00:00–23:59 (GE-759)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Verify lại doanh thu sau fix API",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "09/04/2026",
+          "theme": "Fix UI Báo cáo",
+          "color": "blue",
+          "result": "Doanh thu và hiệu suất bàn trên App khớp Web",
+          "tasks": [
+            {
+              "text": "Fix UI báo cáo Doanh thu App khớp Web (GE-760)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Fix UI Hiệu suất bàn App khớp Web (GE-761)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "So sánh thủ công App vs Web sau fix",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "10/04/2026",
+          "theme": "Fix UI Nhân viên & Viết Test",
+          "color": "amber",
+          "result": "Toàn bộ module báo cáo App khớp Web, test case sẵn sàng",
+          "tasks": [
+            {
+              "text": "Fix UI Nhân viên App khớp Web (GE-762)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Viết & chạy test case so sánh App vs Web (GE-763)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Code review chéo",
+              "tags": [
+                "Team"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "11/04/2026",
+          "theme": "QA & Sign-off",
+          "color": "green",
+          "result": "Manager sign-off, merge vào develop",
+          "tasks": [
+            {
+              "text": "Chạy toàn bộ test case TC_001–TC_010 (GE-764)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Manager xác nhận số liệu App = Web trên cả 3 module",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Merge nhánh feature vào develop, deploy beta",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "US-AR-012",
