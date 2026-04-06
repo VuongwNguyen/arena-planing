@@ -4494,5 +4494,197 @@
         "loai": "Happy Path"
       }
     ]
+  },
+  {
+    "id": "US-AR-012",
+    "project": "Arena Billiard",
+    "title": "Tạo Report lưu order huỷ",
+    "module": "Quản lý Order",
+    "jiraId": "GE-731",
+    "author": "Product Team",
+    "date": "06/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Hiện tại các order bị huỷ không được lưu lại thành báo cáo riêng, gây khó khăn trong việc theo dõi tỷ lệ huỷ, phân tích nguyên nhân và kiểm soát thất thoát doanh thu. Cần tạo màn hình Report lọc danh sách order theo status Huỷ để quản lý nắm bắt và xử lý kịp thời.",
+
+    "userStory": {
+      "as": "Quản lý / Nhân viên thu ngân",
+      "iWant": "Xem danh sách order đã bị huỷ được lọc riêng theo status, kèm thông tin chi tiết",
+      "soThat": "Theo dõi tỷ lệ huỷ, phân tích nguyên nhân và kiểm soát thất thoát doanh thu"
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Hiển thị danh sách order huỷ",
+        "given": "Người dùng vào màn hình Report Order Huỷ",
+        "when": "Màn hình load",
+        "then": "Danh sách chỉ hiển thị các order có status = Huỷ, gồm: mã order, bàn, nhân viên, thời gian tạo, thời gian huỷ, tổng tiền, lý do huỷ"
+      },
+      {
+        "id": "AC-02",
+        "title": "Lọc theo khoảng thời gian",
+        "given": "Người dùng đang xem report",
+        "when": "Chọn khoảng thời gian (Hôm nay / Tuần này / Tháng này / Tuỳ chọn)",
+        "then": "Danh sách cập nhật đúng theo khoảng thời gian đã chọn"
+      },
+      {
+        "id": "AC-03",
+        "title": "Xem chi tiết order huỷ",
+        "given": "Người dùng bấm vào một dòng trong danh sách",
+        "when": "Mở chi tiết order",
+        "then": "Hiển thị đầy đủ: các món trong order, số lượng, giá, tổng tiền, nhân viên huỷ, thời điểm huỷ, lý do huỷ"
+      },
+      {
+        "id": "AC-04",
+        "title": "Thống kê tổng hợp đầu trang",
+        "given": "Người dùng đang xem report",
+        "when": "Trong khoảng thời gian đã lọc",
+        "then": "Hiển thị: tổng số order huỷ, tổng giá trị order huỷ, tỷ lệ huỷ so với tổng order"
+      },
+      {
+        "id": "AC-05",
+        "title": "Xuất report ra Excel/PDF",
+        "given": "Người dùng đang xem danh sách order huỷ",
+        "when": "Bấm nút Xuất báo cáo",
+        "then": "Tải về file Excel hoặc PDF chứa toàn bộ dữ liệu theo bộ lọc hiện tại"
+      }
+    ],
+
+    "flow": "[Quản lý / Thu ngân]\n    |\n    ▼\nVào màn hình Report Order Huỷ\n    |\n    ▼\nHệ thống query danh sách order status = Huỷ\n    |\n    ▼\nHiển thị thống kê tổng hợp (số order, tổng tiền, tỷ lệ)\n    |\n    ▼\nHiển thị danh sách order huỷ\n    |\n    +--[Lọc thời gian]--→ Chọn khoảng → Danh sách cập nhật\n    |\n    +--[Xem chi tiết]---→ Bấm 1 dòng → Mở popup/màn chi tiết\n    |\n    +--[Xuất báo cáo]---→ Chọn Excel/PDF → Tải về\n    |\n    ▼\n[Kết thúc]",
+
+    "edgeCases": [
+      { "case": "Không có order huỷ trong khoảng thời gian chọn", "handle": "Hiển thị empty state: Không có order huỷ trong khoảng này" },
+      { "case": "Order huỷ không có lý do (lý do rỗng)", "handle": "Hiển thị '—' hoặc 'Không có lý do' thay vì để trống" },
+      { "case": "Số lượng order huỷ rất lớn (>1000)", "handle": "Phân trang, mỗi trang 20–50 dòng; xuất file xử lý background" },
+      { "case": "Mất mạng khi đang xem report", "handle": "Giữ dữ liệu đã load, hiển thị banner offline" }
+    ],
+
+    "notes": [
+      "Đây là màn hình lọc từ bảng order hiện có — KHÔNG tạo bảng mới, chỉ filter theo status = Huỷ",
+      "Cần index DB trên cột status + created_at để query nhanh",
+      "Lý do huỷ lấy từ field cancel_reason trong bảng order",
+      "Quyền xem report: Manager trở lên; quyền xuất file: Manager trở lên"
+    ],
+
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Hiển thị danh sách order huỷ hôm nay",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Đăng nhập tài khoản Manager\n- Có ít nhất 3 order bị huỷ hôm nay",
+        "buoc_thuc_hien": "1. Vào màn hình Report Order Huỷ\n2. Chọn bộ lọc Hôm nay",
+        "ket_qua_mong_doi": "- Chỉ hiển thị order có status Huỷ\n- Đủ cột: mã order, bàn, nhân viên, thời gian tạo, thời gian huỷ, tổng tiền, lý do huỷ\n- Thống kê tổng hợp đúng ở đầu trang",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Lọc theo tuần và tháng",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Có order huỷ trong tuần và tháng hiện tại",
+        "buoc_thuc_hien": "1. Chọn Tuần này → kiểm tra kết quả\n2. Chuyển sang Tháng này → kiểm tra kết quả",
+        "ket_qua_mong_doi": "- Danh sách thay đổi đúng theo khoảng lọc\n- Thống kê cập nhật theo từng khoảng",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Xem chi tiết một order huỷ",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Có order huỷ trong danh sách",
+        "buoc_thuc_hien": "1. Bấm vào một dòng order huỷ trong danh sách",
+        "ket_qua_mong_doi": "- Mở chi tiết đầy đủ: các món, số lượng, giá, tổng tiền\n- Hiển thị nhân viên huỷ, thời điểm huỷ, lý do huỷ",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Kiểm tra thống kê tổng hợp đầu trang",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Có 5 order huỷ trong tháng, tổng giá trị 500.000đ\n- Tổng order trong tháng là 100",
+        "buoc_thuc_hien": "1. Vào Report Order Huỷ\n2. Chọn Tháng này\n3. Kiểm tra số liệu tổng hợp",
+        "ket_qua_mong_doi": "- Tổng số order huỷ: 5\n- Tổng giá trị huỷ: 500.000đ\n- Tỷ lệ huỷ: 5%",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Xuất report ra Excel",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Đang xem danh sách order huỷ tháng này",
+        "buoc_thuc_hien": "1. Bấm Xuất báo cáo\n2. Chọn Excel\n3. Tải về",
+        "ket_qua_mong_doi": "- File .xlsx tải về thành công\n- Nội dung đúng với danh sách đang hiển thị\n- Đủ các cột thông tin",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "Lọc tuỳ chọn khoảng ngày",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Có order huỷ trong tháng 3/2026",
+        "buoc_thuc_hien": "1. Chọn Tuỳ chọn\n2. Nhập 01/03/2026 → 31/03/2026\n3. Xem kết quả",
+        "ket_qua_mong_doi": "- Danh sách đúng với khoảng thời gian đã nhập\n- Không hiển thị order ngoài khoảng",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_007",
+        "ten_testcase": "Không có order huỷ trong khoảng thời gian",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Không có order huỷ vào ngày 01/01/2020",
+        "buoc_thuc_hien": "1. Chọn Tuỳ chọn\n2. Nhập 01/01/2020 → 01/01/2020",
+        "ket_qua_mong_doi": "- Empty state: Không có order huỷ trong khoảng này\n- Thống kê hiển thị 0\n- Không crash",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_008",
+        "ten_testcase": "Order huỷ không có lý do huỷ",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Có order huỷ với cancel_reason rỗng",
+        "buoc_thuc_hien": "1. Xem danh sách\n2. Tìm order không có lý do huỷ\n3. Bấm xem chi tiết",
+        "ket_qua_mong_doi": "- Cột lý do hiển thị '—' hoặc 'Không có lý do'\n- Không hiển thị ô trống gây nhầm lẫn",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_009",
+        "ten_testcase": "Danh sách order huỷ hơn 1000 dòng",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Có hơn 1000 order huỷ trong tháng",
+        "buoc_thuc_hien": "1. Chọn khoảng có >1000 order huỷ\n2. Xem danh sách\n3. Chuyển trang",
+        "ket_qua_mong_doi": "- Danh sách phân trang đúng (20-50 dòng/trang)\n- Chuyển trang mượt\n- Thống kê tổng vẫn đúng",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_010",
+        "ten_testcase": "Tài khoản không có quyền xem report",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Đăng nhập tài khoản nhân viên thường",
+        "buoc_thuc_hien": "1. Truy cập màn hình Report Order Huỷ",
+        "ket_qua_mong_doi": "- Bị chặn truy cập\n- Hiển thị thông báo không có quyền",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_011",
+        "ten_testcase": "Mất mạng khi đang xem report",
+        "nhom": "Arena Club Manage",
+        "dieu_kien_tien_quyet": "- Đang xem danh sách order huỷ",
+        "buoc_thuc_hien": "1. Đang xem report\n2. Tắt WiFi/Data",
+        "ket_qua_mong_doi": "- Dữ liệu đã load vẫn hiển thị\n- Banner Đang offline xuất hiện\n- Khi có mạng: có thể refresh",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_012",
+        "ten_testcase": "Lỗi server khi tải danh sách",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- Simulate API trả về 500",
+        "buoc_thuc_hien": "1. Vào màn hình Report Order Huỷ khi API lỗi",
+        "ket_qua_mong_doi": "- Hiển thị thông báo lỗi thân thiện\n- Có nút Thử lại\n- Không crash",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_013",
+        "ten_testcase": "End-to-end: Lọc → Xem chi tiết → Xuất báo cáo",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Đăng nhập Manager\n- Có 10 order huỷ trong tháng 3/2026\n- Kết nối mạng ổn định",
+        "buoc_thuc_hien": "1. Vào Report Order Huỷ\n2. Lọc Tháng này → kiểm tra thống kê\n3. Bấm vào 1 order → kiểm tra chi tiết\n4. Quay lại danh sách\n5. Chọn Tuỳ chọn lọc tháng 3/2026\n6. Xuất Excel\n7. Mở file kiểm tra nội dung",
+        "ket_qua_mong_doi": "- Thống kê tổng hợp đúng\n- Chi tiết order đầy đủ thông tin\n- File Excel đúng dữ liệu tháng 3\n- Tất cả luồng thông suốt, không lỗi",
+        "loai": "Happy Path"
+      }
+    ]
   }
 ]
