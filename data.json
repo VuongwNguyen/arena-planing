@@ -4092,15 +4092,12 @@
     "author": "Product Team",
     "date": "06/04/2026",
     "status": "Chờ phát triển",
-
     "context": "Hiện tại quy trình import hàng hoá vào hệ thống còn thủ công, dễ xảy ra lỗi nhập liệu và mất nhiều thời gian. Cần tối ưu luồng import để tăng tốc độ nhập kho, giảm sai sót, hỗ trợ import số lượng lớn hàng hoá cùng lúc qua file Excel/CSV.",
-
     "userStory": {
       "as": "Nhân viên kho / Quản lý",
       "iWant": "Import danh sách hàng hoá hàng loạt từ file Excel/CSV với validation tức thời",
       "soThat": "Tiết kiệm thời gian nhập liệu, giảm sai sót và cập nhật kho nhanh hơn"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -4138,24 +4135,35 @@
         "then": "Hiển thị thông báo lỗi rõ ràng, không tiến hành import"
       }
     ],
-
     "flow": "[Nhân viên kho]\n    |\n    ▼\nTruy cập màn hình Import hàng hoá\n    |\n    ▼\nTải file template Excel về\n    |\n    ▼\nĐiền dữ liệu hàng hoá vào template\n    |\n    ▼\nUpload file lên hệ thống\n    |\n    ▼\nHệ thống validate & hiển thị preview\n    |\n    +--[Có lỗi]--→ Đánh dấu dòng lỗi\n    |                    |\n    |              Người dùng sửa hoặc\n    |              chọn 'Bỏ qua lỗi'\n    |                    |\n    +--[Hợp lệ]----------+\n    |\n    ▼\nXác nhận Import\n    |\n    ▼\nHệ thống import & cập nhật tồn kho\n    |\n    ▼\nHiển thị báo cáo kết quả (X thành công / Y bỏ qua)\n    |\n    ▼\n[Xuất file lỗi nếu có]",
-
     "edgeCases": [
-      { "case": "File Excel có sheet ẩn hoặc nhiều sheet", "handle": "Chỉ đọc sheet đầu tiên, bỏ qua các sheet còn lại, thông báo cho user" },
-      { "case": "Mã hàng trùng với hàng đã có trong hệ thống", "handle": "Hỏi người dùng: Cập nhật đè hay bỏ qua. Mặc định bỏ qua" },
-      { "case": "File có ký tự đặc biệt hoặc encoding không phải UTF-8", "handle": "Tự detect encoding, nếu không convert được thì thông báo lỗi rõ" },
-      { "case": "Upload file nhưng mất kết nối giữa chừng", "handle": "Rollback toàn bộ batch đang import, không để dữ liệu nửa vời" },
-      { "case": "File 5000 dòng — thời gian xử lý lâu", "handle": "Hiển thị progress bar, xử lý background, thông báo khi xong" }
+      {
+        "case": "File Excel có sheet ẩn hoặc nhiều sheet",
+        "handle": "Chỉ đọc sheet đầu tiên, bỏ qua các sheet còn lại, thông báo cho user"
+      },
+      {
+        "case": "Mã hàng trùng với hàng đã có trong hệ thống",
+        "handle": "Hỏi người dùng: Cập nhật đè hay bỏ qua. Mặc định bỏ qua"
+      },
+      {
+        "case": "File có ký tự đặc biệt hoặc encoding không phải UTF-8",
+        "handle": "Tự detect encoding, nếu không convert được thì thông báo lỗi rõ"
+      },
+      {
+        "case": "Upload file nhưng mất kết nối giữa chừng",
+        "handle": "Rollback toàn bộ batch đang import, không để dữ liệu nửa vời"
+      },
+      {
+        "case": "File 5000 dòng — thời gian xử lý lâu",
+        "handle": "Hiển thị progress bar, xử lý background, thông báo khi xong"
+      }
     ],
-
     "notes": [
       "Template phải có row header cố định, không được thay đổi tên cột",
       "Cần transaction DB: nếu import thất bại giữa chừng thì rollback toàn bộ batch",
       "Log lịch sử import: ai import, lúc nào, bao nhiêu dòng thành công/lỗi",
       "Hỗ trợ cả .xlsx và .csv (delimiter dấu phẩy và dấu chấm phẩy)"
     ],
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -4294,15 +4302,12 @@
     "author": "Product Team",
     "date": "06/04/2026",
     "status": "Chờ phát triển",
-
     "context": "Tính năng báo cáo trên App Arena hiện còn thiếu sót: dữ liệu chưa đầy đủ, biểu đồ chưa trực quan, và thiếu khả năng lọc linh hoạt. Cần hoàn thiện để manager/chủ cơ sở có thể theo dõi doanh thu, hiệu suất bàn và nhân viên ngay trên điện thoại mà không cần lên WebAdmin.",
-
     "userStory": {
       "as": "Quản lý / Chủ cơ sở billiards",
       "iWant": "Xem báo cáo doanh thu, hiệu suất bàn và nhân viên đầy đủ trên App Arena với bộ lọc linh hoạt",
       "soThat": "Nắm bắt tình hình kinh doanh mọi lúc mọi nơi mà không cần truy cập WebAdmin"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -4340,17 +4345,29 @@
         "then": "Dữ liệu cập nhật tối đa sau 5 phút, có indicator thể hiện thời điểm cập nhật lần cuối"
       }
     ],
-
     "flow": "[Quản lý / Chủ cơ sở]\n    |\n    ▼\nMở App Arena → Tab Báo cáo\n    |\n    ▼\nChọn loại báo cáo\n    |\n    +--[Doanh thu]------→ Chọn khoảng thời gian\n    |                          |\n    +--[Hiệu suất bàn]-→ Chọn ngày/khoảng ngày\n    |                          |\n    +--[Nhân viên]-----→ Chọn ca/ngày\n    |                          |\n    +---------------------------+\n    |\n    ▼\nHệ thống load dữ liệu & render biểu đồ\n    |\n    ▼\nXem báo cáo, biểu đồ, bảng thống kê\n    |\n    ▼\n[Tuỳ chọn] Bấm Xuất báo cáo\n    |\n    ▼\nChọn định dạng PDF / Excel\n    |\n    ▼\nShare sheet mở → Gửi Zalo / Email / Lưu máy",
-
     "edgeCases": [
-      { "case": "Chọn khoảng ngày dài hơn 365 ngày", "handle": "Giới hạn tối đa 365 ngày, tự thu hẹp về 365 ngày gần nhất và thông báo" },
-      { "case": "Ngày bắt đầu lớn hơn ngày kết thúc", "handle": "Disable nút Xem báo cáo, hiển thị inline error" },
-      { "case": "Không có dữ liệu trong khoảng thời gian chọn", "handle": "Hiển thị empty state thân thiện: Chưa có dữ liệu trong khoảng này" },
-      { "case": "Mất mạng khi đang xem báo cáo", "handle": "Giữ nguyên dữ liệu đã load (cache), hiển thị banner Đang offline" },
-      { "case": "API load chậm > 30 giây", "handle": "Hiển thị skeleton loading, timeout với nút Thử lại" }
+      {
+        "case": "Chọn khoảng ngày dài hơn 365 ngày",
+        "handle": "Giới hạn tối đa 365 ngày, tự thu hẹp về 365 ngày gần nhất và thông báo"
+      },
+      {
+        "case": "Ngày bắt đầu lớn hơn ngày kết thúc",
+        "handle": "Disable nút Xem báo cáo, hiển thị inline error"
+      },
+      {
+        "case": "Không có dữ liệu trong khoảng thời gian chọn",
+        "handle": "Hiển thị empty state thân thiện: Chưa có dữ liệu trong khoảng này"
+      },
+      {
+        "case": "Mất mạng khi đang xem báo cáo",
+        "handle": "Giữ nguyên dữ liệu đã load (cache), hiển thị banner Đang offline"
+      },
+      {
+        "case": "API load chậm > 30 giây",
+        "handle": "Hiển thị skeleton loading, timeout với nút Thử lại"
+      }
     ],
-
     "notes": [
       "Chỉ tài khoản Manager trở lên mới thấy tab Báo cáo trên App",
       "API báo cáo cần phân trang hoặc giới hạn dữ liệu để tránh timeout trên mobile",
@@ -4358,12 +4375,11 @@
       "Biểu đồ dùng thư viện nhẹ, tối ưu cho mobile (tránh chart.js full bundle)",
       "Xuất file cần xử lý background nếu dữ liệu > 1000 dòng"
     ],
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
         "ten_testcase": "Xem báo cáo doanh thu hôm nay",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Đăng nhập tài khoản Manager\n- Đã có giao dịch trong ngày hôm nay",
         "buoc_thuc_hien": "1. Mở App Arena\n2. Chuyển sang tab Báo cáo\n3. Chọn Hôm nay",
         "ket_qua_mong_doi": "- Hiển thị tổng doanh thu hôm nay\n- Biểu đồ cột theo giờ\n- Số lượt khách và doanh thu trung bình/lượt\n- Thời điểm cập nhật lần cuối hiển thị rõ",
@@ -4372,7 +4388,7 @@
       {
         "ma_testcase": "TC_002",
         "ten_testcase": "Lọc báo cáo theo tuần và tháng",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Đăng nhập Manager\n- Có dữ liệu giao dịch trong tuần và tháng hiện tại",
         "buoc_thuc_hien": "1. Tab Báo cáo → chọn Tuần này\n2. Kiểm tra dữ liệu\n3. Chuyển sang Tháng này\n4. Kiểm tra dữ liệu",
         "ket_qua_mong_doi": "- Dữ liệu thay đổi đúng theo khoảng lọc\n- Biểu đồ re-render đúng\n- Tổng doanh thu tháng >= tổng doanh thu tuần",
@@ -4381,7 +4397,7 @@
       {
         "ma_testcase": "TC_003",
         "ten_testcase": "Xem hiệu suất bàn theo ngày",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Có dữ liệu sử dụng bàn trong ngày hôm qua",
         "buoc_thuc_hien": "1. Tab Báo cáo → chọn Hiệu suất bàn\n2. Chọn ngày hôm qua\n3. Sắp xếp theo Doanh thu",
         "ket_qua_mong_doi": "- Danh sách bàn hiển thị đầy đủ\n- Mỗi bàn có: số giờ dùng, doanh thu, % hoạt động\n- Sắp xếp đúng theo doanh thu giảm dần",
@@ -4390,7 +4406,7 @@
       {
         "ma_testcase": "TC_004",
         "ten_testcase": "Xuất báo cáo định dạng PDF",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Đang xem báo cáo doanh thu tháng này",
         "buoc_thuc_hien": "1. Bấm nút Xuất báo cáo\n2. Chọn định dạng PDF\n3. Bấm Xuất",
         "ket_qua_mong_doi": "- Share sheet của điện thoại mở lên\n- File PDF có đủ thông tin báo cáo\n- Có thể gửi qua Zalo hoặc lưu máy",
@@ -4399,7 +4415,7 @@
       {
         "ma_testcase": "TC_005",
         "ten_testcase": "Lọc tuỳ chọn khoảng ngày hợp lệ",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Đăng nhập Manager",
         "buoc_thuc_hien": "1. Chọn Tuỳ chọn\n2. Nhập 01/03/2026 → 31/03/2026\n3. Bấm Xem báo cáo",
         "ket_qua_mong_doi": "- Báo cáo hiển thị đúng dữ liệu tháng 3/2026\n- Biểu đồ theo ngày trong tháng 3",
@@ -4408,7 +4424,7 @@
       {
         "ma_testcase": "TC_006",
         "ten_testcase": "Không có dữ liệu trong khoảng thời gian chọn",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Không có giao dịch vào ngày 01/01/2020",
         "buoc_thuc_hien": "1. Chọn tuỳ chọn ngày 01/01/2020 → 01/01/2020\n2. Xem báo cáo",
         "ket_qua_mong_doi": "- Hiển thị empty state thân thiện\n- Không crash app\n- Biểu đồ hiển thị trống",
@@ -4417,7 +4433,7 @@
       {
         "ma_testcase": "TC_007",
         "ten_testcase": "Chọn khoảng ngày vượt 365 ngày",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Đang ở bộ lọc tuỳ chọn",
         "buoc_thuc_hien": "1. Nhập ngày bắt đầu 01/01/2025, ngày kết thúc 06/04/2026",
         "ket_qua_mong_doi": "- Hệ thống thông báo vượt giới hạn\n- Tự thu hẹp khoảng về 365 ngày gần nhất\n- Không crash",
@@ -4426,7 +4442,7 @@
       {
         "ma_testcase": "TC_008",
         "ten_testcase": "Ngày bắt đầu lớn hơn ngày kết thúc",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Đang ở bộ lọc tuỳ chọn",
         "buoc_thuc_hien": "1. Nhập ngày bắt đầu 31/03/2026, ngày kết thúc 01/03/2026",
         "ket_qua_mong_doi": "- Inline error: Ngày bắt đầu phải trước ngày kết thúc\n- Nút Xem báo cáo bị disable",
@@ -4435,7 +4451,7 @@
       {
         "ma_testcase": "TC_009",
         "ten_testcase": "Mất mạng khi đang xem báo cáo",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Đang xem báo cáo doanh thu hôm nay",
         "buoc_thuc_hien": "1. Đang xem báo cáo\n2. Tắt WiFi/Data\n3. Thử kéo refresh",
         "ket_qua_mong_doi": "- Dữ liệu cũ vẫn hiển thị (cache)\n- Banner Đang offline xuất hiện\n- Khi có mạng lại: tự cập nhật hoặc có nút Tải lại",
@@ -4444,7 +4460,7 @@
       {
         "ma_testcase": "TC_010",
         "ten_testcase": "Tài khoản không có quyền Manager",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Đăng nhập tài khoản nhân viên thường",
         "buoc_thuc_hien": "1. Mở App\n2. Tìm tab Báo cáo",
         "ket_qua_mong_doi": "- Tab Báo cáo không hiển thị\n- Hoặc hiển thị thông báo không có quyền nếu truy cập trực tiếp",
@@ -4453,7 +4469,7 @@
       {
         "ma_testcase": "TC_011",
         "ten_testcase": "API báo cáo timeout > 30 giây",
-        "nhom": "Arena App",
+        "nhom": "Arena Club Manage",
         "dieu_kien_tien_quyet": "- Simulate API chậm > 30 giây",
         "buoc_thuc_hien": "1. Chọn khoảng thời gian dài\n2. Bấm Xem báo cáo\n3. Chờ 30 giây",
         "ket_qua_mong_doi": "- Skeleton loading hiển thị trong khi chờ\n- Sau 30s: hiển thị lỗi timeout\n- Có nút Thử lại",
