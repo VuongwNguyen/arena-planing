@@ -55,14 +55,7 @@ Số thứ tự 3 chữ số, tăng dần **trong từng project** độc lập.
     "soThat": "Kết quả mong muốn"
   },
 
-  "example": {
-    "description": "Mô tả ngắn ví dụ minh hoạ",
-    "discount": 0,
-    "total": 0,
-    "items": [
-      { "code": "SP000001", "name": "Tên hàng", "qty": 1, "price": 0 }
-    ]
-  },
+  "mockupUrl": "https://figma.com/...",
 
   "acceptanceCriteria": [
     {
@@ -173,10 +166,22 @@ Mỗi US **phải có** field `testcases[]` với đầy đủ các nhóm:
 
 ## Optional fields
 
-- `example` — bỏ qua nếu không có ví dụ số liệu
+- `mockupUrl` — link Figma/ảnh mockup; **bắt buộc hỏi user khi US liên quan đến giao diện**
 - `dbChanges` — bỏ qua nếu không đổi DB
 - `edgeCases` — nên có ít nhất 3-4 cases
 - `sprintPlan` — bỏ qua nếu chỉ cần user story đơn thuần
+
+## Quy tắc mockup (BẮT BUỘC với US có giao diện)
+
+Nếu US liên quan đến màn hình / UI / giao diện → **hỏi user trước khi commit**:
+> "US này có giao diện — bạn có link mockup/ảnh nào muốn thêm vào không?"
+
+`mockupUrl` có thể là string (1 link) hoặc array (nhiều link):
+```json
+"mockupUrl": "https://figma.com/..."
+// hoặc
+"mockupUrl": ["https://figma.com/...", "https://imgur.com/..."]
+```
 
 ---
 
