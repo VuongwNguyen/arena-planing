@@ -4404,201 +4404,170 @@
   {
     "id": "US-AR-011",
     "project": "Arena Billiard",
-    "title": "Hoàn thiện tính năng báo cáo trên App",
+    "title": "Đồng bộ báo cáo Web sang App",
     "module": "Báo cáo & Thống kê",
     "jiraId": "GE-316",
     "author": "Product Team",
     "date": "06/04/2026",
     "status": "Chờ phát triển",
-    "context": "Tính năng báo cáo trên App Arena hiện còn thiếu sót: dữ liệu chưa đầy đủ, biểu đồ chưa trực quan, và thiếu khả năng lọc linh hoạt. Cần hoàn thiện để manager/chủ cơ sở có thể theo dõi doanh thu, hiệu suất bàn và nhân viên ngay trên điện thoại mà không cần lên WebAdmin.",
+    "context": "Tính năng báo cáo đã hoàn thiện trên WebAdmin (doanh thu, hiệu suất bàn, nhân viên). Tuy nhiên App Arena đang hiển thị dữ liệu lệch so với Web do gọi API khác nhau, logic tính toán không nhất quán, hoặc thiếu một số chỉ số. Cần đồng bộ để App phản ánh đúng dữ liệu như Web, tránh gây nhầm lẫn cho quản lý khi đối chiếu 2 nơi.",
     "userStory": {
       "as": "Quản lý / Chủ cơ sở billiards",
-      "iWant": "Xem báo cáo doanh thu, hiệu suất bàn và nhân viên đầy đủ trên App Arena với bộ lọc linh hoạt",
-      "soThat": "Nắm bắt tình hình kinh doanh mọi lúc mọi nơi mà không cần truy cập WebAdmin"
+      "iWant": "Số liệu báo cáo trên App Arena khớp hoàn toàn với WebAdmin",
+      "soThat": "Không còn bất đồng số liệu khi đối chiếu App với Web, ra quyết định chính xác hơn"
     },
     "acceptanceCriteria": [
       {
         "id": "AC-01",
-        "title": "Báo cáo doanh thu theo khoảng thời gian",
-        "given": "Người dùng mở tab Báo cáo trên App",
-        "when": "Chọn khoảng thời gian (Hôm nay / Tuần này / Tháng này / Tuỳ chọn)",
-        "then": "Hiển thị tổng doanh thu, số lượt khách, doanh thu trung bình/lượt và biểu đồ cột theo ngày"
+        "title": "Doanh thu App khớp Web cùng khoảng thời gian",
+        "given": "Quản lý chọn cùng khoảng thời gian trên cả App và Web",
+        "when": "So sánh số liệu doanh thu",
+        "then": "Tổng doanh thu, số lượt khách, doanh thu trung bình/lượt trên App phải khớp 100% với Web"
       },
       {
         "id": "AC-02",
-        "title": "Báo cáo hiệu suất bàn",
-        "given": "Người dùng chọn tab Hiệu suất bàn",
-        "when": "Chọn ngày hoặc khoảng ngày",
-        "then": "Hiển thị danh sách bàn với số giờ sử dụng, doanh thu, % thời gian hoạt động; sắp xếp được theo doanh thu hoặc giờ sử dụng"
+        "title": "Hiệu suất bàn App khớp Web",
+        "given": "Quản lý xem hiệu suất bàn cùng ngày trên App và Web",
+        "when": "So sánh số giờ sử dụng và doanh thu từng bàn",
+        "then": "Số liệu từng bàn trên App khớp với Web, không lệch quá 1 đơn vị do làm tròn"
       },
       {
         "id": "AC-03",
-        "title": "Báo cáo theo nhân viên",
-        "given": "Người dùng chọn tab Nhân viên",
-        "when": "Chọn ca / ngày",
-        "then": "Hiển thị doanh thu theo từng nhân viên phụ trách, số giao dịch, giờ làm"
+        "title": "Báo cáo nhân viên App khớp Web",
+        "given": "Quản lý xem báo cáo nhân viên cùng ca trên App và Web",
+        "when": "So sánh doanh thu và số giao dịch từng nhân viên",
+        "then": "Dữ liệu nhân viên trên App khớp với Web"
       },
       {
         "id": "AC-04",
-        "title": "Xuất báo cáo",
-        "given": "Người dùng đang xem bất kỳ màn hình báo cáo nào",
-        "when": "Bấm nút Xuất báo cáo",
-        "then": "Hệ thống tạo file PDF hoặc Excel và chia sẻ qua Share sheet của điện thoại"
+        "title": "Cùng logic tính toán và timezone",
+        "given": "App và Web cùng hiển thị báo cáo hôm nay",
+        "when": "Kiểm tra logic cắt ngày (00:00–23:59 UTC+7)",
+        "then": "Cả 2 dùng cùng timezone UTC+7, cùng điểm cắt ngày, không có giao dịch bị tính nhầm sang ngày khác"
       },
       {
         "id": "AC-05",
-        "title": "Dữ liệu cập nhật trong vòng 5 phút",
-        "given": "Đang có giao dịch diễn ra",
-        "when": "Người dùng xem báo cáo Hôm nay",
-        "then": "Dữ liệu cập nhật tối đa sau 5 phút, có indicator thể hiện thời điểm cập nhật lần cuối"
+        "title": "App dùng chung API với Web",
+        "given": "Dev kiểm tra network call của App",
+        "when": "App gọi API báo cáo",
+        "then": "App gọi đúng endpoint báo cáo chuẩn (giống Web), không còn endpoint riêng lẻ tính toán khác"
       }
     ],
-    "flow": "[Quản lý / Chủ cơ sở]\n    |\n    ▼\nMở App Arena → Tab Báo cáo\n    |\n    ▼\nChọn loại báo cáo\n    |\n    +--[Doanh thu]------→ Chọn khoảng thời gian\n    |                          |\n    +--[Hiệu suất bàn]-→ Chọn ngày/khoảng ngày\n    |                          |\n    +--[Nhân viên]-----→ Chọn ca/ngày\n    |                          |\n    +---------------------------+\n    |\n    ▼\nHệ thống load dữ liệu & render biểu đồ\n    |\n    ▼\nXem báo cáo, biểu đồ, bảng thống kê\n    |\n    ▼\n[Tuỳ chọn] Bấm Xuất báo cáo\n    |\n    ▼\nChọn định dạng PDF / Excel\n    |\n    ▼\nShare sheet mở → Gửi Zalo / Email / Lưu máy",
+    "flow": "[Quản lý phát hiện lệch số liệu App vs Web]\n    |\n    ▼\n== PHÂN TÍCH NGUYÊN NHÂN LỆCH ==\nSo sánh API endpoint App vs Web\n    |\n    +--[App dùng API khác]--→ Migrate App sang API chuẩn của Web\n    |\n    +--[Logic tính khác]---→ Đồng nhất logic (timezone, làm tròn, cắt ngày)\n    |\n    +--[Thiếu trường dữ liệu]→ Bổ sung mapping trường còn thiếu trên App\n    |\n    ▼\n== VERIFY SAU FIX ==\nChạy test case so sánh App vs Web cùng dataset\n    |\n    ▼\nSố liệu khớp → Done\n    |\n    ▼\nSố liệu vẫn lệch → Debug tiếp vòng lặp trên",
     "edgeCases": [
       {
-        "case": "Chọn khoảng ngày dài hơn 365 ngày",
-        "handle": "Giới hạn tối đa 365 ngày, tự thu hẹp về 365 ngày gần nhất và thông báo"
+        "case": "Giao dịch xảy ra đúng 00:00 — App và Web tính vào ngày khác nhau",
+        "handle": "Thống nhất rule: giao dịch thuộc ngày nếu created_at >= 00:00:00 UTC+7 ngày đó"
       },
       {
-        "case": "Ngày bắt đầu lớn hơn ngày kết thúc",
-        "handle": "Disable nút Xem báo cáo, hiển thị inline error"
+        "case": "App cache dữ liệu cũ, Web hiển thị real-time",
+        "handle": "Đồng bộ TTL cache: App cache tối đa 5 phút giống Web"
       },
       {
-        "case": "Không có dữ liệu trong khoảng thời gian chọn",
-        "handle": "Hiển thị empty state thân thiện: Chưa có dữ liệu trong khoảng này"
+        "case": "Làm tròn số gây lệch nhỏ (ví dụ 0.01đ)",
+        "handle": "Chấp nhận sai số tối đa 1đ do làm tròn, ghi rõ trong tài liệu"
       },
       {
-        "case": "Mất mạng khi đang xem báo cáo",
-        "handle": "Giữ nguyên dữ liệu đã load (cache), hiển thị banner Đang offline"
-      },
-      {
-        "case": "API load chậm > 30 giây",
-        "handle": "Hiển thị skeleton loading, timeout với nút Thử lại"
+        "case": "Nhân viên bị xoá sau khi đã có giao dịch",
+        "handle": "Cả App và Web phải hiển thị nhất quán: giữ tên cũ hoặc cùng hiển thị Nhân viên đã xoá"
       }
     ],
     "notes": [
-      "Chỉ tài khoản Manager trở lên mới thấy tab Báo cáo trên App",
-      "API báo cáo cần phân trang hoặc giới hạn dữ liệu để tránh timeout trên mobile",
-      "Cache local 5 phút cho dữ liệu báo cáo",
-      "Biểu đồ dùng thư viện nhẹ, tối ưu cho mobile (tránh chart.js full bundle)",
-      "Xuất file cần xử lý background nếu dữ liệu > 1000 dòng"
+      "Ưu tiên tìm nguyên nhân lệch trước khi code: so sánh API response App vs Web với cùng params",
+      "Không tạo API mới — App phải dùng đúng API đã có của Web",
+      "Cần test case tự động so sánh kết quả App API vs Web API với cùng dataset",
+      "Kiểm tra kỹ timezone: UTC vs UTC+7 là nguyên nhân phổ biến nhất gây lệch báo cáo ngày",
+      "Sau fix phải có sign-off từ quản lý: tự xác nhận số khớp trên cả 2 nền tảng"
     ],
     "testcases": [
       {
         "ma_testcase": "TC_001",
-        "ten_testcase": "Xem báo cáo doanh thu hôm nay",
+        "ten_testcase": "Doanh thu hôm nay App = Web",
         "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Đăng nhập tài khoản Manager\n- Đã có giao dịch trong ngày hôm nay",
-        "buoc_thuc_hien": "1. Mở App Arena\n2. Chuyển sang tab Báo cáo\n3. Chọn Hôm nay",
-        "ket_qua_mong_doi": "- Hiển thị tổng doanh thu hôm nay\n- Biểu đồ cột theo giờ\n- Số lượt khách và doanh thu trung bình/lượt\n- Thời điểm cập nhật lần cuối hiển thị rõ",
+        "dieu_kien_tien_quyet": "- Có giao dịch hôm nay\n- Đăng nhập cùng tài khoản Manager trên cả App và Web",
+        "buoc_thuc_hien": "1. Mở Web → Báo cáo → Doanh thu Hôm nay → ghi lại số\n2. Mở App → Báo cáo → Doanh thu Hôm nay\n3. So sánh tổng doanh thu, số lượt, doanh thu TB",
+        "ket_qua_mong_doi": "- Tổng doanh thu App = Web\n- Số lượt khách App = Web\n- Doanh thu TB/lượt App = Web",
         "loai": "Happy Path"
       },
       {
         "ma_testcase": "TC_002",
-        "ten_testcase": "Lọc báo cáo theo tuần và tháng",
+        "ten_testcase": "Doanh thu tuần này App = Web",
         "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Đăng nhập Manager\n- Có dữ liệu giao dịch trong tuần và tháng hiện tại",
-        "buoc_thuc_hien": "1. Tab Báo cáo → chọn Tuần này\n2. Kiểm tra dữ liệu\n3. Chuyển sang Tháng này\n4. Kiểm tra dữ liệu",
-        "ket_qua_mong_doi": "- Dữ liệu thay đổi đúng theo khoảng lọc\n- Biểu đồ re-render đúng\n- Tổng doanh thu tháng >= tổng doanh thu tuần",
+        "dieu_kien_tien_quyet": "- Có dữ liệu giao dịch trong tuần hiện tại",
+        "buoc_thuc_hien": "1. Web → Tuần này → ghi số\n2. App → Tuần này\n3. So sánh",
+        "ket_qua_mong_doi": "- Số liệu khớp hoàn toàn giữa App và Web",
         "loai": "Happy Path"
       },
       {
         "ma_testcase": "TC_003",
-        "ten_testcase": "Xem hiệu suất bàn theo ngày",
+        "ten_testcase": "Hiệu suất bàn App = Web cùng ngày",
         "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Có dữ liệu sử dụng bàn trong ngày hôm qua",
-        "buoc_thuc_hien": "1. Tab Báo cáo → chọn Hiệu suất bàn\n2. Chọn ngày hôm qua\n3. Sắp xếp theo Doanh thu",
-        "ket_qua_mong_doi": "- Danh sách bàn hiển thị đầy đủ\n- Mỗi bàn có: số giờ dùng, doanh thu, % hoạt động\n- Sắp xếp đúng theo doanh thu giảm dần",
+        "dieu_kien_tien_quyet": "- Có dữ liệu sử dụng bàn hôm qua",
+        "buoc_thuc_hien": "1. Web → Hiệu suất bàn → chọn hôm qua → ghi từng bàn\n2. App → Hiệu suất bàn → hôm qua\n3. So sánh từng bàn",
+        "ket_qua_mong_doi": "- Số giờ và doanh thu từng bàn khớp (cho phép sai số ≤ 1đ)",
         "loai": "Happy Path"
       },
       {
         "ma_testcase": "TC_004",
-        "ten_testcase": "Xuất báo cáo định dạng PDF",
+        "ten_testcase": "Báo cáo nhân viên App = Web cùng ca",
         "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Đang xem báo cáo doanh thu tháng này",
-        "buoc_thuc_hien": "1. Bấm nút Xuất báo cáo\n2. Chọn định dạng PDF\n3. Bấm Xuất",
-        "ket_qua_mong_doi": "- Share sheet của điện thoại mở lên\n- File PDF có đủ thông tin báo cáo\n- Có thể gửi qua Zalo hoặc lưu máy",
+        "dieu_kien_tien_quyet": "- Có dữ liệu ca làm hôm nay",
+        "buoc_thuc_hien": "1. Web → Nhân viên → hôm nay → ghi từng người\n2. App → Nhân viên → hôm nay\n3. So sánh",
+        "ket_qua_mong_doi": "- Doanh thu và số giao dịch từng nhân viên khớp",
         "loai": "Happy Path"
       },
       {
         "ma_testcase": "TC_005",
-        "ten_testcase": "Lọc tuỳ chọn khoảng ngày hợp lệ",
-        "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Đăng nhập Manager",
-        "buoc_thuc_hien": "1. Chọn Tuỳ chọn\n2. Nhập 01/03/2026 → 31/03/2026\n3. Bấm Xem báo cáo",
-        "ket_qua_mong_doi": "- Báo cáo hiển thị đúng dữ liệu tháng 3/2026\n- Biểu đồ theo ngày trong tháng 3",
-        "loai": "Happy Path"
+        "ten_testcase": "App và Web dùng cùng timezone UTC+7",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- Có giao dịch lúc 23:58 và 00:02",
+        "buoc_thuc_hien": "1. Kiểm tra giao dịch 23:58 thuộc ngày nào trên App vs Web\n2. Kiểm tra giao dịch 00:02 thuộc ngày nào trên App vs Web",
+        "ket_qua_mong_doi": "- App và Web phân loại ngày giống nhau cho cả 2 giao dịch\n- Không có giao dịch bị tính nhầm sang ngày khác",
+        "loai": "Edge Case"
       },
       {
         "ma_testcase": "TC_006",
-        "ten_testcase": "Không có dữ liệu trong khoảng thời gian chọn",
+        "ten_testcase": "App không cache dữ liệu cũ hơn Web",
         "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Không có giao dịch vào ngày 01/01/2020",
-        "buoc_thuc_hien": "1. Chọn tuỳ chọn ngày 01/01/2020 → 01/01/2020\n2. Xem báo cáo",
-        "ket_qua_mong_doi": "- Hiển thị empty state thân thiện\n- Không crash app\n- Biểu đồ hiển thị trống",
+        "dieu_kien_tien_quyet": "- Vừa có giao dịch mới trong vòng 5 phút",
+        "buoc_thuc_hien": "1. Tạo giao dịch mới\n2. Chờ 5 phút\n3. Xem báo cáo Hôm nay trên App và Web",
+        "ket_qua_mong_doi": "- App phản ánh giao dịch mới sau tối đa 5 phút\n- Không lệch quá 1 giao dịch so với Web",
         "loai": "Edge Case"
       },
       {
         "ma_testcase": "TC_007",
-        "ten_testcase": "Chọn khoảng ngày vượt 365 ngày",
+        "ten_testcase": "Nhân viên đã xoá vẫn hiển thị nhất quán",
         "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Đang ở bộ lọc tuỳ chọn",
-        "buoc_thuc_hien": "1. Nhập ngày bắt đầu 01/01/2025, ngày kết thúc 06/04/2026",
-        "ket_qua_mong_doi": "- Hệ thống thông báo vượt giới hạn\n- Tự thu hẹp khoảng về 365 ngày gần nhất\n- Không crash",
+        "dieu_kien_tien_quyet": "- Có nhân viên đã xoá nhưng có lịch sử giao dịch cũ",
+        "buoc_thuc_hien": "1. Xem báo cáo nhân viên khoảng có giao dịch của người đã xoá\n2. So sánh App vs Web",
+        "ket_qua_mong_doi": "- App và Web hiển thị nhất quán: cùng tên cũ hoặc cùng Nhân viên đã xoá\n- Số liệu khớp",
         "loai": "Edge Case"
       },
       {
         "ma_testcase": "TC_008",
-        "ten_testcase": "Ngày bắt đầu lớn hơn ngày kết thúc",
-        "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Đang ở bộ lọc tuỳ chọn",
-        "buoc_thuc_hien": "1. Nhập ngày bắt đầu 31/03/2026, ngày kết thúc 01/03/2026",
-        "ket_qua_mong_doi": "- Inline error: Ngày bắt đầu phải trước ngày kết thúc\n- Nút Xem báo cáo bị disable",
+        "ten_testcase": "App gọi đúng API chuẩn của Web",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- Có thể inspect network calls của App",
+        "buoc_thuc_hien": "1. Bật network log trên App\n2. Mở màn hình báo cáo\n3. Kiểm tra endpoint được gọi",
+        "ket_qua_mong_doi": "- App gọi đúng endpoint báo cáo chuẩn\n- Không còn endpoint riêng lẻ khác Web",
         "loai": "Edge Case"
       },
       {
         "ma_testcase": "TC_009",
-        "ten_testcase": "Mất mạng khi đang xem báo cáo",
+        "ten_testcase": "Không có dữ liệu trong khoảng thời gian",
         "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Đang xem báo cáo doanh thu hôm nay",
-        "buoc_thuc_hien": "1. Đang xem báo cáo\n2. Tắt WiFi/Data\n3. Thử kéo refresh",
-        "ket_qua_mong_doi": "- Dữ liệu cũ vẫn hiển thị (cache)\n- Banner Đang offline xuất hiện\n- Khi có mạng lại: tự cập nhật hoặc có nút Tải lại",
-        "loai": "Edge Case"
+        "dieu_kien_tien_quyet": "- Không có giao dịch ngày 01/01/2020",
+        "buoc_thuc_hien": "1. Xem báo cáo 01/01/2020 trên App và Web",
+        "ket_qua_mong_doi": "- Cả 2 đều hiển thị 0 hoặc empty state\n- Không lệch nhau",
+        "loai": "Error Case"
       },
       {
         "ma_testcase": "TC_010",
-        "ten_testcase": "Tài khoản không có quyền Manager",
-        "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Đăng nhập tài khoản nhân viên thường",
-        "buoc_thuc_hien": "1. Mở App\n2. Tìm tab Báo cáo",
-        "ket_qua_mong_doi": "- Tab Báo cáo không hiển thị\n- Hoặc hiển thị thông báo không có quyền nếu truy cập trực tiếp",
-        "loai": "Error Case"
-      },
-      {
-        "ma_testcase": "TC_011",
-        "ten_testcase": "API báo cáo timeout > 30 giây",
-        "nhom": "Arena Club Manage",
-        "dieu_kien_tien_quyet": "- Simulate API chậm > 30 giây",
-        "buoc_thuc_hien": "1. Chọn khoảng thời gian dài\n2. Bấm Xem báo cáo\n3. Chờ 30 giây",
-        "ket_qua_mong_doi": "- Skeleton loading hiển thị trong khi chờ\n- Sau 30s: hiển thị lỗi timeout\n- Có nút Thử lại",
-        "loai": "Error Case"
-      },
-      {
-        "ma_testcase": "TC_012",
-        "ten_testcase": "Lỗi server 500 khi tải dữ liệu",
-        "nhom": "Backend",
-        "dieu_kien_tien_quyet": "- Simulate API trả về 500",
-        "buoc_thuc_hien": "1. Bấm Xem báo cáo khi API lỗi",
-        "ket_qua_mong_doi": "- App không crash\n- Hiển thị thông báo lỗi thân thiện\n- Có nút Thử lại",
-        "loai": "Error Case"
-      },
-      {
-        "ma_testcase": "TC_013",
-        "ten_testcase": "End-to-end: Xem → Lọc → Xuất báo cáo",
+        "ten_testcase": "End-to-end: So sánh App vs Web toàn bộ module báo cáo",
         "nhom": "End-to-end",
-        "dieu_kien_tien_quyet": "- Đăng nhập Manager\n- Có dữ liệu giao dịch tháng 3/2026\n- Kết nối mạng ổn định",
-        "buoc_thuc_hien": "1. Mở App → Tab Báo cáo\n2. Xem doanh thu Hôm nay\n3. Chuyển sang Tuần này, kiểm tra biểu đồ\n4. Chuyển sang Hiệu suất bàn, sắp xếp theo giờ\n5. Xem báo cáo Nhân viên theo ca hôm nay\n6. Quay về Doanh thu, xuất PDF tháng này\n7. Gửi file qua Zalo",
-        "ket_qua_mong_doi": "- Tất cả tab hiển thị dữ liệu đúng\n- Chuyển tab mượt, không lag\n- File PDF xuất đúng dữ liệu tháng 3\n- Chia sẻ qua Zalo thành công",
+        "dieu_kien_tien_quyet": "- Đăng nhập Manager\n- Có dữ liệu đầy đủ tuần này\n- Mở song song App và Web",
+        "buoc_thuc_hien": "1. So sánh Doanh thu: Hôm nay, Tuần này, Tháng này\n2. So sánh Hiệu suất bàn hôm qua\n3. So sánh Nhân viên ca hôm nay\n4. Ghi lại mọi điểm lệch nếu có",
+        "ket_qua_mong_doi": "- Tất cả module báo cáo khớp App vs Web\n- Không có điểm lệch nào\n- Manager xác nhận và sign-off",
         "loai": "Happy Path"
       }
     ]
