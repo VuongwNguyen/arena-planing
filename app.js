@@ -78,43 +78,19 @@ function buildOverview(item) {
   });
   content.appendChild(usBox);
 
-  // Example
-  if (item.example) {
-    content.appendChild(el('div', { className: 'section-title', textContent: '📊 Ví dụ minh hoạ' }));
-    content.appendChild(el('p', { textContent: item.example.description, style: 'font-size:13px;color:#64748b;margin-bottom:8px' }));
-
-    const table = el('table', { className: 'ex-table' });
-    const thead = el('thead');
-    const hr = el('tr');
-    ['Mã HH', 'Tên hàng', 'SL', 'Đơn giá', 'Thành tiền'].forEach(function(h) {
-      hr.appendChild(el('th', { textContent: h }));
+  // Mockup
+  if (item.mockupUrl) {
+    content.appendChild(el('div', { className: 'section-title', textContent: '🖼️ Mockup / Giao diện' }));
+    const urls = Array.isArray(item.mockupUrl) ? item.mockupUrl : [item.mockupUrl];
+    const mockupWrap = el('div', { className: 'mockup-wrap' });
+    urls.forEach(function(url, idx) {
+      const img = el('img', { src: url, alt: 'Mockup ' + (idx + 1), className: 'mockup-img' });
+      const link = el('a', { href: url, target: '_blank', className: 'mockup-link', textContent: '🔗 Xem ảnh ' + (idx + 1) });
+      img.onerror = function() { img.style.display = 'none'; link.style.display = 'inline-block'; };
+      mockupWrap.appendChild(img);
+      mockupWrap.appendChild(link);
     });
-    thead.appendChild(hr);
-    table.appendChild(thead);
-
-    const tbody = el('tbody');
-    var grandTotal = 0;
-    item.example.items.forEach(function(i) {
-      const total = i.qty * i.price;
-      grandTotal += total;
-      const tr = el('tr');
-      [i.code, i.name, i.qty, fmt(i.price), fmt(total)].forEach(function(v) {
-        tr.appendChild(el('td', { textContent: String(v) }));
-      });
-      tbody.appendChild(tr);
-    });
-    // Total row
-    const totalTr = el('tr', { className: 'total-row' });
-    const tdLabel = el('td', { textContent: 'TỔNG', colspan: '4' });
-    totalTr.appendChild(tdLabel);
-    totalTr.appendChild(el('td', { textContent: fmt(grandTotal) }));
-    tbody.appendChild(totalTr);
-    table.appendChild(tbody);
-    content.appendChild(table);
-
-    const note = el('p', { className: 'discount-note' });
-    note.textContent = 'Thu ngân giảm tay: ' + fmt(item.example.discount) + ' · Khách trả: ' + fmt(grandTotal - item.example.discount);
-    content.appendChild(note);
+    content.appendChild(mockupWrap);
   }
 
   page.appendChild(content);

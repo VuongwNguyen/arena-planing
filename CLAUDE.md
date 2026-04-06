@@ -38,14 +38,7 @@ Mỗi item trong array `data.json` theo đúng cấu trúc sau:
     "soThat": "Kết quả mong muốn"
   },
 
-  "example": {
-    "description": "Mô tả ngắn ví dụ minh hoạ",
-    "discount": 0,
-    "total": 0,
-    "items": [
-      { "code": "SP000001", "name": "Tên hàng", "qty": 1, "price": 0 }
-    ]
-  },
+  "mockupUrl": "https://figma.com/...",
 
   "acceptanceCriteria": [
     {
@@ -145,7 +138,14 @@ Mỗi US **phải có** field `testcases[]` với đầy đủ các nhóm:
 
 ## Các field tuỳ chọn
 
-Có thể bỏ qua nếu không cần: `example`, `dbChanges`, `edgeCases`, `sprintPlan`
+Có thể bỏ qua nếu không cần: `mockupUrl`, `dbChanges`, `edgeCases`, `sprintPlan`
+
+## Quy tắc mockupUrl (BẮT BUỘC với US có giao diện)
+
+Nếu US liên quan đến màn hình / UI → **hỏi user trước khi commit:**
+> "US này có giao diện — bạn có link mockup/ảnh nào muốn thêm vào không?"
+
+`mockupUrl` có thể là string hoặc array string.
 
 ## Quy trình thêm planning item mới
 
