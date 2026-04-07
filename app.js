@@ -501,14 +501,18 @@ const JIRA_BASE  = 'https://arena-platform.atlassian.net';
 const JIRA_EMAIL = 'nguyenvuongw134@gmail.com';
 const JIRA_BOARD = 139;
 
+const CORS_PROXY = 'https://corsproxy.io/?url=';
+
 function jiraToken()     { return localStorage.getItem('jira_token') || ''; }
 function jiraSetToken(t) { localStorage.setItem('jira_token', t); }
 function jiraAuth()      { return 'Basic ' + btoa(JIRA_EMAIL + ':' + jiraToken()); }
 function clearEl(node)   { while (node.firstChild) node.removeChild(node.firstChild); }
 
 async function jiraFetch(path, opts) {
-  const r = await fetch(JIRA_BASE + path, Object.assign({
-    headers: { 'Authorization': jiraAuth(), 'Content-Type': 'application/json' }
+  const directUrl = JIRA_BASE + path;
+  const url = CORS_PROXY + encodeURIComponent(directUrl);
+  const r = await fetch(url, Object.assign({
+    headers: { 'Authorization': jiraAuth(), 'Content-Type': 'application/json', 'x-requested-with': 'XMLHttpRequest' }
   }, opts || {}));
   if (!r.ok) {
     const msg = await r.text().catch(function() { return ''; });
@@ -529,31 +533,9 @@ function buildJiraChip(statusName, issueKey, clickable) {
   var s = JIRA_S[statusName] || { cls: 'jira-status-todo', label: statusName, next: 'In Progress' };
   var chip = el('span', { className: 'jira-status' + (clickable ? ' clickable' : '') + ' ' + s.cls, textContent: s.label });
   if (!clickable) return chip;
-  chip.title = 'Click → ' + s.next;
-  chip.addEventListener('click', async function() {
-    var prev = chip.textContent;
-    chip.textContent = '...';
-    chip.className = 'jira-status';
-    try {
-      var trans = await jiraFetch('/rest/api/3/issue/' + issueKey + '/transitions');
-      var target = s.next.toLowerCase().replace(/\s/g, '');
-      var t = trans.transitions.find(function(x) {
-        return x.to.name.toLowerCase().replace(/\s/g,'') === target
-            || x.name.toLowerCase().replace(/\s/g,'').includes(target);
-      });
-      if (!t) throw new Error('Không tìm thấy transition → ' + s.next);
-      await jiraFetch('/rest/api/3/issue/' + issueKey + '/transitions', {
-        method: 'POST',
-        body: JSON.stringify({ transition: { id: t.id } })
-      });
-      var newChip = buildJiraChip(t.to.name, issueKey, true);
-      chip.parentNode.replaceChild(newChip, chip);
-    } catch(e) {
-      chip.textContent = prev;
-      chip.className = 'jira-status clickable ' + s.cls;
-      chip.title = 'Lỗi: ' + e.message;
-      console.error('[Jira transition]', e);
-    }
+  chip.title = 'Click \u2192 m\u1EDF Jira \u0111\u1EC3 c\u1EADp nh\u1EADt status';
+  chip.addEventListener('click', function() {
+    window.open(JIRA_BASE + '/browse/' + issueKey, '_blank');
   });
   return chip;
 }
