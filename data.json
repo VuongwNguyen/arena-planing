@@ -4647,11 +4647,12 @@
       }
     ],
     "notes": [
-      "Ưu tiên tìm nguyên nhân lệch trước khi code: so sánh API response App vs Web với cùng params",
-      "Không tạo API mới — App phải dùng đúng API đã có của Web",
-      "Cần test case tự động so sánh kết quả App API vs Web API với cùng dataset",
-      "Kiểm tra kỹ timezone: UTC vs UTC+7 là nguyên nhân phổ biến nhất gây lệch báo cáo ngày",
-      "Sau fix phải có sign-off từ quản lý: tự xác nhận số khớp trên cả 2 nền tảng"
+      "Không tạo API mới — App phải migrate sang API chuẩn đã có của Web",
+      "Endpoint mapping cần fix: [Doanh thu] /api/app/sale-reports/get-revenue → /api/reports/get-time-sale-detail-report | [Hiệu suất bàn] /api/app/sale-reports/get-table-revenue → /api/reports/get-table-sale-detail-report | [Doanh thu NV] /api/app/reports/get-revenue-by-employee → /api/reports/get-cashier-shift-daily-report",
+      "File cần sửa: src/screens/report-v2/sell-report/sale-reports.hook.ts (doanh thu + bàn), src/screens/report-v2/end-of-day-report/end-report.hook.ts, src/redux/slices/report.ts (endpoint cũ)",
+      "Timezone fix: thêm dayjs/plugin/utc + dayjs/plugin/timezone, dùng dayjs().tz('Asia/Ho_Chi_Minh') — tham khảo src/screens/shift/HandoverVoucherScreen.tsx đã làm đúng",
+      "Màn hình Doanh thu NV (GE-762) có thể cần tạo mới: src/screens/report-v2/staff-report/ dùng get-cashier-shift-daily-report",
+      "Sau fix phải có sign-off từ quản lý: tự xác nhận số khớp App vs Web trên cả 3 module"
     ],
     "testcases": [
       {
