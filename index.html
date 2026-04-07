@@ -145,77 +145,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 
-/* Nav action */
-.nav-action { padding: 0 16px; margin-left: auto; display: flex; align-items: center; flex-shrink: 0; }
-.nav-jira-btn { padding: 6px 14px; font-size: 12px; font-weight: 600; color: #0052cc; background: #e0f0ff; border: 1px solid #b3d4ff; border-radius: 6px; cursor: pointer; text-decoration: none; transition: all 0.15s; white-space: nowrap; }
-.nav-jira-btn:hover, .nav-jira-btn.active { background: #0052cc; color: #fff; border-color: #0052cc; }
-
-/* Jira container */
-.jira-container { max-width: 980px; margin: 0 auto; padding: 28px 40px; }
-
-/* Setup */
-.jira-setup { text-align: center; padding: 80px 40px; }
-.jira-setup-icon { font-size: 40px; margin-bottom: 12px; }
-.jira-setup h2 { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
-.jira-setup p { font-size: 14px; color: #64748b; margin-bottom: 24px; }
-.jira-token-input { display: block; width: 400px; max-width: 100%; margin: 0 auto 12px; padding: 10px 14px; font-size: 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; outline: none; font-family: monospace; }
-.jira-token-input:focus { border-color: #0052cc; }
-.jira-connect-btn { padding: 10px 28px; font-size: 14px; font-weight: 600; background: #0052cc; color: #fff; border: none; border-radius: 8px; cursor: pointer; }
-.jira-connect-btn:hover { background: #0041a0; }
-
-/* Sprint header */
-.jira-sprint-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #e2e8f0; flex-wrap: wrap; }
-.jira-sprint-name { font-size: 18px; font-weight: 700; color: #0f172a; flex: 1; }
-.jira-sprint-dates { font-size: 13px; color: #64748b; }
-.jira-sprint-total { font-size: 12px; font-weight: 600; color: #fff; background: #0052cc; padding: 3px 10px; border-radius: 20px; }
-.jira-reset-btn { padding: 5px 12px; font-size: 12px; color: #94a3b8; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; }
-.jira-reset-btn:hover { color: #dc2626; border-color: #fca5a5; background: #fff; }
-
-/* Story group */
-.jira-story-group { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
-.jira-story-header { display: flex; align-items: center; gap: 10px; padding: 13px 18px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
-.jira-story-key { font-size: 11px; font-weight: 700; color: #0052cc; text-decoration: none; background: #dbeafe; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
-.jira-story-key:hover { text-decoration: underline; }
-.jira-story-summary { font-size: 14px; font-weight: 600; color: #0f172a; flex: 1; }
-.jira-story-est { font-size: 12px; color: #64748b; }
-
-/* Subtask row */
-.jira-subtask-row { display: flex; align-items: center; gap: 10px; padding: 10px 18px 10px 30px; border-bottom: 1px solid #f1f5f9; font-size: 13px; transition: background 0.1s; }
-.jira-subtask-row:last-child { border-bottom: none; }
-.jira-subtask-row:hover { background: #f8fafc; }
-.jira-sub-key { font-size: 11px; font-weight: 700; color: #0052cc; text-decoration: none; background: #e0f0ff; padding: 2px 7px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
-.jira-sub-key:hover { text-decoration: underline; }
-.jira-sub-summary { flex: 1; color: #334155; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.jira-est { font-size: 11px; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
-
-/* Status chip */
-.jira-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; user-select: none; }
-.jira-status.clickable { cursor: pointer; }
-.jira-status.clickable:hover { opacity: 0.75; }
-.jira-status-todo     { background: #f1f5f9; color: #475569; }
-.jira-status-progress { background: #fff7ed; color: #c2410c; }
-.jira-status-done     { background: #dcfce7; color: #15803d; }
-
-/* Orphan task */
-.jira-orphan-group .jira-story-header { background: #fffbeb; border-color: #fde68a; }
-
-/* Loading / Error */
-.jira-loading { text-align: center; padding: 80px 40px; font-size: 14px; color: #64748b; }
-.jira-error { text-align: center; padding: 60px 40px; }
-.jira-error h3 { font-size: 16px; color: #dc2626; margin-bottom: 8px; }
-.jira-error-msg { font-size: 12px; color: #94a3b8; font-family: monospace; margin-bottom: 20px; }
 </style>
 </head>
 <body>
 <div class="nav" id="nav">
   <div class="nav-logo"><div class="nav-logo-dot"></div>Presented By Vuongw</div>
   <div class="nav-tabs" id="nav-tabs"></div>
-  <div class="nav-action">
-    <a href="?view=jira" class="nav-jira-btn" id="nav-jira-btn">🎯 Jira Board</a>
-  </div>
 </div>
 <div id="app"></div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>
