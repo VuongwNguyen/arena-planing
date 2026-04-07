@@ -450,6 +450,13 @@ function renderNav(item) {
 
 async function init() {
   const params = new URLSearchParams(window.location.search);
+
+  if (params.get('view') === 'jira') {
+    document.title = 'Jira Board \u2014 Arena Planning';
+    await renderJiraBoard(document.getElementById('app'));
+    return;
+  }
+
   const id = params.get('id');
 
   if (!id) { renderNotFound(''); return; }
@@ -486,5 +493,194 @@ async function init() {
 
   showTab('overview');
 }
+
+// ============================================================
+// JIRA BOARD
+// ============================================================
+const JIRA_BASE  = 'https://arena-platform.atlassian.net';
+const JIRA_EMAIL = 'nguyenvuongw134@gmail.com';
+const JIRA_BOARD = 139;
+
+function jiraToken()     { return localStorage.getItem('jira_token') || ''; }
+function jiraSetToken(t) { localStorage.setItem('jira_token', t); }
+function jiraAuth()      { return 'Basic ' + btoa(JIRA_EMAIL + ':' + jiraToken()); }
+function clearEl(node)   { while (node.firstChild) node.removeChild(node.firstChild); }
+
+async function jiraFetch(path, opts) {
+  const r = await fetch(JIRA_BASE + path, Object.assign({
+    headers: { 'Authorization': jiraAuth(), 'Content-Type': 'application/json' }
+  }, opts || {}));
+  if (!r.ok) {
+    const msg = await r.text().catch(function() { return ''; });
+    throw new Error('HTTP ' + r.status + (msg ? ': ' + msg.slice(0, 120) : ''));
+  }
+  return r.status === 204 ? null : r.json();
+}
+
+const JIRA_S = {
+  'To Do':       { cls: 'jira-status-todo',     label: 'To Do',       next: 'In Progress' },
+  'In Progress': { cls: 'jira-status-progress', label: 'In Progress', next: 'Done' },
+  'IN PROGRESS': { cls: 'jira-status-progress', label: 'In Progress', next: 'Done' },
+  'Done':        { cls: 'jira-status-done',      label: 'Done',        next: 'To Do' },
+  'DONE':        { cls: 'jira-status-done',      label: 'Done',        next: 'To Do' },
+};
+
+function buildJiraChip(statusName, issueKey, clickable) {
+  var s = JIRA_S[statusName] || { cls: 'jira-status-todo', label: statusName, next: 'In Progress' };
+  var chip = el('span', { className: 'jira-status' + (clickable ? ' clickable' : '') + ' ' + s.cls, textContent: s.label });
+  if (!clickable) return chip;
+  chip.title = 'Click → ' + s.next;
+  chip.addEventListener('click', async function() {
+    var prev = chip.textContent;
+    chip.textContent = '...';
+    chip.className = 'jira-status';
+    try {
+      var trans = await jiraFetch('/rest/api/3/issue/' + issueKey + '/transitions');
+      var target = s.next.toLowerCase().replace(/\s/g, '');
+      var t = trans.transitions.find(function(x) {
+        return x.to.name.toLowerCase().replace(/\s/g,'') === target
+            || x.name.toLowerCase().replace(/\s/g,'').includes(target);
+      });
+      if (!t) throw new Error('Không tìm thấy transition → ' + s.next);
+      await jiraFetch('/rest/api/3/issue/' + issueKey + '/transitions', {
+        method: 'POST',
+        body: JSON.stringify({ transition: { id: t.id } })
+      });
+      var newChip = buildJiraChip(t.to.name, issueKey, true);
+      chip.parentNode.replaceChild(newChip, chip);
+    } catch(e) {
+      chip.textContent = prev;
+      chip.className = 'jira-status clickable ' + s.cls;
+      chip.title = 'Lỗi: ' + e.message;
+      console.error('[Jira transition]', e);
+    }
+  });
+  return chip;
+}
+
+async function renderJiraBoard(container) {
+  clearEl(container);
+
+  var navBtn = document.getElementById('nav-jira-btn');
+  if (navBtn) navBtn.classList.add('active');
+
+  if (!jiraToken()) {
+    var setup = el('div', { className: 'jira-setup' });
+    setup.appendChild(el('div', { className: 'jira-setup-icon', textContent: '\uD83D\uDD11' }));
+    setup.appendChild(el('h2', { textContent: 'K\u1EBFt n\u1ED1i Jira' }));
+    setup.appendChild(el('p', { textContent: 'Nh\u1EADp Atlassian API token \u0111\u1EC3 xem sprint board.' }));
+    var inp = el('input', { type: 'password', className: 'jira-token-input', placeholder: 'API Token...' });
+    var btn = el('button', { className: 'jira-connect-btn', textContent: 'K\u1EBFt n\u1ED1i' });
+    btn.addEventListener('click', function() {
+      var t = inp.value.trim();
+      if (!t) { inp.focus(); return; }
+      jiraSetToken(t);
+      renderJiraBoard(container);
+    });
+    inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') btn.click(); });
+    setup.appendChild(inp);
+    setup.appendChild(btn);
+    container.appendChild(el('div', { className: 'jira-container' }, [setup]));
+    return;
+  }
+
+  var wrap = el('div', { className: 'jira-container' });
+  container.appendChild(wrap);
+  var loading = el('div', { className: 'jira-loading', textContent: '\u23F3 \u0110ang t\u1EA3i sprint...' });
+  wrap.appendChild(loading);
+
+  try {
+    var sprintData = await jiraFetch('/rest/agile/1.0/board/' + JIRA_BOARD + '/sprint?state=active');
+    var sprint = sprintData.values && sprintData.values[0];
+    if (!sprint) throw new Error('Kh\u00F4ng c\u00F3 sprint active');
+
+    var issueData = await jiraFetch(
+      '/rest/agile/1.0/sprint/' + sprint.id +
+      '/issue?maxResults=100&fields=summary,status,timetracking,parent,issuetype,assignee'
+    );
+
+    if (wrap.contains(loading)) wrap.removeChild(loading);
+
+    var totalSec = 0;
+    issueData.issues.forEach(function(i) {
+      var s = i.fields.timetracking && i.fields.timetracking.originalEstimateSeconds;
+      if (s) totalSec += s;
+    });
+
+    var startD = (sprint.startDate || '').slice(0, 10);
+    var endD   = (sprint.endDate   || '').slice(0, 10);
+
+    var spHdr = el('div', { className: 'jira-sprint-header' });
+    spHdr.appendChild(el('div', { className: 'jira-sprint-name', textContent: '\uD83D\uDCC5 ' + sprint.name }));
+    if (startD) spHdr.appendChild(el('div', { className: 'jira-sprint-dates', textContent: startD + ' \u2192 ' + endD }));
+    if (totalSec) spHdr.appendChild(el('span', { className: 'jira-sprint-total', textContent: Math.round(totalSec / 3600) + 'h t\u1ED5ng' }));
+    var resetBtn = el('button', { className: 'jira-reset-btn', textContent: '\uD83D\uDD11 \u0110\u1ED5i token' });
+    resetBtn.addEventListener('click', function() {
+      localStorage.removeItem('jira_token');
+      renderJiraBoard(container);
+    });
+    spHdr.appendChild(resetBtn);
+    wrap.appendChild(spHdr);
+
+    var stories = {};
+    var orphans = [];
+    issueData.issues.forEach(function(iss) {
+      var type = iss.fields.issuetype.name;
+      if (type === 'Story' || type === 'Epic') {
+        if (!stories[iss.key]) stories[iss.key] = { issue: iss, children: [] };
+        else stories[iss.key].issue = iss;
+      } else {
+        var pk = iss.fields.parent && iss.fields.parent.key;
+        if (pk) {
+          if (!stories[pk]) stories[pk] = { issue: null, children: [] };
+          stories[pk].children.push(iss);
+        } else {
+          orphans.push(iss);
+        }
+      }
+    });
+
+    function buildGroup(issue, children) {
+      var group = el('div', { className: 'jira-story-group' });
+      var hdr = el('div', { className: 'jira-story-header' });
+      if (issue) {
+        hdr.appendChild(el('a', { className: 'jira-story-key', href: JIRA_BASE + '/browse/' + issue.key, target: '_blank', textContent: issue.key }));
+        hdr.appendChild(el('span', { className: 'jira-story-summary', textContent: issue.fields.summary }));
+        var est = issue.fields.timetracking && issue.fields.timetracking.originalEstimate;
+        if (est) hdr.appendChild(el('span', { className: 'jira-story-est', textContent: est }));
+        hdr.appendChild(buildJiraChip(issue.fields.status.name, issue.key, false));
+      } else {
+        hdr.appendChild(el('span', { className: 'jira-story-summary', textContent: '\uD83D\uDCCC Tasks kh\u00F4ng c\u00F3 Story cha' }));
+      }
+      group.appendChild(hdr);
+      children.forEach(function(child) {
+        var row = el('div', { className: 'jira-subtask-row' });
+        row.appendChild(el('a', { className: 'jira-sub-key', href: JIRA_BASE + '/browse/' + child.key, target: '_blank', textContent: child.key }));
+        row.appendChild(el('span', { className: 'jira-sub-summary', textContent: child.fields.summary }));
+        var ce = child.fields.timetracking && child.fields.timetracking.originalEstimate;
+        if (ce) row.appendChild(el('span', { className: 'jira-est', textContent: ce }));
+        row.appendChild(buildJiraChip(child.fields.status.name, child.key, true));
+        group.appendChild(row);
+      });
+      return group;
+    }
+
+    Object.values(stories).forEach(function(g) { wrap.appendChild(buildGroup(g.issue, g.children)); });
+    if (orphans.length) wrap.appendChild(buildGroup(null, orphans));
+
+  } catch(e) {
+    if (wrap.contains(loading)) wrap.removeChild(loading);
+    var errDiv = el('div', { className: 'jira-error' });
+    errDiv.appendChild(el('h3', { textContent: '\u274C Kh\u00F4ng th\u1EC3 t\u1EA3i Jira' }));
+    errDiv.appendChild(el('div', { className: 'jira-error-msg', textContent: e.message }));
+    var retryBtn = el('button', { className: 'jira-connect-btn', textContent: 'Th\u1EED l\u1EA1i' });
+    retryBtn.addEventListener('click', function() { renderJiraBoard(container); });
+    errDiv.appendChild(retryBtn);
+    wrap.appendChild(errDiv);
+    console.error('[Jira]', e);
+  }
+}
+
+// ============================================================
 
 init();
