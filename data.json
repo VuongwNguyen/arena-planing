@@ -5132,9 +5132,27 @@
           "color": "purple",
           "result": "US được duyệt, AC rõ ràng, nhánh feature tạo xong",
           "tasks": [
-            { "text": "Tạo US-AR-012 và AC trên planning", "tags": ["Claude", "Team"] },
-            { "text": "Tạo nhánh feature/GE-731-report-cancel-order từ develop", "tags": ["Dev", "Git"] },
-            { "text": "Xác nhận API spec: endpoint + response schema", "tags": ["Dev", "Team"] }
+            {
+              "text": "Tạo US-AR-012 và AC trên planning",
+              "tags": [
+                "Claude",
+                "Team"
+              ]
+            },
+            {
+              "text": "Tạo nhánh feature/GE-731-report-cancel-order từ develop",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            },
+            {
+              "text": "Xác nhận API spec: endpoint + response schema",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -5144,10 +5162,34 @@
           "color": "teal",
           "result": "Cấu trúc file FE tạo xong, BE endpoint skeleton sẵn sàng",
           "tasks": [
-            { "text": "Tạo skeleton các component: CancelOrderList, SideBar, Header, Table, DetailModal", "tags": ["Dev", "Claude"] },
-            { "text": "Thêm route /transactions/cancel-orders vào Routes.tsx và routeConfigAdmin.tsx", "tags": ["Dev", "Claude"] },
-            { "text": "Thêm messageId arena.menu.cancel-orders vào en_US.json", "tags": ["Dev", "Claude"] },
-            { "text": "BE: tạo skeleton searchCancelled() trong app-order-repo.ts", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Tạo skeleton các component: CancelOrderList, SideBar, Header, Table, DetailModal",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thêm route /transactions/cancel-orders vào Routes.tsx và routeConfigAdmin.tsx",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thêm messageId arena.menu.cancel-orders vào en_US.json",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "BE: tạo skeleton searchCancelled() trong app-order-repo.ts",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -5157,11 +5199,41 @@
           "color": "blue",
           "result": "Danh sách hiển thị đúng, filter hoạt động",
           "tasks": [
-            { "text": "BE: implement searchCancelled() với branchId IN, fromTime/toTime, pagination", "tags": ["Dev", "Claude"] },
-            { "text": "BE: cập nhật cancelled() ghi updatedBy = sessionUser.id", "tags": ["Dev", "Claude"] },
-            { "text": "BE: thêm cancelledAt alias và join cancelledByName vào getOne()", "tags": ["Dev", "Claude"] },
-            { "text": "FE: implement CancelOrderSideBar với SelectBranch + TimeFilterSelect", "tags": ["Dev", "Claude"] },
-            { "text": "FE: implement CancelOrderTable với column picker", "tags": ["Dev", "Claude"] }
+            {
+              "text": "BE: implement searchCancelled() với branchId IN, fromTime/toTime, pagination",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "BE: cập nhật cancelled() ghi updatedBy = sessionUser.id",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "BE: thêm cancelledAt alias và join cancelledByName vào getOne()",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "FE: implement CancelOrderSideBar với SelectBranch + TimeFilterSelect",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "FE: implement CancelOrderTable với column picker",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -5171,10 +5243,34 @@
           "color": "blue",
           "result": "Toàn bộ feature hoạt động end-to-end",
           "tasks": [
-            { "text": "FE: implement CancelOrderDetailModal (read-only)", "tags": ["Dev", "Claude"] },
-            { "text": "FE: fix các bug phát sinh (branch picker, time preset, double click)", "tags": ["Dev", "Claude"] },
-            { "text": "QA: chạy toàn bộ test case Happy Path", "tags": ["Dev", "Team"] },
-            { "text": "QA: chạy Edge Case và Error Case", "tags": ["Dev", "Team"] }
+            {
+              "text": "FE: implement CancelOrderDetailModal (read-only)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "FE: fix các bug phát sinh (branch picker, time preset, double click)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "QA: chạy toàn bộ test case Happy Path",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            },
+            {
+              "text": "QA: chạy Edge Case và Error Case",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -5184,9 +5280,25 @@
           "color": "amber",
           "result": "Code review hoàn tất, sẵn sàng merge",
           "tasks": [
-            { "text": "Code review chéo trong team", "tags": ["Team"] },
-            { "text": "Fix các issue từ review", "tags": ["Dev"] },
-            { "text": "Tạo PR cho arena-admin-web và arena-crm-be", "tags": ["Dev", "Git"] }
+            {
+              "text": "Code review chéo trong team",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Fix các issue từ review",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Tạo PR cho arena-admin-web và arena-crm-be",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            }
           ]
         },
         {
@@ -5196,9 +5308,26 @@
           "color": "green",
           "result": "Merge vào develop, deploy beta thành công",
           "tasks": [
-            { "text": "Merge PR sau khi approved", "tags": ["Dev", "Git"] },
-            { "text": "Deploy beta và smoke test trên môi trường staging", "tags": ["Dev", "Team"] },
-            { "text": "Cập nhật status US-AR-012 → Hoàn thành", "tags": ["Claude"] }
+            {
+              "text": "Merge PR sau khi approved",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            },
+            {
+              "text": "Deploy beta và smoke test trên môi trường staging",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            },
+            {
+              "text": "Cập nhật status US-AR-012 → Hoàn thành",
+              "tags": [
+                "Claude"
+              ]
+            }
           ]
         }
       ]
@@ -5445,6 +5574,184 @@
         "dieu_kien_tien_quyet": "- Đăng nhập Arena App với tài khoản nhân viên\n- Đăng nhập Admin Web với tài khoản quản lý\n- Có order đang hoạt động tại chi nhánh A\n- Kết nối mạng ổn định",
         "buoc_thuc_hien": "1. Trên Arena App: mở order đang chạy\n2. Bấm Huỷ order → xác nhận\n3. Chuyển sang Admin Web\n4. Vào Giao dịch → Đơn hàng hủy\n5. Lọc theo chi nhánh A + Hôm nay\n6. Tìm order vừa huỷ trong danh sách\n7. Bấm vào xem chi tiết\n8. Kiểm tra thông tin Người huỷ, Thời gian huỷ",
         "ket_qua_mong_doi": "- Order xuất hiện trong danh sách sau khi huỷ\n- Cột Người huỷ hiển thị tên nhân viên đã huỷ\n- Thời gian huỷ khớp với thời điểm thao tác\n- Chi tiết modal đầy đủ thông tin\n- Toàn bộ flow thông suốt, không lỗi",
+        "loai": "Happy Path"
+      }
+    ]
+  },
+  {
+    "id": "US-LF-002",
+    "project": "Lunar Fest",
+    "title": "Đăng Nhập Admin & Tự Đăng Xuất Khi Hết Hạn Token",
+    "module": "Auth",
+    "author": "Product Team",
+    "date": "10/04/2026",
+    "status": "Chờ phát triển",
+    "context": "Host Dashboard hiện đã có màn hình đăng nhập bằng mật khẩu và lưu JWT vào localStorage. Tuy nhiên token có thời hạn 8h nhưng hệ thống chưa xử lý khi token hết hạn — Host sẽ bị lỗi 401 âm thầm mà không được redirect về trang login. Cần bổ sung: (1) tự động đăng xuất và redirect khi token hết hạn, (2) nút đăng xuất thủ công trên Dashboard, (3) guard bảo vệ route /host.",
+    "userStory": {
+      "as": "Host tổ chức sự kiện Lunar Fest",
+      "iWant": "Được tự động đăng xuất và chuyển về trang login khi token hết hạn, đồng thời có nút đăng xuất thủ công",
+      "soThat": "Phiên làm việc luôn an toàn, không bị kẹt ở trạng thái lỗi 401 âm thầm"
+    },
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Đăng nhập thành công — lưu token và vào Dashboard",
+        "given": "Host ở trang /host/login",
+        "when": "Host nhập đúng mật khẩu và nhấn Đăng nhập",
+        "then": "Token được lưu vào localStorage (key: adminToken). Host được redirect sang /host. Dashboard hiển thị bình thường"
+      },
+      {
+        "id": "AC-02",
+        "title": "Đăng nhập sai mật khẩu — hiển thị lỗi",
+        "given": "Host ở trang /host/login",
+        "when": "Host nhập sai mật khẩu",
+        "then": "Hiển thị thông báo lỗi. Token không được lưu. Host vẫn ở trang login"
+      },
+      {
+        "id": "AC-03",
+        "title": "Token hết hạn — tự động đăng xuất và redirect",
+        "given": "Host đang ở Dashboard với token đã hết hạn",
+        "when": "Bất kỳ API call nào trả về 401 Unauthorized",
+        "then": "Xóa adminToken khỏi localStorage. Redirect về /host/login. Hiển thị thông báo \"Phiên làm việc đã hết hạn, vui lòng đăng nhập lại\""
+      },
+      {
+        "id": "AC-04",
+        "title": "Nút đăng xuất thủ công trên Dashboard",
+        "given": "Host đang ở Dashboard",
+        "when": "Host nhấn nút Đăng xuất",
+        "then": "Xóa adminToken khỏi localStorage. Redirect về /host/login"
+      },
+      {
+        "id": "AC-05",
+        "title": "Truy cập /host khi chưa đăng nhập — redirect về login",
+        "given": "Không có adminToken trong localStorage",
+        "when": "Người dùng truy cập trực tiếp vào /host",
+        "then": "Redirect ngay về /host/login mà không render Dashboard"
+      }
+    ],
+    "flow": "[HOST]\n    |\n    ▼\nTruy cập /host/login\n    |\n    ▼\nNhập mật khẩu → POST /auth/login\n    ├─ Sai → Hiển thị lỗi, ở lại trang login\n    └─ Đúng → Lưu adminToken → Redirect /host\n    |\n    ▼\n[DASHBOARD] Hoạt động bình thường\n    |\n    ▼\nAPI call bất kỳ\n    ├─ 200 OK → Tiếp tục\n    └─ 401 Unauthorized\n           |\n           ▼\n       Xóa adminToken\n       Redirect /host/login\n       Toast: \"Phiên làm việc đã hết hạn\"\n    |\n    ▼\n[HOST] Nhấn nút Đăng xuất thủ công\n    |\n    ▼\nXóa adminToken → Redirect /host/login",
+    "notes": [
+      "Token JWT hiện có expiresIn: 8h (auth.module.ts) — đủ cho 1 sự kiện",
+      "Xử lý 401 đặt trong Axios response interceptor (AxiosInstance.ts) để cover toàn bộ API call",
+      "Nút đăng xuất đặt ở góc trên HostDashboardPage.tsx",
+      "Route /host cần guard kiểm tra adminToken — check trong DashboardLayout.tsx"
+    ],
+    "sprintPlan": {
+      "startDate": "10/04/2026",
+      "endDate": "11/04/2026",
+      "days": [
+        {
+          "day": "Thứ 6",
+          "date": "10/04/2026",
+          "theme": "Code & Fix",
+          "color": "amber",
+          "result": "AC-01 đến AC-05 pass. Auto logout và redirect hoạt động đúng.",
+          "tasks": [
+            {
+              "text": "Thêm interceptor 401 vào AxiosInstance.ts → xóa token + redirect /host/login",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thêm guard kiểm tra adminToken trong DashboardLayout.tsx → redirect nếu không có token",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Thêm nút Đăng xuất vào HostDashboardPage.tsx",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Test AC-03: giả lập 401 bằng cách thay token giả rồi gọi API",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "11/04/2026",
+          "theme": "Merge & Deploy",
+          "color": "green",
+          "result": "Merge vào main. Production deploy thành công.",
+          "tasks": [
+            {
+              "text": "Merge feature/auth-improvements vào main",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Deploy và smoke test trên production",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Đăng nhập đúng mật khẩu — vào được Dashboard",
+        "nhom": "Lunar Fest",
+        "dieu_kien_tien_quyet": "- Đang ở trang /host/login\n- Không có adminToken trong localStorage",
+        "buoc_thuc_hien": "1. Nhập đúng mật khẩu admin\n2. Nhấn Đăng nhập\n3. Quan sát redirect và localStorage",
+        "ket_qua_mong_doi": "- Redirect sang /host\n- localStorage có key adminToken với JWT hợp lệ\n- Dashboard hiển thị bình thường",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Đăng nhập sai mật khẩu — hiển thị lỗi",
+        "nhom": "Lunar Fest",
+        "dieu_kien_tien_quyet": "- Đang ở trang /host/login",
+        "buoc_thuc_hien": "1. Nhập sai mật khẩu\n2. Nhấn Đăng nhập",
+        "ket_qua_mong_doi": "- Hiển thị thông báo lỗi\n- Không có adminToken trong localStorage\n- Vẫn ở trang /host/login",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Token hết hạn — tự động đăng xuất",
+        "nhom": "Lunar Fest",
+        "dieu_kien_tien_quyet": "- Đang ở Dashboard\n- adminToken trong localStorage đã hết hạn hoặc không hợp lệ",
+        "buoc_thuc_hien": "1. Thay adminToken bằng token giả/hết hạn trong localStorage\n2. Thực hiện bất kỳ action nào gọi API\n3. Quan sát hành vi",
+        "ket_qua_mong_doi": "- adminToken bị xóa khỏi localStorage\n- Redirect về /host/login\n- Hiển thị thông báo \"Phiên làm việc đã hết hạn\"",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Đăng xuất thủ công",
+        "nhom": "Lunar Fest",
+        "dieu_kien_tien_quyet": "- Đang ở Dashboard với token hợp lệ",
+        "buoc_thuc_hien": "1. Nhấn nút Đăng xuất\n2. Quan sát redirect và localStorage",
+        "ket_qua_mong_doi": "- adminToken bị xóa khỏi localStorage\n- Redirect về /host/login",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Truy cập /host khi chưa đăng nhập — redirect về login",
+        "nhom": "Lunar Fest",
+        "dieu_kien_tien_quyet": "- Không có adminToken trong localStorage",
+        "buoc_thuc_hien": "1. Truy cập trực tiếp URL /host trên trình duyệt",
+        "ket_qua_mong_doi": "- Redirect ngay về /host/login\n- Dashboard không được render",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "End-to-end: Đăng nhập → dùng Dashboard → đăng xuất",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Production environment đang chạy\n- Biết mật khẩu admin",
+        "buoc_thuc_hien": "1. Truy cập /host → bị redirect về /host/login\n2. Đăng nhập đúng mật khẩu\n3. Tạo match, thực hiện 1 vài action\n4. Nhấn Đăng xuất\n5. Thử truy cập lại /host",
+        "ket_qua_mong_doi": "- Bước 1: redirect đúng\n- Bước 2: vào được Dashboard\n- Bước 3: các action hoạt động bình thường\n- Bước 4: redirect về login, token bị xóa\n- Bước 5: bị redirect về login lại",
         "loai": "Happy Path"
       }
     ]
