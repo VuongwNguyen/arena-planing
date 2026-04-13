@@ -6063,10 +6063,10 @@
       },
       {
         "id": "AC-04",
-        "title": "Hiển thị kết quả phân tích",
+        "title": "Hiển thị kết quả từ server",
         "given": "Server đã xử lý xong dữ liệu",
         "when": "Kết quả trả về",
-        "then": "Kết quả phân tích cú đánh hiển thị đầy đủ (điểm, nhận xét, chỉ số kỹ thuật)"
+        "then": "Kết quả từ server được hiển thị lên màn hình"
       }
     ],
 
@@ -6209,7 +6209,7 @@
         "nhom": "Arena App",
         "dieu_kien_tien_quyet": "- Submit thành công\n- Server đã xử lý xong dữ liệu",
         "buoc_thuc_hien": "1. Chờ server trả kết quả\n2. Quan sát màn hình kết quả",
-        "ket_qua_mong_doi": "- Kết quả phân tích hiển thị đầy đủ: điểm, nhận xét, chỉ số kỹ thuật\n- Không còn loading spinner",
+        "ket_qua_mong_doi": "- Kết quả từ server hiển thị lên màn hình\n- Không còn loading spinner",
         "loai": "Happy Path"
       },
       {
@@ -6254,7 +6254,7 @@
         "nhom": "End-to-end",
         "dieu_kien_tien_quyet": "- Môi trường beta đang chạy\n- Đã đăng nhập tài khoản test\n- Camera ngoại vi sẵn sàng\n- Mạng ổn định",
         "buoc_thuc_hien": "1. Vào màn hình tạo bài tập\n2. Nhấn 'Bật camera' → chờ RTSP hiển thị\n3. Nhập tên bài tập\n4. Nhấn Submit\n5. Chờ server xử lý\n6. Xem kết quả phân tích",
-        "ket_qua_mong_doi": "- Bước 2: API 200, RTSP stream hiển thị ngay\n- Bước 3: ô tên nhận input, nút Submit active\n- Bước 4: dữ liệu gửi thành công, loading hiện\n- Bước 5: server xử lý, loading tiếp tục\n- Bước 6: kết quả phân tích đầy đủ và đúng\n- Toàn bộ flow không có lỗi",
+        "ket_qua_mong_doi": "- Bước 2: API 200, RTSP stream hiển thị ngay\n- Bước 3: ô tên nhận input, nút Submit active\n- Bước 4: dữ liệu gửi thành công, loading hiện\n- Bước 5: server xử lý, loading tiếp tục\n- Bước 6: kết quả từ server hiển thị lên màn hình\n- Toàn bộ flow không có lỗi",
         "loai": "Happy Path"
       }
     ]
