@@ -6070,7 +6070,7 @@
       }
     ],
 
-    "flow": "[Người chơi]\n    |\n    ▼\nVào màn hình tạo bài tập\n    |\n    ▼\nNhấn \"Bật camera\" → App gọi API camera ngoại vi\n    |\n    ├── API lỗi ──▶ Thông báo lỗi + Thử lại\n    │\n    └── API thành công\n            |\n            ▼\n        Luồng RTSP hiển thị trên app\n            |\n            ▼\n        Người chơi nhập tên bài tập\n            |\n            ▼\n        Nhấn Submit → Server nhận dữ liệu thô\n            |\n            ├── Submit lỗi ──▶ Thông báo lỗi + Thử lại\n            │\n            └── Submit thành công\n                    |\n                    ▼\n                Server xử lý (loading)\n                    |\n                    ▼\n                Hiển thị kết quả phân tích",
+    "flow": "[Người chơi]\n    |\n    ▼\nVào màn hình tạo bài tập\n    |\n    ▼\nNhấn \"Bật camera\" → App gọi API camera ngoại vi\n    |\n    ├── API lỗi ──▶ Thông báo lỗi + Thử lại\n    │\n    └── API thành công\n            |\n            ▼\n        Luồng RTSP hiển thị trên app\n            |\n            ▼\n        Người chơi nhập tên bài tập\n            |\n            ▼\n        Nhấn Submit → Server nhận dữ liệu thô\n            |\n            ├── Submit lỗi ──▶ Thông báo lỗi + Thử lại\n            │\n            └── Submit thành công\n                    |\n                    ▼\n                Server xử lý (loading)\n                    |\n                    ▼\n                Hiển thị kết quả",
 
     "edgeCases": [
       {
