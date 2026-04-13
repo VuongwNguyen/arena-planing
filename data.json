@@ -5763,6 +5763,7 @@
     "module": "Mission & Analytics",
     "author": "Product Team",
     "date": "13/04/2026",
+    "jiraId": "GE-958",
     "status": "Chờ phát triển",
 
     "context": "Arena Billiard có chế độ chơi Mission — nơi cơ thủ thực hiện các thử thách kỹ năng (đánh bóng theo góc nhất định, hoàn thành series, v.v.). Hiện tại người chơi không có nơi nào để xem lại kết quả, tiến độ hay xếp hạng của bản thân sau mỗi phiên Mission. Cần xây dựng Dashboard Performance để cơ thủ theo dõi chỉ số, nhìn lại lịch sử và có động lực cải thiện kỹ năng.",
@@ -6029,6 +6030,7 @@
     "module": "Mission & Tập luyện",
     "author": "Product Team",
     "date": "13/04/2026",
+    "jiraId": "GE-870",
     "status": "Chờ phát triển",
 
     "context": "Hiện tại Arena App chỉ có Mission cố định do hệ thống tạo. Tính năng này cho phép cơ thủ tự tạo bài tập cá nhân: bật camera ngoại vi của hệ thống Arena qua API, xem luồng RTSP trực tiếp, đặt tên bài tập rồi submit dữ liệu thô lên server để nhận kết quả phân tích. Đây là bước mở rộng của Epic GE-867.",
