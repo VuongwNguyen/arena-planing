@@ -5755,5 +5755,271 @@
         "loai": "Happy Path"
       }
     ]
+  },
+  {
+    "id": "US-AR-013",
+    "project": "Arena Billiard",
+    "title": "Dashboard Performance cơ thủ chơi Mission",
+    "module": "Mission & Analytics",
+    "author": "Product Team",
+    "date": "13/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Arena Billiard có chế độ chơi Mission — nơi cơ thủ thực hiện các thử thách kỹ năng (đánh bóng theo góc nhất định, hoàn thành series, v.v.). Hiện tại người chơi không có nơi nào để xem lại kết quả, tiến độ hay xếp hạng của bản thân sau mỗi phiên Mission. Cần xây dựng Dashboard Performance để cơ thủ theo dõi chỉ số, nhìn lại lịch sử và có động lực cải thiện kỹ năng.",
+
+    "userStory": {
+      "as": "Cơ thủ đã hoàn thành ít nhất 1 Mission",
+      "iWant": "Xem Dashboard tổng hợp hiệu suất của mình trong các Mission đã chơi",
+      "soThat": "Biết được điểm mạnh, điểm yếu, tiến độ cải thiện và vị trí xếp hạng so với cơ thủ khác"
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Hiển thị tổng quan số liệu Mission",
+        "given": "Cơ thủ đã chơi ít nhất 1 Mission và mở Dashboard",
+        "when": "Trang Dashboard load xong",
+        "then": "Hiển thị: tổng số Mission đã chơi, số Mission hoàn thành, tỉ lệ thành công (%), tổng điểm tích lũy, chuỗi ngày chơi liên tiếp (streak)"
+      },
+      {
+        "id": "AC-02",
+        "title": "Biểu đồ tiến độ theo thời gian",
+        "given": "Cơ thủ có lịch sử chơi Mission ≥ 7 ngày",
+        "when": "Cơ thủ xem tab Lịch sử",
+        "then": "Hiển thị biểu đồ đường hoặc cột thể hiện điểm/số Mission hoàn thành theo ngày hoặc tuần; có thể lọc theo khoảng thời gian (7 ngày, 30 ngày, tất cả)"
+      },
+      {
+        "id": "AC-03",
+        "title": "Xếp hạng cơ thủ",
+        "given": "Có ít nhất 2 cơ thủ đã chơi Mission",
+        "when": "Cơ thủ xem tab Xếp hạng",
+        "then": "Hiển thị bảng xếp hạng theo tổng điểm, có highlight vị trí của cơ thủ hiện tại; hiển thị top 10 và vị trí của mình nếu ngoài top 10"
+      },
+      {
+        "id": "AC-04",
+        "title": "Chi tiết từng Mission",
+        "given": "Cơ thủ nhấn vào một Mission trong lịch sử",
+        "when": "Modal hoặc trang chi tiết mở ra",
+        "then": "Hiển thị: tên Mission, thời gian chơi, điểm đạt được, kết quả (Hoàn thành / Thất bại), số lần thử"
+      },
+      {
+        "id": "AC-05",
+        "title": "Trạng thái khi chưa có dữ liệu",
+        "given": "Cơ thủ chưa chơi Mission nào",
+        "when": "Cơ thủ mở Dashboard",
+        "then": "Hiển thị empty state với thông điệp khuyến khích và nút CTA dẫn đến màn hình chọn Mission"
+      }
+    ],
+
+    "flow": "[Cơ thủ]\n    |\n    ▼\nMở app → vào mục Mission\n    |\n    ▼\nNhấn \"Xem hiệu suất\" / icon Dashboard\n    |\n    ▼\nDashboard load dữ liệu từ API\n    |\n    ├── Có dữ liệu ──────────────────────────────┐\n    │                                            ▼\n    │                              Hiển thị: Tổng quan | Lịch sử | Xếp hạng\n    │                                            |\n    │                              Cơ thủ chuyển tab / lọc thời gian\n    │                                            |\n    │                              Nhấn vào Mission → xem chi tiết\n    │\n    └── Chưa có dữ liệu ─────────────────────────▼\n                                   Empty state + nút \"Bắt đầu chơi Mission\"",
+
+    "edgeCases": [
+      {
+        "case": "Cơ thủ chưa chơi Mission nào",
+        "handle": "Hiển thị empty state, không crash; ẩn biểu đồ và bảng xếp hạng"
+      },
+      {
+        "case": "Chỉ có 1 điểm dữ liệu (1 ngày chơi)",
+        "handle": "Biểu đồ hiển thị 1 điểm đơn lẻ, không vẽ đường xu hướng; không báo lỗi"
+      },
+      {
+        "case": "API trả về lỗi hoặc timeout",
+        "handle": "Hiển thị skeleton loader trong 3s, sau đó hiện thông báo lỗi với nút Thử lại"
+      },
+      {
+        "case": "Dữ liệu xếp hạng có nhiều cơ thủ cùng điểm",
+        "handle": "Sắp xếp theo thời gian đạt điểm (ai đạt trước xếp cao hơn); hiển thị đồng hạng"
+      },
+      {
+        "case": "Mạng chậm hoặc mất kết nối khi đang xem",
+        "handle": "Cache dữ liệu lần load trước, hiển thị banner 'Dữ liệu có thể chưa cập nhật'; không xóa màn hình"
+      }
+    ],
+
+    "notes": [
+      "GE-958 thuộc Epic GE-956 — Dashboard về Performance cơ thủ chơi Mission",
+      "Sub-tasks Jira: GE-1016 (UI), GE-1017 (API), GE-1018 (Gọi API), GE-1019 (Test)",
+      "API cần trả về: tổng số mission, mission hoàn thành, điểm tích lũy, streak, lịch sử theo ngày, bảng xếp hạng",
+      "Biểu đồ dùng thư viện chart hiện có trong dự án (không import thêm nếu không cần)",
+      "Xếp hạng chỉ tính cơ thủ trong cùng club/venue, không tính toàn quốc"
+    ],
+
+    "sprintPlan": {
+      "startDate": "14/04/2026",
+      "endDate": "19/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "14/04/2026",
+          "theme": "Chuẩn bị & Thống nhất",
+          "color": "purple",
+          "result": "US-AR-013 được duyệt, API contract thống nhất, component plan rõ ràng",
+          "tasks": [
+            { "text": "Review US-AR-013 và AC với team, xác nhận scope", "tags": ["Team"] },
+            { "text": "Thống nhất API contract: request/response schema cho dashboard", "tags": ["Dev", "Claude"] },
+            { "text": "Liệt kê components cần tạo: StatCard, LineChart, RankingTable, MissionDetailModal", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "15/04/2026",
+          "theme": "Phân rã & Khởi động",
+          "color": "teal",
+          "result": "Nhánh feature tạo xong, API stub sẵn sàng, skeleton UI dựng được",
+          "tasks": [
+            { "text": "Tạo nhánh feature/GE-958-mission-dashboard", "tags": ["Git"] },
+            { "text": "Viết API stub / mock data cho dashboard endpoint", "tags": ["Dev"] },
+            { "text": "Dựng skeleton layout Dashboard: 3 tab Tổng quan / Lịch sử / Xếp hạng", "tags": ["Dev", "Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "16/04/2026",
+          "theme": "Code Core (1) — UI & API",
+          "color": "blue",
+          "result": "StatCard + biểu đồ lịch sử hoạt động với mock data; API endpoint cơ bản trả dữ liệu",
+          "tasks": [
+            { "text": "Implement StatCard: hiển thị tổng số mission, tỉ lệ thành công, streak", "tags": ["Dev"] },
+            { "text": "Implement biểu đồ tiến độ theo ngày/tuần với filter 7/30/tất cả", "tags": ["Dev", "Claude"] },
+            { "text": "Viết API /mission/performance trả tổng quan + lịch sử theo ngày", "tags": ["Dev"] },
+            { "text": "Unit test cho API endpoint", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "17/04/2026",
+          "theme": "Code (2) + QA",
+          "color": "blue",
+          "result": "Bảng xếp hạng, modal chi tiết và empty state hoàn chỉnh; toàn bộ testcase pass",
+          "tasks": [
+            { "text": "Implement bảng xếp hạng: highlight vị trí hiện tại, xử lý đồng hạng", "tags": ["Dev"] },
+            { "text": "Implement MissionDetailModal: chi tiết từng lần chơi", "tags": ["Dev"] },
+            { "text": "Implement empty state và skeleton loader + error state", "tags": ["Dev", "Claude"] },
+            { "text": "Kết nối UI với API thật, xóa mock data", "tags": ["Dev"] },
+            { "text": "Chạy toàn bộ testcase TC_001 → TC_008, ghi kết quả", "tags": ["Dev", "Team"] }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "18/04/2026",
+          "theme": "Review & Hoàn thiện",
+          "color": "amber",
+          "result": "Code review xong, không còn issue P1/P2, sẵn sàng merge",
+          "tasks": [
+            { "text": "Code review chéo: focus vào performance query và UX edge cases", "tags": ["Team"] },
+            { "text": "Fix bug từ review và QA", "tags": ["Dev"] },
+            { "text": "Kiểm tra responsive trên các màn hình khác nhau", "tags": ["Dev"] },
+            { "text": "Cập nhật US-AR-013 status → Đang phát triển", "tags": ["Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "19/04/2026",
+          "theme": "Merge & Deploy Beta",
+          "color": "green",
+          "result": "Feature merge vào develop, deploy beta thành công, GE-958 chuyển Done",
+          "tasks": [
+            { "text": "Pull latest develop, resolve conflicts nếu có", "tags": ["Git"] },
+            { "text": "Chạy lại full regression test", "tags": ["Dev"] },
+            { "text": "Merge feature branch vào develop, tạo PR", "tags": ["Git", "Team"] },
+            { "text": "Deploy lên môi trường beta, smoke test", "tags": ["Dev"] },
+            { "text": "Cập nhật GE-958 → Done, comment link planning vào Jira", "tags": ["Claude"] }
+          ]
+        }
+      ]
+    },
+
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Dashboard hiển thị đúng số liệu tổng quan",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã đăng nhập vào app\n- Tài khoản đã chơi ít nhất 5 Mission (3 hoàn thành, 2 thất bại)",
+        "buoc_thuc_hien": "1. Vào mục Mission\n2. Nhấn nút \"Xem hiệu suất\" / icon Dashboard\n3. Quan sát tab Tổng quan",
+        "ket_qua_mong_doi": "- Tổng số Mission đã chơi: 5\n- Số Mission hoàn thành: 3\n- Tỉ lệ thành công: 60%\n- Tổng điểm tích lũy hiển thị đúng\n- Streak hiển thị chính xác theo ngày chơi liên tiếp",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Biểu đồ lịch sử hiển thị và lọc theo thời gian",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã chơi Mission trong ít nhất 10 ngày khác nhau\n- Mở tab Lịch sử",
+        "buoc_thuc_hien": "1. Vào Dashboard → tab Lịch sử\n2. Mặc định hiển thị 7 ngày gần nhất\n3. Chọn bộ lọc \"30 ngày\"\n4. Chọn bộ lọc \"Tất cả\"",
+        "ket_qua_mong_doi": "- Bước 2: biểu đồ hiển thị đúng 7 ngày gần nhất\n- Bước 3: biểu đồ mở rộng hiển thị 30 ngày\n- Bước 4: biểu đồ hiển thị toàn bộ lịch sử\n- Trục X là ngày, trục Y là điểm/số mission; dữ liệu khớp với lịch sử thực tế",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Bảng xếp hạng hiển thị và highlight vị trí hiện tại",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có ít nhất 5 cơ thủ trong cùng venue đã chơi Mission\n- Cơ thủ hiện tại đứng hạng 3",
+        "buoc_thuc_hien": "1. Vào Dashboard → tab Xếp hạng\n2. Quan sát danh sách\n3. Cuộn xuống để tìm vị trí của mình",
+        "ket_qua_mong_doi": "- Top 10 cơ thủ hiển thị với tên và điểm\n- Vị trí hạng 3 được highlight rõ ràng\n- Điểm sắp xếp từ cao đến thấp chính xác",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Xem chi tiết Mission trong lịch sử",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã chơi ít nhất 1 Mission\n- Đang ở tab Lịch sử",
+        "buoc_thuc_hien": "1. Nhấn vào một Mission bất kỳ trong danh sách lịch sử\n2. Modal/trang chi tiết mở ra",
+        "ket_qua_mong_doi": "- Hiển thị: tên Mission, ngày giờ chơi, điểm đạt được, kết quả (Hoàn thành/Thất bại), số lần thử\n- Nút đóng/back hoạt động bình thường",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Empty state khi chưa chơi Mission nào",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Tài khoản mới, chưa chơi Mission lần nào",
+        "buoc_thuc_hien": "1. Đăng nhập tài khoản mới\n2. Vào Dashboard Mission",
+        "ket_qua_mong_doi": "- Không có crash\n- Hiển thị empty state với thông điệp khuyến khích\n- Có nút CTA dẫn đến màn hình chọn Mission\n- Biểu đồ và bảng xếp hạng ẩn hoặc hiển thị trạng thái trống",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "Biểu đồ với chỉ 1 ngày dữ liệu",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Cơ thủ chỉ chơi Mission trong đúng 1 ngày",
+        "buoc_thuc_hien": "1. Mở tab Lịch sử\n2. Chọn lần lượt các bộ lọc 7 ngày, 30 ngày, Tất cả",
+        "ket_qua_mong_doi": "- Biểu đồ hiển thị 1 điểm đơn lẻ, không vẽ đường xu hướng\n- Không có lỗi hoặc crash\n- UI không bị vỡ layout",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_007",
+        "ten_testcase": "Xếp hạng khi nhiều cơ thủ cùng điểm",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có 2 cơ thủ cùng điểm số trong bảng xếp hạng",
+        "buoc_thuc_hien": "1. Vào tab Xếp hạng\n2. Quan sát hai cơ thủ cùng điểm",
+        "ket_qua_mong_doi": "- Hai cơ thủ hiển thị cùng hạng (đồng hạng)\n- Ai đạt điểm đó trước thì xếp trên\n- Không có lỗi sắp xếp hoặc hiển thị sai",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_008",
+        "ten_testcase": "API lỗi — hiển thị error state và thử lại",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- Giả lập API /mission/performance trả lỗi 500\n- Đang ở màn hình Dashboard",
+        "buoc_thuc_hien": "1. Mở Dashboard (API đang lỗi)\n2. Chờ 3 giây\n3. Nhấn nút \"Thử lại\"",
+        "ket_qua_mong_doi": "- Bước 1: hiển thị skeleton loader\n- Bước 2: hiển thị thông báo lỗi rõ ràng + nút Thử lại\n- Bước 3: app gọi lại API; nếu API phục hồi thì load dữ liệu bình thường",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_009",
+        "ten_testcase": "Mất kết nối khi đang xem Dashboard",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Dashboard đã load dữ liệu lần đầu thành công\n- Tắt kết nối mạng",
+        "buoc_thuc_hien": "1. Mở Dashboard → dữ liệu load xong\n2. Tắt WiFi/data\n3. Chuyển tab hoặc kéo để refresh",
+        "ket_qua_mong_doi": "- Dữ liệu cũ vẫn hiển thị (không xóa màn hình)\n- Hiện banner \"Dữ liệu có thể chưa cập nhật\"\n- Không crash; khi có lại mạng thì tự động refresh hoặc có nút refresh",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_010",
+        "ten_testcase": "End-to-end: Chơi Mission → xem Dashboard → kiểm tra số liệu cập nhật",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Môi trường beta đang chạy\n- Đã đăng nhập tài khoản test\n- Biết số liệu hiện tại của tài khoản",
+        "buoc_thuc_hien": "1. Ghi nhớ số liệu Dashboard hiện tại (X mission, Y điểm)\n2. Chơi 1 Mission và hoàn thành\n3. Quay lại Dashboard\n4. Kiểm tra tab Tổng quan\n5. Kiểm tra tab Lịch sử\n6. Kiểm tra tab Xếp hạng",
+        "ket_qua_mong_doi": "- Bước 4: tổng mission tăng thêm 1, điểm tăng đúng, tỉ lệ thành công cập nhật\n- Bước 5: ngày hôm nay xuất hiện trong biểu đồ với điểm vừa đạt\n- Bước 6: vị trí xếp hạng cập nhật nếu điểm mới thay đổi thứ hạng\n- Toàn bộ flow không có lỗi",
+        "loai": "Happy Path"
+      }
+    ]
   }
 ]
