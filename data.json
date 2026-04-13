@@ -6031,83 +6031,71 @@
     "date": "13/04/2026",
     "status": "Chờ phát triển",
 
-    "context": "Hiện tại Arena App chỉ cung cấp các Mission/bài tập có sẵn do hệ thống tạo ra. Người chơi không có khả năng tự thiết kế bài tập theo nhu cầu cá nhân. Tính năng này cho phép cơ thủ kích hoạt camera ngoại vi của hệ thống Arena (gọi qua API) để ghi lại cú đánh, gửi dữ liệu thô lên server phân tích và nhận kết quả — từ đó tạo thành bài tập riêng để luyện tập lặp lại. Đây là bước mở rộng của Epic GE-867.",
+    "context": "Hiện tại Arena App chỉ có Mission cố định do hệ thống tạo. Tính năng này cho phép cơ thủ tự tạo bài tập cá nhân: bật camera ngoại vi của hệ thống Arena qua API, xem luồng RTSP trực tiếp, đặt tên bài tập rồi submit dữ liệu thô lên server để nhận kết quả phân tích. Đây là bước mở rộng của Epic GE-867.",
 
     "userStory": {
-      "as": "Cơ thủ muốn luyện tập theo cách cá nhân hoá",
-      "iWant": "Tự tạo bài tập bằng cách bật camera ngoại vi của hệ thống Arena qua app, gửi dữ liệu thô và nhận kết quả phân tích",
-      "soThat": "Có thể luyện tập đúng điểm yếu của mình thay vì chỉ làm Mission cố định của hệ thống"
+      "as": "Cơ thủ muốn luyện tập cá nhân hoá",
+      "iWant": "Bật camera ngoại vi hệ thống Arena, nhập tên bài tập, xem stream RTSP rồi submit để nhận kết quả phân tích",
+      "soThat": "Có thể tạo bài tập riêng theo điểm yếu của mình thay vì chỉ làm Mission cố định"
     },
 
     "acceptanceCriteria": [
       {
         "id": "AC-01",
-        "title": "Tạo bài tập mới với thông tin cơ bản",
-        "given": "Người chơi đã đăng nhập và vào mục Bài tập",
-        "when": "Nhấn nút 'Tạo bài tập mới' và điền tên, mô tả, loại kỹ năng rồi nhấn Tiếp tục",
-        "then": "Hệ thống tạo draft bài tập, chuyển sang màn hình bật camera; dữ liệu nhập không bị mất khi back lại"
+        "title": "Bật camera ngoại vi qua API",
+        "given": "Người chơi vào màn hình tạo bài tập",
+        "when": "Nhấn 'Bật camera' — app gọi API kích hoạt camera ngoại vi",
+        "then": "API trả 200; luồng RTSP từ camera hiển thị trực tiếp trên app; không yêu cầu bất kỳ quyền thiết bị nào"
       },
       {
         "id": "AC-02",
-        "title": "Gọi API bật camera ngoại vi và ghi lại cú đánh",
-        "given": "Người chơi đã tạo draft bài tập và đang ở màn hình camera",
-        "when": "Nhấn 'Bật camera' — app gọi API kích hoạt camera ngoại vi của hệ thống Arena",
-        "then": "Camera ngoại vi được bật thành công (API trả 200); luồng video từ camera hiển thị trên app; người chơi nhấn Ghi để bắt đầu và Dừng để kết thúc; có nút Xem lại và Dùng video này"
+        "title": "Nhập tên bài tập",
+        "given": "Camera đang hiển thị luồng RTSP",
+        "when": "Người chơi nhập tên bài tập vào ô tên",
+        "then": "Tên được lưu tạm; nút Submit chỉ active khi tên không rỗng"
       },
       {
         "id": "AC-03",
-        "title": "Gửi dữ liệu thô lên hệ thống",
-        "given": "Người chơi đã xác nhận dùng video từ camera ngoại vi",
-        "when": "Nhấn 'Gửi dữ liệu'",
-        "then": "Dữ liệu thô được upload lên server; hiển thị progress bar trong quá trình upload; sau khi upload xong chuyển sang màn hình chờ xử lý"
+        "title": "Submit dữ liệu thô lên server",
+        "given": "Camera đang chạy và người chơi đã nhập tên",
+        "when": "Nhấn Submit",
+        "then": "Dữ liệu thô được gửi lên server; hiển thị trạng thái đang xử lý (loading/spinner)"
       },
       {
         "id": "AC-04",
-        "title": "Hiển thị kết quả phân tích sau khi gửi",
-        "given": "Hệ thống đã xử lý xong dữ liệu thô",
-        "when": "Kết quả trả về từ server",
-        "then": "Hiển thị kết quả phân tích cú đánh (điểm, nhận xét, các chỉ số kỹ thuật); người chơi có thể xem chi tiết từng chỉ số"
-      },
-      {
-        "id": "AC-05",
-        "title": "Submit bài tập và nhận thông báo hoàn thành",
-        "given": "Người chơi đã xem kết quả và muốn lưu bài tập",
-        "when": "Nhấn 'Lưu bài tập'",
-        "then": "Bài tập được lưu vào danh sách bài tập của người chơi; hiển thị thông báo 'Bài tập đã được lưu thành công'; có nút Tập lại và Về trang chủ"
+        "title": "Hiển thị kết quả phân tích",
+        "given": "Server đã xử lý xong dữ liệu",
+        "when": "Kết quả trả về",
+        "then": "Kết quả phân tích cú đánh hiển thị đầy đủ (điểm, nhận xét, chỉ số kỹ thuật)"
       }
     ],
 
-    "flow": "[Người chơi]\n    |\n    ▼\nVào mục Bài tập → nhấn \"Tạo bài tập mới\"\n    |\n    ▼\nNhập tên, mô tả, loại kỹ năng → Tiếp tục\n    |\n    ▼\nMàn hình Camera — nhấn \"Bật camera\"\n    |\n    ▼\nApp gọi API kích hoạt camera ngoại vi\n    |\n    ├── API lỗi / camera không khả dụng ──▶ Thông báo lỗi + Thử lại\n    │\n    └── API thành công\n            |\n            ▼\n        Luồng video từ camera hiển thị trên app\n            |\n            ▼\n        Nhấn Ghi → thực hiện cú đánh → Dừng\n            |\n            ▼\n        Xem lại → Dùng video này\n            |\n            ▼\n        Gửi dữ liệu thô (upload + progress bar)\n            |\n            ├── Upload thất bại ──────▶ Thông báo lỗi + Thử lại\n            │\n            └── Upload thành công\n                    |\n                    ▼\n                Chờ hệ thống xử lý\n                    |\n                    ▼\n                Hiển thị kết quả phân tích\n                    |\n                    ▼\n                Nhấn \"Lưu bài tập\"\n                    |\n                    ▼\n                Thông báo lưu thành công\n                    |\n            ┌───────┴────────┐\n            ▼                ▼\n        Tập lại          Về trang chủ",
+    "flow": "[Người chơi]\n    |\n    ▼\nVào màn hình tạo bài tập\n    |\n    ▼\nNhấn \"Bật camera\" → App gọi API camera ngoại vi\n    |\n    ├── API lỗi ──▶ Thông báo lỗi + Thử lại\n    │\n    └── API thành công\n            |\n            ▼\n        Luồng RTSP hiển thị trên app\n            |\n            ▼\n        Người chơi nhập tên bài tập\n            |\n            ▼\n        Nhấn Submit → Server nhận dữ liệu thô\n            |\n            ├── Submit lỗi ──▶ Thông báo lỗi + Thử lại\n            │\n            └── Submit thành công\n                    |\n                    ▼\n                Server xử lý (loading)\n                    |\n                    ▼\n                Hiển thị kết quả phân tích",
 
     "edgeCases": [
       {
-        "case": "API bật camera ngoại vi trả lỗi (camera đang bận hoặc offline)",
-        "handle": "Hiển thị thông báo lỗi cụ thể (camera không khả dụng); có nút Thử lại; không crash app"
+        "case": "API bật camera trả lỗi (camera bận hoặc offline)",
+        "handle": "Hiển thị thông báo lỗi cụ thể; có nút Thử lại; không crash app"
       },
       {
-        "case": "Mất kết nối với camera ngoại vi giữa chừng khi đang ghi",
-        "handle": "Hiển thị cảnh báo mất kết nối camera; dừng ghi tự động; hỏi người chơi có muốn thử lại hay dùng đoạn đã ghi"
+        "case": "Submit khi tên bài tập rỗng",
+        "handle": "Nút Submit bị disabled; hiển thị hint yêu cầu nhập tên"
       },
       {
-        "case": "Upload dữ liệu thô thất bại (mạng yếu hoặc file quá lớn)",
-        "handle": "Hiển thị thông báo lỗi cụ thể; cho phép thử lại mà không cần quay lại ghi; giữ nguyên dữ liệu đã ghi"
+        "case": "Mất kết nối RTSP giữa chừng",
+        "handle": "Hiển thị cảnh báo mất kết nối camera; có nút Kết nối lại"
       },
       {
-        "case": "Hệ thống xử lý dữ liệu quá lâu (> 30 giây)",
-        "handle": "Hiển thị loading với thông báo 'Đang phân tích...'; sau 30s hiển thị tùy chọn 'Chờ tiếp' hoặc 'Nhận kết quả sau qua thông báo'"
-      },
-      {
-        "case": "Dữ liệu ghi vượt giới hạn dung lượng/thời lượng",
-        "handle": "Thông báo giới hạn trước khi upload; hướng dẫn người chơi ghi lại đoạn ngắn hơn"
+        "case": "Server xử lý quá lâu",
+        "handle": "Giữ màn hình loading; hiển thị thông báo nếu quá timeout"
       }
     ],
 
     "notes": [
       "GE-870 thuộc Epic GE-867 — Cho phép Người chơi Tự tạo Bài tập + Tập luyện trên Arena App",
-      "Camera là camera ngoại vi của hệ thống Arena — kích hoạt qua API, KHÔNG phải camera điện thoại, không cần xin quyền",
-      "Sub-tasks Jira: GE-980 (API tạo mission), GE-981 (tích hợp & test), GE-995 (UI bật camera), GE-998 (gọi API camera ngoại vi), GE-999 (UI gửi dữ liệu thô), GE-1000 (gọi API gửi dữ liệu thô), GE-1001 (research hiển thị kết quả), GE-1002 (UI hiển thị kết quả), GE-1011 (UI submit + thông báo), GE-1020 (E2E test)",
-      "GE-1001 là sub-task research — cần hoàn thành trước GE-1002 để biết cách render kết quả từ server",
-      "API upload dữ liệu thô cần hỗ trợ multipart/form-data; server trả về jobId để poll trạng thái xử lý"
+      "Camera là camera ngoại vi hệ thống Arena — kích hoạt qua API, stream qua RTSP, KHÔNG phải camera điện thoại",
+      "Sub-tasks Jira: GE-980 (API tạo mission), GE-981 (tích hợp & test), GE-995 (UI bật camera), GE-998 (gọi API camera), GE-999 (UI gửi dữ liệu thô), GE-1000 (gọi API gửi dữ liệu thô), GE-1001 (research hiển thị kết quả), GE-1002 (UI hiển thị kết quả), GE-1011 (UI submit + thông báo), GE-1020 (E2E test)",
+      "GE-1001 là sub-task research — cần hoàn thành trước GE-1002 để biết cách render kết quả từ server"
     ],
 
     "sprintPlan": {
@@ -6119,11 +6107,11 @@
           "date": "14/04/2026",
           "theme": "Chuẩn bị & Thống nhất",
           "color": "purple",
-          "result": "US-AR-014 được duyệt, API contract camera ngoại vi và upload thống nhất, flow xác nhận",
+          "result": "US-AR-014 được duyệt, API contract thống nhất, RTSP stream URL xác nhận",
           "tasks": [
-            { "text": "Review US-AR-014 và AC với team, xác nhận giới hạn dữ liệu ghi (dung lượng, thời lượng)", "tags": ["Team"] },
-            { "text": "Thống nhất API contract: bật camera ngoại vi, tạo mission, upload dữ liệu thô, poll kết quả", "tags": ["Dev", "Claude"] },
-            { "text": "Xác nhận schema response API camera ngoại vi (stream URL, trạng thái, error codes)", "tags": ["Dev"] }
+            { "text": "Review US-AR-014 và AC với team, xác nhận flow: bật camera → nhập tên → RTSP → submit → kết quả", "tags": ["Team"] },
+            { "text": "Thống nhất API contract: bật camera ngoại vi (trả RTSP URL), submit dữ liệu thô, poll/nhận kết quả", "tags": ["Dev", "Claude"] },
+            { "text": "Xác nhận format kết quả phân tích từ server (GE-1001 research)", "tags": ["Dev"] }
           ]
         },
         {
@@ -6144,12 +6132,12 @@
           "date": "16/04/2026",
           "theme": "Code Core (1) — Camera & Upload",
           "color": "blue",
-          "result": "Màn hình camera hoạt động qua API ngoại vi, upload dữ liệu thô thành công với mock API",
+          "result": "Màn hình bật camera RTSP hoạt động, submit dữ liệu thô thành công với mock API",
           "tasks": [
-            { "text": "Implement gọi API bật camera ngoại vi, hiển thị luồng video trên app (GE-995, GE-998)", "tags": ["Dev"] },
-            { "text": "Implement UI ghi hình: nút Ghi / Dừng / Xem lại / Dùng video này; xử lý lỗi API camera", "tags": ["Dev"] },
-            { "text": "Implement upload dữ liệu thô: multipart upload, progress bar, retry on failure (GE-999, GE-1000)", "tags": ["Dev"] },
-            { "text": "Viết API logic tạo mission và nhận upload (GE-980)", "tags": ["Dev"] }
+            { "text": "Implement gọi API bật camera ngoại vi → nhận RTSP URL → hiển thị stream trên app (GE-995, GE-998)", "tags": ["Dev"] },
+            { "text": "Implement ô nhập tên bài tập; nút Submit chỉ active khi tên không rỗng (GE-999)", "tags": ["Dev"] },
+            { "text": "Implement submit dữ liệu thô lên server, hiển thị loading (GE-1000)", "tags": ["Dev"] },
+            { "text": "Viết API logic tạo mission và nhận dữ liệu thô (GE-980)", "tags": ["Dev"] }
           ]
         },
         {
@@ -6199,83 +6187,74 @@
     "testcases": [
       {
         "ma_testcase": "TC_001",
-        "ten_testcase": "Tạo bài tập mới với đầy đủ thông tin",
+        "ten_testcase": "Bật camera ngoại vi thành công — RTSP stream hiển thị",
         "nhom": "Arena App",
-        "dieu_kien_tien_quyet": "- Đã đăng nhập vào app\n- Đang ở màn hình Bài tập",
-        "buoc_thuc_hien": "1. Nhấn 'Tạo bài tập mới'\n2. Nhập tên bài tập, mô tả, chọn loại kỹ năng\n3. Nhấn Tiếp tục",
-        "ket_qua_mong_doi": "- Draft bài tập được tạo\n- Chuyển sang màn hình Camera\n- Dữ liệu đã nhập không bị mất khi back lại",
+        "dieu_kien_tien_quyet": "- Đã đăng nhập vào app\n- Camera ngoại vi hệ thống Arena đang sẵn sàng",
+        "buoc_thuc_hien": "1. Vào màn hình tạo bài tập\n2. Nhấn 'Bật camera'\n3. Chờ API phản hồi",
+        "ket_qua_mong_doi": "- API trả 200\n- Luồng RTSP từ camera ngoại vi hiển thị trực tiếp trên app\n- Không yêu cầu bất kỳ quyền thiết bị nào",
         "loai": "Happy Path"
       },
       {
         "ma_testcase": "TC_002",
-        "ten_testcase": "Gọi API bật camera ngoại vi thành công và ghi hình",
+        "ten_testcase": "Nhập tên và submit dữ liệu thô thành công",
         "nhom": "Arena App",
-        "dieu_kien_tien_quyet": "- Camera ngoại vi của hệ thống Arena đang sẵn sàng\n- Đang ở màn hình Camera",
-        "buoc_thuc_hien": "1. Nhấn 'Bật camera'\n2. Chờ API phản hồi\n3. Quan sát luồng video hiển thị\n4. Nhấn Ghi → thực hiện cú đánh → Dừng\n5. Xem lại → Nhấn 'Dùng video này'",
-        "ket_qua_mong_doi": "- API trả 200, camera ngoại vi bật thành công\n- Luồng video hiển thị trên app\n- Ghi và dừng hoạt động đúng\n- Sau khi xác nhận, chuyển sang màn hình Gửi dữ liệu",
+        "dieu_kien_tien_quyet": "- RTSP stream đang hiển thị\n- Mạng ổn định",
+        "buoc_thuc_hien": "1. Nhập tên bài tập vào ô tên\n2. Nhấn Submit\n3. Chờ server xử lý",
+        "ket_qua_mong_doi": "- Nút Submit active sau khi nhập tên\n- Dữ liệu thô gửi lên server thành công\n- Hiển thị loading/spinner trong khi server xử lý",
         "loai": "Happy Path"
       },
       {
         "ma_testcase": "TC_003",
-        "ten_testcase": "Upload dữ liệu thô và nhận kết quả phân tích",
+        "ten_testcase": "Hiển thị kết quả phân tích sau khi server xử lý xong",
         "nhom": "Arena App",
-        "dieu_kien_tien_quyet": "- Đã có video từ camera ngoại vi\n- Mạng ổn định",
-        "buoc_thuc_hien": "1. Nhấn 'Gửi dữ liệu'\n2. Chờ upload hoàn tất\n3. Chờ hệ thống xử lý\n4. Xem kết quả phân tích",
-        "ket_qua_mong_doi": "- Progress bar hiển thị trong khi upload\n- Sau upload: màn hình chờ xử lý với thông báo 'Đang phân tích...'\n- Kết quả hiển thị đúng: điểm, nhận xét, chỉ số kỹ thuật",
+        "dieu_kien_tien_quyet": "- Submit thành công\n- Server đã xử lý xong dữ liệu",
+        "buoc_thuc_hien": "1. Chờ server trả kết quả\n2. Quan sát màn hình kết quả",
+        "ket_qua_mong_doi": "- Kết quả phân tích hiển thị đầy đủ: điểm, nhận xét, chỉ số kỹ thuật\n- Không còn loading spinner",
         "loai": "Happy Path"
       },
       {
         "ma_testcase": "TC_004",
-        "ten_testcase": "Lưu bài tập và nhận thông báo thành công",
+        "ten_testcase": "Submit khi tên bài tập rỗng — nút bị disabled",
         "nhom": "Arena App",
-        "dieu_kien_tien_quyet": "- Đã xem kết quả phân tích\n- Đang ở màn hình kết quả",
-        "buoc_thuc_hien": "1. Nhấn 'Lưu bài tập'\n2. Quan sát thông báo\n3. Nhấn 'Tập lại'\n4. Quay lại và nhấn 'Về trang chủ'",
-        "ket_qua_mong_doi": "- Bài tập lưu vào danh sách bài tập của người chơi\n- Thông báo 'Bài tập đã được lưu thành công' hiển thị\n- Nút 'Tập lại' reset về màn hình Camera\n- Nút 'Về trang chủ' điều hướng đúng",
-        "loai": "Happy Path"
+        "dieu_kien_tien_quyet": "- RTSP stream đang hiển thị\n- Ô tên bài tập đang rỗng",
+        "buoc_thuc_hien": "1. Không nhập tên\n2. Quan sát nút Submit\n3. Thử nhấn Submit",
+        "ket_qua_mong_doi": "- Nút Submit bị disabled\n- Hiển thị hint yêu cầu nhập tên\n- Không có request nào được gửi lên server",
+        "loai": "Edge Case"
       },
       {
         "ma_testcase": "TC_005",
-        "ten_testcase": "API bật camera ngoại vi trả lỗi — hiển thị thông báo và thử lại",
+        "ten_testcase": "API bật camera ngoại vi trả lỗi — thông báo và thử lại",
         "nhom": "Backend",
-        "dieu_kien_tien_quyet": "- Camera ngoại vi đang bận hoặc offline\n- Đang ở màn hình Camera",
-        "buoc_thuc_hien": "1. Nhấn 'Bật camera'\n2. API trả lỗi (camera không khả dụng)\n3. Nhấn 'Thử lại'\n4. Camera phục hồi → nhấn 'Bật camera' lần nữa",
-        "ket_qua_mong_doi": "- App không crash\n- Thông báo lỗi rõ ràng (camera không khả dụng / đang bận)\n- Nút 'Thử lại' gọi lại API\n- Sau khi camera sẵn sàng: bật thành công bình thường",
+        "dieu_kien_tien_quyet": "- Camera ngoại vi đang bận hoặc offline",
+        "buoc_thuc_hien": "1. Nhấn 'Bật camera'\n2. API trả lỗi\n3. Nhấn 'Thử lại'\n4. Camera phục hồi → nhấn 'Bật camera' lại",
+        "ket_qua_mong_doi": "- Thông báo lỗi rõ ràng hiển thị\n- App không crash\n- Nút Thử lại gọi lại API\n- Khi camera sẵn sàng: bật và hiển thị RTSP thành công",
         "loai": "Error Case"
       },
       {
         "ma_testcase": "TC_006",
-        "ten_testcase": "Mất kết nối camera ngoại vi giữa chừng khi đang ghi",
+        "ten_testcase": "Mất kết nối RTSP giữa chừng",
         "nhom": "Arena App",
-        "dieu_kien_tien_quyet": "- Camera ngoại vi đang ghi hình\n- Kết nối với camera bị ngắt đột ngột",
-        "buoc_thuc_hien": "1. Đang ghi hình → camera mất kết nối\n2. Quan sát UI\n3. Chọn 'Ghi lại'",
-        "ket_qua_mong_doi": "- Cảnh báo mất kết nối camera hiển thị\n- Ghi hình tự động dừng\n- Hỏi người chơi: 'Dùng đoạn đã ghi' hoặc 'Ghi lại'\n- Chọn 'Ghi lại': gọi lại API bật camera; không crash",
+        "dieu_kien_tien_quyet": "- RTSP stream đang hiển thị bình thường\n- Kết nối bị ngắt đột ngột",
+        "buoc_thuc_hien": "1. RTSP stream đang chạy → ngắt kết nối\n2. Quan sát UI\n3. Nhấn 'Kết nối lại'",
+        "ket_qua_mong_doi": "- Cảnh báo mất kết nối camera hiển thị\n- Có nút 'Kết nối lại'\n- Nhấn Kết nối lại → gọi lại API bật camera; không crash",
         "loai": "Edge Case"
       },
       {
         "ma_testcase": "TC_007",
-        "ten_testcase": "Upload thất bại do mất mạng — giữ dữ liệu và thử lại",
+        "ten_testcase": "Submit lỗi do mất mạng — thử lại không cần bật camera lại",
         "nhom": "Arena App",
-        "dieu_kien_tien_quyet": "- Đã có video từ camera ngoại vi sẵn sàng gửi\n- Tắt mạng trước khi nhấn Gửi",
-        "buoc_thuc_hien": "1. Nhấn 'Gửi dữ liệu'\n2. Quan sát khi upload thất bại\n3. Bật mạng lại\n4. Nhấn 'Thử lại'",
-        "ket_qua_mong_doi": "- Thông báo lỗi upload hiển thị rõ ràng\n- Dữ liệu ghi vẫn còn, không bị xóa\n- Nút Thử lại upload lại mà không cần ghi lại từ đầu\n- Upload thành công sau khi có mạng",
-        "loai": "Edge Case"
-      },
-      {
-        "ma_testcase": "TC_008",
-        "ten_testcase": "Server xử lý phân tích lỗi — hiển thị lỗi và cho phép thử lại",
-        "nhom": "Backend",
-        "dieu_kien_tien_quyet": "- Upload thành công\n- Giả lập server xử lý trả lỗi 500",
-        "buoc_thuc_hien": "1. Chờ kết quả sau khi upload\n2. Server trả lỗi\n3. Nhấn 'Thử lại'",
-        "ket_qua_mong_doi": "- Hiển thị thông báo lỗi xử lý rõ ràng\n- Có nút 'Thử lại' (gửi lại request phân tích)\n- Không crash app\n- Dữ liệu đã upload vẫn còn trên server",
+        "dieu_kien_tien_quyet": "- RTSP stream đang chạy, đã nhập tên\n- Tắt mạng trước khi nhấn Submit",
+        "buoc_thuc_hien": "1. Nhấn Submit\n2. Quan sát khi lỗi\n3. Bật mạng lại → nhấn Thử lại",
+        "ket_qua_mong_doi": "- Thông báo lỗi submit rõ ràng\n- Nút Thử lại gửi lại mà không cần bật lại camera\n- Submit thành công sau khi có mạng",
         "loai": "Error Case"
       },
       {
-        "ma_testcase": "TC_009",
-        "ten_testcase": "End-to-end: Tạo bài tập → bật camera ngoại vi → ghi → gửi → nhận kết quả → lưu",
+        "ma_testcase": "TC_008",
+        "ten_testcase": "End-to-end: bật camera → nhập tên → RTSP → submit → kết quả",
         "nhom": "End-to-end",
-        "dieu_kien_tien_quyet": "- Môi trường beta đang chạy\n- Đã đăng nhập tài khoản test\n- Camera ngoại vi hệ thống Arena đang sẵn sàng\n- Mạng ổn định",
-        "buoc_thuc_hien": "1. Vào mục Bài tập → nhấn 'Tạo bài tập mới'\n2. Nhập đầy đủ tên, mô tả, loại kỹ năng → Tiếp tục\n3. Nhấn 'Bật camera' → API kích hoạt camera ngoại vi\n4. Ghi hình cú đánh → Dừng → Xem lại → Dùng video này\n5. Nhấn 'Gửi dữ liệu' → chờ upload và xử lý\n6. Xem kết quả phân tích\n7. Nhấn 'Lưu bài tập'\n8. Vào danh sách bài tập kiểm tra bài vừa tạo",
-        "ket_qua_mong_doi": "- Bước 3: API trả 200, camera ngoại vi bật, luồng video hiển thị\n- Bước 4: ghi hình và xác nhận bình thường\n- Bước 5: upload thành công, progress bar hiển thị, hệ thống phân tích\n- Bước 6: kết quả phân tích đầy đủ và đúng\n- Bước 7: thông báo lưu thành công\n- Bước 8: bài tập mới xuất hiện trong danh sách\n- Toàn bộ flow không có lỗi",
+        "dieu_kien_tien_quyet": "- Môi trường beta đang chạy\n- Đã đăng nhập tài khoản test\n- Camera ngoại vi sẵn sàng\n- Mạng ổn định",
+        "buoc_thuc_hien": "1. Vào màn hình tạo bài tập\n2. Nhấn 'Bật camera' → chờ RTSP hiển thị\n3. Nhập tên bài tập\n4. Nhấn Submit\n5. Chờ server xử lý\n6. Xem kết quả phân tích",
+        "ket_qua_mong_doi": "- Bước 2: API 200, RTSP stream hiển thị ngay\n- Bước 3: ô tên nhận input, nút Submit active\n- Bước 4: dữ liệu gửi thành công, loading hiện\n- Bước 5: server xử lý, loading tiếp tục\n- Bước 6: kết quả phân tích đầy đủ và đúng\n- Toàn bộ flow không có lỗi",
         "loai": "Happy Path"
       }
     ]
