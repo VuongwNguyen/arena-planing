@@ -6021,5 +6021,270 @@
         "loai": "Happy Path"
       }
     ]
+  },
+  {
+    "id": "US-AR-014",
+    "project": "Arena Billiard",
+    "title": "Người chơi tự tạo bài tập",
+    "module": "Mission & Tập luyện",
+    "author": "Product Team",
+    "date": "13/04/2026",
+    "status": "Chờ phát triển",
+
+    "context": "Hiện tại Arena App chỉ cung cấp các Mission/bài tập có sẵn do hệ thống tạo ra. Người chơi không có khả năng tự thiết kế bài tập theo nhu cầu cá nhân hoặc phong cách chơi riêng. Tính năng 'Người chơi tự tạo bài tập' cho phép cơ thủ chủ động quay lại cú đánh bằng camera, gửi dữ liệu thô lên hệ thống và nhận kết quả phân tích — từ đó tạo thành bài tập riêng để luyện tập lặp lại. Đây là bước mở rộng của Epic GE-867.",
+
+    "userStory": {
+      "as": "Cơ thủ muốn luyện tập theo cách cá nhân hoá",
+      "iWant": "Tự tạo bài tập bằng cách quay cú đánh qua camera, gửi dữ liệu và nhận kết quả phân tích",
+      "soThat": "Có thể luyện tập đúng điểm yếu của mình thay vì chỉ làm Mission cố định của hệ thống"
+    },
+
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Tạo bài tập mới với thông tin cơ bản",
+        "given": "Người chơi đã đăng nhập và vào mục Bài tập",
+        "when": "Nhấn nút 'Tạo bài tập mới' và điền tên, mô tả, loại kỹ năng rồi nhấn Tiếp tục",
+        "then": "Hệ thống tạo draft bài tập, chuyển sang màn hình bật camera; dữ liệu nhập không bị mất khi back lại"
+      },
+      {
+        "id": "AC-02",
+        "title": "Bật camera và quay/chụp cú đánh",
+        "given": "Người chơi đã tạo draft bài tập và đang ở màn hình camera",
+        "when": "Cho phép quyền camera → bật camera → quay hoặc chụp cú đánh",
+        "then": "Camera mở thành công; người chơi có thể quay video hoặc chụp ảnh; có nút Xem lại, Quay lại và Dùng ảnh/video này"
+      },
+      {
+        "id": "AC-03",
+        "title": "Gửi dữ liệu thô lên hệ thống",
+        "given": "Người chơi đã có video/ảnh từ camera và nhấn xác nhận",
+        "when": "Nhấn 'Gửi dữ liệu'",
+        "then": "Dữ liệu thô (video/ảnh) được upload lên server; hiển thị progress bar trong quá trình upload; sau khi upload xong chuyển sang màn hình chờ xử lý"
+      },
+      {
+        "id": "AC-04",
+        "title": "Hiển thị kết quả phân tích sau khi gửi",
+        "given": "Hệ thống đã xử lý xong dữ liệu thô",
+        "when": "Kết quả trả về từ server",
+        "then": "Hiển thị kết quả phân tích cú đánh (điểm, nhận xét, các chỉ số kỹ thuật); người chơi có thể xem chi tiết từng chỉ số"
+      },
+      {
+        "id": "AC-05",
+        "title": "Submit bài tập và nhận thông báo hoàn thành",
+        "given": "Người chơi đã xem kết quả và muốn lưu bài tập",
+        "when": "Nhấn 'Lưu bài tập'",
+        "then": "Bài tập được lưu vào danh sách bài tập của người chơi; hiển thị thông báo 'Bài tập đã được lưu thành công'; có nút Tập lại và Về trang chủ"
+      },
+      {
+        "id": "AC-06",
+        "title": "Xử lý khi từ chối quyền camera",
+        "given": "Người chơi từ chối cấp quyền camera",
+        "when": "Hệ thống yêu cầu quyền camera bị từ chối",
+        "then": "Hiển thị thông báo hướng dẫn vào Cài đặt để bật quyền camera; không crash app; có nút Mở cài đặt và Huỷ"
+      }
+    ],
+
+    "flow": "[Người chơi]\n    |\n    ▼\nVào mục Bài tập → nhấn \"Tạo bài tập mới\"\n    |\n    ▼\nNhập tên, mô tả, loại kỹ năng → Tiếp tục\n    |\n    ▼\nMàn hình Camera\n    |\n    ├── Từ chối quyền camera ───────▶ Hướng dẫn vào Cài đặt\n    │\n    └── Cho phép camera\n            |\n            ▼\n        Quay video / Chụp ảnh cú đánh\n            |\n            ▼\n        Xem lại → Dùng ảnh/video này\n            |\n            ▼\n        Gửi dữ liệu thô (upload + progress bar)\n            |\n            ├── Upload thất bại ──────▶ Thông báo lỗi + Thử lại\n            │\n            └── Upload thành công\n                    |\n                    ▼\n                Chờ hệ thống xử lý\n                    |\n                    ▼\n                Hiển thị kết quả phân tích\n                    |\n                    ▼\n                Nhấn \"Lưu bài tập\"\n                    |\n                    ▼\n                Thông báo lưu thành công\n                    |\n            ┌───────┴────────┐\n            ▼                ▼\n        Tập lại          Về trang chủ",
+
+    "edgeCases": [
+      {
+        "case": "Camera bị từ chối quyền",
+        "handle": "Hiển thị dialog hướng dẫn vào Cài đặt hệ thống để bật quyền; không crash; có nút Mở cài đặt"
+      },
+      {
+        "case": "Upload dữ liệu thô thất bại (mạng yếu hoặc file quá lớn)",
+        "handle": "Hiển thị thông báo lỗi cụ thể; cho phép thử lại mà không phải quay lại từ đầu; giữ nguyên file đã quay"
+      },
+      {
+        "case": "Hệ thống xử lý dữ liệu quá lâu (> 30 giây)",
+        "handle": "Hiển thị loading với thông báo 'Đang phân tích...'; sau 30s hiển thị tùy chọn 'Chờ tiếp' hoặc 'Nhận kết quả sau qua thông báo'"
+      },
+      {
+        "case": "Người chơi thoát app giữa chừng khi đang upload",
+        "handle": "Upload tiếp tục trong nền nếu có thể; khi mở lại app hiển thị trạng thái upload; không mất dữ liệu"
+      },
+      {
+        "case": "Video quá dài hoặc dung lượng vượt giới hạn",
+        "handle": "Hiển thị thông báo giới hạn (ví dụ: tối đa 30 giây hoặc 100MB) trước khi upload; hướng dẫn cắt video"
+      }
+    ],
+
+    "notes": [
+      "GE-870 thuộc Epic GE-867 — Cho phép Người chơi Tự tạo Bài tập + Tập luyện trên Arena App",
+      "Sub-tasks Jira: GE-980 (API tạo mission), GE-981 (tích hợp & test), GE-995 (UI camera), GE-998 (gọi API camera), GE-999 (UI gửi dữ liệu thô), GE-1000 (gọi API gửi dữ liệu thô), GE-1001 (research hiển thị kết quả), GE-1002 (UI hiển thị kết quả), GE-1011 (UI submit + thông báo), GE-1020 (E2E test)",
+      "GE-1001 là sub-task research — cần hoàn thành trước GE-1002 để biết cách render kết quả từ server",
+      "API upload dữ liệu thô cần hỗ trợ multipart/form-data; server trả về jobId để poll trạng thái xử lý",
+      "Cân nhắc giới hạn video: độ dài tối đa và dung lượng tối đa cần xác định trước khi code"
+    ],
+
+    "sprintPlan": {
+      "startDate": "14/04/2026",
+      "endDate": "19/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "14/04/2026",
+          "theme": "Chuẩn bị & Thống nhất",
+          "color": "purple",
+          "result": "US-AR-014 được duyệt, API contract upload/kết quả thống nhất, flow camera xác nhận",
+          "tasks": [
+            { "text": "Review US-AR-014 và AC với team, xác nhận giới hạn video (dung lượng, thời lượng)", "tags": ["Team"] },
+            { "text": "Thống nhất API contract: tạo mission, upload dữ liệu thô, poll kết quả", "tags": ["Dev", "Claude"] },
+            { "text": "Xác nhận cách xử lý quyền camera trên iOS và Android", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "15/04/2026",
+          "theme": "Phân rã & Khởi động",
+          "color": "teal",
+          "result": "Nhánh tạo xong, API stub sẵn, màn hình nhập thông tin bài tập dựng được",
+          "tasks": [
+            { "text": "Tạo nhánh feature/GE-870-player-create-drill", "tags": ["Git"] },
+            { "text": "Viết API stub: POST /mission/custom, POST /mission/upload-raw, GET /mission/result/:jobId", "tags": ["Dev"] },
+            { "text": "Dựng màn hình nhập tên, mô tả, loại kỹ năng bài tập", "tags": ["Dev", "Claude"] },
+            { "text": "Research (GE-1001): cách render kết quả phân tích từ server — xác định format dữ liệu trả về", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "16/04/2026",
+          "theme": "Code Core (1) — Camera & Upload",
+          "color": "blue",
+          "result": "Màn hình camera hoạt động, upload dữ liệu thô thành công với mock API",
+          "tasks": [
+            { "text": "Implement màn hình camera: request permission, quay video, chụp ảnh, xem lại", "tags": ["Dev"] },
+            { "text": "Xử lý từ chối quyền camera: dialog hướng dẫn mở Cài đặt", "tags": ["Dev"] },
+            { "text": "Implement upload dữ liệu thô: multipart upload, progress bar, retry on failure", "tags": ["Dev"] },
+            { "text": "Viết API logic tạo mission và nhận upload (GE-980)", "tags": ["Dev"] }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "17/04/2026",
+          "theme": "Code (2) + QA",
+          "color": "blue",
+          "result": "Hiển thị kết quả, lưu bài tập và toàn bộ flow hoạt động end-to-end; testcase pass",
+          "tasks": [
+            { "text": "Implement màn hình chờ xử lý + polling kết quả theo jobId", "tags": ["Dev"] },
+            { "text": "Implement màn hình hiển thị kết quả phân tích (GE-1002)", "tags": ["Dev", "Claude"] },
+            { "text": "Implement màn hình submit + thông báo lưu thành công (GE-1011)", "tags": ["Dev"] },
+            { "text": "Kết nối toàn bộ flow với API thật (GE-998, GE-1000)", "tags": ["Dev"] },
+            { "text": "Chạy toàn bộ testcase TC_001 → TC_009, ghi kết quả (GE-1020)", "tags": ["Dev", "Team"] }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "18/04/2026",
+          "theme": "Review & Hoàn thiện",
+          "color": "amber",
+          "result": "Code review xong, không còn issue P1/P2, edge case camera và upload đã ổn định",
+          "tasks": [
+            { "text": "Code review chéo: focus camera permission flow và upload error handling", "tags": ["Team"] },
+            { "text": "Fix bug từ review và QA, kiểm tra trên cả iOS và Android", "tags": ["Dev"] },
+            { "text": "Tích hợp và testing đầy đủ (GE-981)", "tags": ["Dev", "Team"] },
+            { "text": "Cập nhật US-AR-014 status → Đang phát triển", "tags": ["Claude"] }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "19/04/2026",
+          "theme": "Merge & Deploy Beta",
+          "color": "green",
+          "result": "Feature merge vào develop, deploy beta thành công, GE-870 chuyển Done",
+          "tasks": [
+            { "text": "Pull latest develop, resolve conflicts nếu có", "tags": ["Git"] },
+            { "text": "Chạy lại full regression test (GE-1020)", "tags": ["Dev"] },
+            { "text": "Merge feature branch vào develop, tạo PR", "tags": ["Git", "Team"] },
+            { "text": "Deploy lên beta, smoke test toàn bộ flow tạo bài tập", "tags": ["Dev"] },
+            { "text": "Cập nhật GE-870 → Done, comment link planning vào Jira", "tags": ["Claude"] }
+          ]
+        }
+      ]
+    },
+
+    "testcases": [
+      {
+        "ma_testcase": "TC_001",
+        "ten_testcase": "Tạo bài tập mới với đầy đủ thông tin",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã đăng nhập vào app\n- Đang ở màn hình Bài tập",
+        "buoc_thuc_hien": "1. Nhấn 'Tạo bài tập mới'\n2. Nhập tên bài tập, mô tả, chọn loại kỹ năng\n3. Nhấn Tiếp tục",
+        "ket_qua_mong_doi": "- Draft bài tập được tạo\n- Chuyển sang màn hình Camera\n- Dữ liệu đã nhập không bị mất khi back lại",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_002",
+        "ten_testcase": "Quay video cú đánh và xác nhận dùng",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã cho phép quyền camera\n- Đang ở màn hình Camera",
+        "buoc_thuc_hien": "1. Nhấn nút Quay\n2. Thực hiện cú đánh, dừng quay\n3. Xem lại video\n4. Nhấn 'Dùng video này'",
+        "ket_qua_mong_doi": "- Camera mở và quay bình thường\n- Video hiển thị đúng khi xem lại\n- Sau khi xác nhận, chuyển sang màn hình Gửi dữ liệu",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_003",
+        "ten_testcase": "Upload dữ liệu thô và nhận kết quả phân tích",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã có video/ảnh cú đánh\n- Mạng ổn định",
+        "buoc_thuc_hien": "1. Nhấn 'Gửi dữ liệu'\n2. Chờ upload hoàn tất\n3. Chờ hệ thống xử lý\n4. Xem kết quả phân tích",
+        "ket_qua_mong_doi": "- Progress bar hiển thị trong khi upload\n- Sau upload: màn hình chờ xử lý\n- Kết quả hiển thị đúng: điểm, nhận xét, chỉ số kỹ thuật",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_004",
+        "ten_testcase": "Lưu bài tập và nhận thông báo thành công",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã xem kết quả phân tích\n- Đang ở màn hình kết quả",
+        "buoc_thuc_hien": "1. Nhấn 'Lưu bài tập'\n2. Quan sát thông báo\n3. Nhấn 'Tập lại'\n4. Quay lại và nhấn 'Về trang chủ'",
+        "ket_qua_mong_doi": "- Bài tập lưu vào danh sách bài tập của người chơi\n- Thông báo 'Bài tập đã được lưu thành công' hiển thị\n- Nút 'Tập lại' reset về màn hình Camera\n- Nút 'Về trang chủ' điều hướng đúng",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_005",
+        "ten_testcase": "Từ chối quyền camera — hiển thị hướng dẫn",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang ở màn hình Camera\n- Quyền camera chưa được cấp",
+        "buoc_thuc_hien": "1. Hệ thống yêu cầu quyền camera\n2. Nhấn 'Từ chối'\n3. Quan sát UI",
+        "ket_qua_mong_doi": "- App không crash\n- Hiển thị dialog hướng dẫn vào Cài đặt để bật quyền camera\n- Có nút 'Mở cài đặt' và 'Huỷ'\n- Nhấn 'Mở cài đặt' → mở đúng trang cài đặt app",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_006",
+        "ten_testcase": "Upload thất bại do mất mạng — giữ file và thử lại",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã có video sẵn sàng gửi\n- Tắt mạng trước khi nhấn Gửi",
+        "buoc_thuc_hien": "1. Nhấn 'Gửi dữ liệu'\n2. Quan sát khi upload thất bại\n3. Bật mạng lại\n4. Nhấn 'Thử lại'",
+        "ket_qua_mong_doi": "- Thông báo lỗi upload hiển thị rõ ràng\n- File video vẫn còn, không bị xóa\n- Nút Thử lại upload lại từ đầu mà không cần quay lại quay video\n- Upload thành công sau khi có mạng",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_007",
+        "ten_testcase": "Video vượt giới hạn dung lượng/thời lượng",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Có sẵn video > giới hạn quy định (ví dụ > 30s hoặc > 100MB)",
+        "buoc_thuc_hien": "1. Chọn hoặc quay video vượt giới hạn\n2. Nhấn 'Dùng video này'",
+        "ket_qua_mong_doi": "- Hệ thống phát hiện video vượt giới hạn trước khi upload\n- Hiển thị thông báo rõ ràng về giới hạn\n- Hướng dẫn người chơi cắt video hoặc quay lại\n- Không bắt đầu upload",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_008",
+        "ten_testcase": "Server xử lý lỗi — hiển thị lỗi và cho phép thử lại",
+        "nhom": "Backend",
+        "dieu_kien_tien_quyet": "- Upload thành công\n- Giả lập server xử lý trả lỗi 500",
+        "buoc_thuc_hien": "1. Chờ kết quả sau khi upload\n2. Server trả lỗi\n3. Nhấn 'Thử lại'",
+        "ket_qua_mong_doi": "- Hiển thị thông báo lỗi xử lý rõ ràng\n- Có nút 'Thử lại' (gửi lại request xử lý)\n- Không crash app\n- Dữ liệu đã upload vẫn còn trên server",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_009",
+        "ten_testcase": "End-to-end: Tạo bài tập → quay → gửi → nhận kết quả → lưu",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Môi trường beta đang chạy\n- Đã đăng nhập tài khoản test\n- Camera và mạng hoạt động bình thường",
+        "buoc_thuc_hien": "1. Vào mục Bài tập → nhấn 'Tạo bài tập mới'\n2. Nhập đầy đủ tên, mô tả, loại kỹ năng → Tiếp tục\n3. Bật camera → quay video cú đánh → xác nhận dùng\n4. Nhấn 'Gửi dữ liệu' → chờ upload và xử lý\n5. Xem kết quả phân tích\n6. Nhấn 'Lưu bài tập'\n7. Vào danh sách bài tập kiểm tra bài vừa tạo",
+        "ket_qua_mong_doi": "- Bước 1-3: flow điều hướng đúng, camera hoạt động\n- Bước 4: upload thành công, progress bar hiển thị, hệ thống xử lý\n- Bước 5: kết quả phân tích đầy đủ, đúng\n- Bước 6: thông báo lưu thành công\n- Bước 7: bài tập mới xuất hiện trong danh sách với đúng tên và thông tin\n- Toàn bộ flow không có lỗi",
+        "loai": "Happy Path"
+      }
+    ]
   }
 ]
