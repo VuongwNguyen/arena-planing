@@ -5765,15 +5765,12 @@
     "date": "13/04/2026",
     "jiraId": "GE-958",
     "status": "Chờ phát triển",
-
     "context": "Cơ thủ chơi Mission nhưng không có nơi nào theo dõi lịch sử và hiệu suất của từng Mission. Cần xây dựng Dashboard dạng bảng liệt kê tất cả Mission đã chơi kèm các chỉ số: tên Mission, ngày bắt đầu, ngày chơi gần nhất, số lần chơi, số lần thành công và % thành công.",
-
     "userStory": {
       "as": "Cơ thủ đã chơi ít nhất 1 Mission",
       "iWant": "Xem bảng tổng hợp hiệu suất của từng Mission mình đã chơi",
       "soThat": "Biết Mission nào đang làm tốt, Mission nào cần luyện thêm"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -5804,9 +5801,7 @@
         "then": "Hiển thị thông báo lỗi và nút Thử lại; không crash"
       }
     ],
-
     "flow": "[Cơ thủ]\n    |\n    ▼\nVào mục Mission → nhấn Dashboard / Hiệu suất\n    |\n    ▼\nGọi API lấy danh sách Mission + chỉ số\n    |\n    ├── API lỗi ──▶ Thông báo lỗi + Thử lại\n    │\n    ├── Không có dữ liệu ──▶ Empty state\n    │\n    └── Có dữ liệu\n            |\n            ▼\n        Hiển thị bảng:\n        | Tên Mission | Ngày bắt đầu | Ngày chơi gần nhất | Số lần chơi | Số lần thành công | % Thành công |",
-
     "edgeCases": [
       {
         "case": "Mission chưa có lần thành công nào",
@@ -5825,14 +5820,12 @@
         "handle": "Bảng có scroll hoặc phân trang; không bị vỡ layout"
       }
     ],
-
     "notes": [
       "GE-958 thuộc Epic GE-956 — Dashboard về Performance cơ thủ chơi Mission",
       "Sub-tasks Jira: GE-1016 (UI), GE-1017 (API), GE-1018 (Gọi API), GE-1019 (Test)",
       "API cần trả về mảng mission gồm: tên, ngày bắt đầu, ngày chơi gần nhất, số lần chơi, số lần thành công",
       "% Thành công tính ở client: (số lần thành công / số lần chơi) × 100, làm tròn 1 chữ số thập phân"
     ],
-
     "sprintPlan": {
       "startDate": "14/04/2026",
       "endDate": "19/04/2026",
@@ -5844,8 +5837,19 @@
           "color": "purple",
           "result": "US-AR-013 được duyệt, API contract thống nhất, schema bảng xác nhận",
           "tasks": [
-            { "text": "Review US-AR-013 và AC với team, xác nhận 6 cột bảng", "tags": ["Team"] },
-            { "text": "Thống nhất API contract: response trả mảng mission gồm tên, ngày bắt đầu, ngày gần nhất, số lần chơi, số lần thành công", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Review US-AR-013 và AC với team, xác nhận 6 cột bảng",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Thống nhất API contract: response trả mảng mission gồm tên, ngày bắt đầu, ngày gần nhất, số lần chơi, số lần thành công",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -5855,9 +5859,25 @@
           "color": "teal",
           "result": "Nhánh tạo xong, API stub sẵn, layout bảng dựng được",
           "tasks": [
-            { "text": "Tạo nhánh feature/GE-958-mission-dashboard", "tags": ["Git"] },
-            { "text": "Viết API stub / mock data: mảng mission với 6 trường", "tags": ["Dev"] },
-            { "text": "Dựng layout bảng với 6 cột (GE-1016)", "tags": ["Dev", "Claude"] }
+            {
+              "text": "Tạo nhánh feature/GE-958-mission-dashboard",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Viết API stub / mock data: mảng mission với 6 trường",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Dựng layout bảng với 6 cột (GE-1016)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -5867,10 +5887,31 @@
           "color": "blue",
           "result": "StatCard + biểu đồ lịch sử hoạt động với mock data; API endpoint cơ bản trả dữ liệu",
           "tasks": [
-            { "text": "Implement StatCard: hiển thị tổng số mission, tỉ lệ thành công, streak", "tags": ["Dev"] },
-            { "text": "Implement biểu đồ tiến độ theo ngày/tuần với filter 7/30/tất cả", "tags": ["Dev", "Claude"] },
-            { "text": "Viết API /mission/performance trả tổng quan + lịch sử theo ngày", "tags": ["Dev"] },
-            { "text": "Unit test cho API endpoint", "tags": ["Dev"] }
+            {
+              "text": "Implement StatCard: hiển thị tổng số mission, tỉ lệ thành công, streak",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement biểu đồ tiến độ theo ngày/tuần với filter 7/30/tất cả",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Viết API /mission/performance trả tổng quan + lịch sử theo ngày",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Unit test cho API endpoint",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -5880,11 +5921,38 @@
           "color": "blue",
           "result": "Bảng xếp hạng, modal chi tiết và empty state hoàn chỉnh; toàn bộ testcase pass",
           "tasks": [
-            { "text": "Implement bảng xếp hạng: highlight vị trí hiện tại, xử lý đồng hạng", "tags": ["Dev"] },
-            { "text": "Implement MissionDetailModal: chi tiết từng lần chơi", "tags": ["Dev"] },
-            { "text": "Implement empty state và skeleton loader + error state", "tags": ["Dev", "Claude"] },
-            { "text": "Kết nối UI với API thật, xóa mock data", "tags": ["Dev"] },
-            { "text": "Chạy toàn bộ testcase TC_001 → TC_008, ghi kết quả", "tags": ["Dev", "Team"] }
+            {
+              "text": "Implement bảng xếp hạng: highlight vị trí hiện tại, xử lý đồng hạng",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement MissionDetailModal: chi tiết từng lần chơi",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement empty state và skeleton loader + error state",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Kết nối UI với API thật, xóa mock data",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Chạy toàn bộ testcase TC_001 → TC_008, ghi kết quả",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -5894,10 +5962,30 @@
           "color": "amber",
           "result": "Code review xong, không còn issue P1/P2, sẵn sàng merge",
           "tasks": [
-            { "text": "Code review chéo: focus vào performance query và UX edge cases", "tags": ["Team"] },
-            { "text": "Fix bug từ review và QA", "tags": ["Dev"] },
-            { "text": "Kiểm tra responsive trên các màn hình khác nhau", "tags": ["Dev"] },
-            { "text": "Cập nhật US-AR-013 status → Đang phát triển", "tags": ["Claude"] }
+            {
+              "text": "Code review chéo: focus vào performance query và UX edge cases",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Fix bug từ review và QA",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Kiểm tra responsive trên các màn hình khác nhau",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Cập nhật US-AR-013 status → Đang phát triển",
+              "tags": [
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -5907,16 +5995,41 @@
           "color": "green",
           "result": "Feature merge vào develop, deploy beta thành công, GE-958 chuyển Done",
           "tasks": [
-            { "text": "Pull latest develop, resolve conflicts nếu có", "tags": ["Git"] },
-            { "text": "Chạy lại full regression test", "tags": ["Dev"] },
-            { "text": "Merge feature branch vào develop, tạo PR", "tags": ["Git", "Team"] },
-            { "text": "Deploy lên môi trường beta, smoke test", "tags": ["Dev"] },
-            { "text": "Cập nhật GE-958 → Done, comment link planning vào Jira", "tags": ["Claude"] }
+            {
+              "text": "Pull latest develop, resolve conflicts nếu có",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy lại full regression test",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Merge feature branch vào develop, tạo PR",
+              "tags": [
+                "Git",
+                "Team"
+              ]
+            },
+            {
+              "text": "Deploy lên môi trường beta, smoke test",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Cập nhật GE-958 → Done, comment link planning vào Jira",
+              "tags": [
+                "Claude"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -5983,15 +6096,12 @@
     "date": "13/04/2026",
     "jiraId": "GE-870",
     "status": "Chờ phát triển",
-
     "context": "Hiện tại Arena App chỉ có Mission cố định do hệ thống tạo. Tính năng này cho phép cơ thủ tự tạo bài tập cá nhân: bật camera ngoại vi của hệ thống Arena qua API, xem luồng RTSP trực tiếp, đặt tên bài tập rồi submit dữ liệu thô lên server để nhận kết quả phân tích. Đây là bước mở rộng của Epic GE-867.",
-
     "userStory": {
       "as": "Cơ thủ muốn luyện tập cá nhân hoá",
       "iWant": "Bật camera ngoại vi hệ thống Arena, nhập tên bài tập, xem stream RTSP rồi submit để nhận kết quả phân tích",
       "soThat": "Có thể tạo bài tập riêng theo điểm yếu của mình thay vì chỉ làm Mission cố định"
     },
-
     "acceptanceCriteria": [
       {
         "id": "AC-01",
@@ -6022,9 +6132,7 @@
         "then": "Kết quả từ server được hiển thị lên màn hình"
       }
     ],
-
     "flow": "[Người chơi]\n    |\n    ▼\nVào màn hình tạo bài tập\n    |\n    ▼\nNhấn \"Bật camera\" → App gọi API camera ngoại vi\n    |\n    ├── API lỗi ──▶ Thông báo lỗi + Thử lại\n    │\n    └── API thành công\n            |\n            ▼\n        Luồng RTSP hiển thị trên app\n            |\n            ▼\n        Người chơi nhập tên bài tập\n            |\n            ▼\n        Nhấn Submit → Server nhận dữ liệu thô\n            |\n            ├── Submit lỗi ──▶ Thông báo lỗi + Thử lại\n            │\n            └── Submit thành công\n                    |\n                    ▼\n                Server xử lý (loading)\n                    |\n                    ▼\n                Hiển thị kết quả",
-
     "edgeCases": [
       {
         "case": "API bật camera trả lỗi (camera bận hoặc offline)",
@@ -6043,14 +6151,12 @@
         "handle": "Giữ màn hình loading; hiển thị thông báo nếu quá timeout"
       }
     ],
-
     "notes": [
       "GE-870 thuộc Epic GE-867 — Cho phép Người chơi Tự tạo Bài tập + Tập luyện trên Arena App",
       "Camera là camera ngoại vi hệ thống Arena — kích hoạt qua API, stream qua RTSP, KHÔNG phải camera điện thoại",
       "Sub-tasks Jira: GE-980 (API tạo mission), GE-981 (tích hợp & test), GE-995 (UI bật camera), GE-998 (gọi API camera), GE-999 (UI gửi dữ liệu thô), GE-1000 (gọi API gửi dữ liệu thô), GE-1001 (research hiển thị kết quả), GE-1002 (UI hiển thị kết quả), GE-1011 (UI submit + thông báo), GE-1020 (E2E test)",
       "GE-1001 là sub-task research — cần hoàn thành trước GE-1002 để biết cách render kết quả từ server"
     ],
-
     "sprintPlan": {
       "startDate": "14/04/2026",
       "endDate": "19/04/2026",
@@ -6062,9 +6168,25 @@
           "color": "purple",
           "result": "US-AR-014 được duyệt, API contract thống nhất, RTSP stream URL xác nhận",
           "tasks": [
-            { "text": "Review US-AR-014 và AC với team, xác nhận flow: bật camera → nhập tên → RTSP → submit → kết quả", "tags": ["Team"] },
-            { "text": "Thống nhất API contract: bật camera ngoại vi (trả RTSP URL), submit dữ liệu thô, poll/nhận kết quả", "tags": ["Dev", "Claude"] },
-            { "text": "Xác nhận format kết quả phân tích từ server (GE-1001 research)", "tags": ["Dev"] }
+            {
+              "text": "Review US-AR-014 và AC với team, xác nhận flow: bật camera → nhập tên → RTSP → submit → kết quả",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Thống nhất API contract: bật camera ngoại vi (trả RTSP URL), submit dữ liệu thô, poll/nhận kết quả",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Xác nhận format kết quả phân tích từ server (GE-1001 research)",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -6074,10 +6196,31 @@
           "color": "teal",
           "result": "Nhánh tạo xong, API stub sẵn, màn hình nhập thông tin bài tập dựng được",
           "tasks": [
-            { "text": "Tạo nhánh feature/GE-870-player-create-drill", "tags": ["Git"] },
-            { "text": "Viết API stub: POST /mission/custom, POST /mission/upload-raw, GET /mission/result/:jobId", "tags": ["Dev"] },
-            { "text": "Dựng màn hình nhập tên, mô tả, loại kỹ năng bài tập", "tags": ["Dev", "Claude"] },
-            { "text": "Research (GE-1001): cách render kết quả phân tích từ server — xác định format dữ liệu trả về", "tags": ["Dev"] }
+            {
+              "text": "Tạo nhánh feature/GE-870-player-create-drill",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Viết API stub: POST /mission/custom, POST /mission/upload-raw, GET /mission/result/:jobId",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Dựng màn hình nhập tên, mô tả, loại kỹ năng bài tập",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Research (GE-1001): cách render kết quả phân tích từ server — xác định format dữ liệu trả về",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -6087,10 +6230,30 @@
           "color": "blue",
           "result": "Màn hình bật camera RTSP hoạt động, submit dữ liệu thô thành công với mock API",
           "tasks": [
-            { "text": "Implement gọi API bật camera ngoại vi → nhận RTSP URL → hiển thị stream trên app (GE-995, GE-998)", "tags": ["Dev"] },
-            { "text": "Implement ô nhập tên bài tập; nút Submit chỉ active khi tên không rỗng (GE-999)", "tags": ["Dev"] },
-            { "text": "Implement submit dữ liệu thô lên server, hiển thị loading (GE-1000)", "tags": ["Dev"] },
-            { "text": "Viết API logic tạo mission và nhận dữ liệu thô (GE-980)", "tags": ["Dev"] }
+            {
+              "text": "Implement gọi API bật camera ngoại vi → nhận RTSP URL → hiển thị stream trên app (GE-995, GE-998)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement ô nhập tên bài tập; nút Submit chỉ active khi tên không rỗng (GE-999)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement submit dữ liệu thô lên server, hiển thị loading (GE-1000)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Viết API logic tạo mission và nhận dữ liệu thô (GE-980)",
+              "tags": [
+                "Dev"
+              ]
+            }
           ]
         },
         {
@@ -6100,11 +6263,38 @@
           "color": "blue",
           "result": "Hiển thị kết quả, lưu bài tập và toàn bộ flow hoạt động end-to-end; testcase pass",
           "tasks": [
-            { "text": "Implement màn hình chờ xử lý + polling kết quả theo jobId", "tags": ["Dev"] },
-            { "text": "Implement màn hình hiển thị kết quả phân tích (GE-1002)", "tags": ["Dev", "Claude"] },
-            { "text": "Implement màn hình submit + thông báo lưu thành công (GE-1011)", "tags": ["Dev"] },
-            { "text": "Kết nối toàn bộ flow với API thật (GE-998, GE-1000)", "tags": ["Dev"] },
-            { "text": "Chạy toàn bộ testcase TC_001 → TC_009, ghi kết quả (GE-1020)", "tags": ["Dev", "Team"] }
+            {
+              "text": "Implement màn hình chờ xử lý + polling kết quả theo jobId",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement màn hình hiển thị kết quả phân tích (GE-1002)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            },
+            {
+              "text": "Implement màn hình submit + thông báo lưu thành công (GE-1011)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Kết nối toàn bộ flow với API thật (GE-998, GE-1000)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Chạy toàn bộ testcase TC_001 → TC_009, ghi kết quả (GE-1020)",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            }
           ]
         },
         {
@@ -6114,10 +6304,31 @@
           "color": "amber",
           "result": "Code review xong, không còn issue P1/P2, edge case camera ngoại vi và upload đã ổn định",
           "tasks": [
-            { "text": "Code review chéo: focus API camera ngoại vi error handling và upload retry flow", "tags": ["Team"] },
-            { "text": "Fix bug từ review và QA, kiểm tra trên cả iOS và Android", "tags": ["Dev"] },
-            { "text": "Tích hợp và testing đầy đủ (GE-981)", "tags": ["Dev", "Team"] },
-            { "text": "Cập nhật US-AR-014 status → Đang phát triển", "tags": ["Claude"] }
+            {
+              "text": "Code review chéo: focus API camera ngoại vi error handling và upload retry flow",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Fix bug từ review và QA, kiểm tra trên cả iOS và Android",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Tích hợp và testing đầy đủ (GE-981)",
+              "tags": [
+                "Dev",
+                "Team"
+              ]
+            },
+            {
+              "text": "Cập nhật US-AR-014 status → Đang phát triển",
+              "tags": [
+                "Claude"
+              ]
+            }
           ]
         },
         {
@@ -6127,16 +6338,41 @@
           "color": "green",
           "result": "Feature merge vào develop, deploy beta thành công, GE-870 chuyển Done",
           "tasks": [
-            { "text": "Pull latest develop, resolve conflicts nếu có", "tags": ["Git"] },
-            { "text": "Chạy lại full regression test (GE-1020)", "tags": ["Dev"] },
-            { "text": "Merge feature branch vào develop, tạo PR", "tags": ["Git", "Team"] },
-            { "text": "Deploy lên beta, smoke test toàn bộ flow tạo bài tập", "tags": ["Dev"] },
-            { "text": "Cập nhật GE-870 → Done, comment link planning vào Jira", "tags": ["Claude"] }
+            {
+              "text": "Pull latest develop, resolve conflicts nếu có",
+              "tags": [
+                "Git"
+              ]
+            },
+            {
+              "text": "Chạy lại full regression test (GE-1020)",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Merge feature branch vào develop, tạo PR",
+              "tags": [
+                "Git",
+                "Team"
+              ]
+            },
+            {
+              "text": "Deploy lên beta, smoke test toàn bộ flow tạo bài tập",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Cập nhật GE-870 → Done, comment link planning vào Jira",
+              "tags": [
+                "Claude"
+              ]
+            }
           ]
         }
       ]
     },
-
     "testcases": [
       {
         "ma_testcase": "TC_001",
@@ -6208,6 +6444,446 @@
         "dieu_kien_tien_quyet": "- Môi trường beta đang chạy\n- Đã đăng nhập tài khoản test\n- Camera ngoại vi sẵn sàng\n- Mạng ổn định",
         "buoc_thuc_hien": "1. Vào màn hình tạo bài tập\n2. Nhấn 'Bật camera' → chờ RTSP hiển thị\n3. Nhập tên bài tập\n4. Nhấn Submit\n5. Chờ server xử lý\n6. Xem kết quả phân tích",
         "ket_qua_mong_doi": "- Bước 2: API 200, RTSP stream hiển thị ngay\n- Bước 3: ô tên nhận input, nút Submit active\n- Bước 4: dữ liệu gửi thành công, loading hiện\n- Bước 5: server xử lý, loading tiếp tục\n- Bước 6: kết quả từ server hiển thị lên màn hình\n- Toàn bộ flow không có lỗi",
+        "loai": "Happy Path"
+      }
+    ]
+  },
+  {
+    "id": "US-AR-015",
+    "project": "Arena Billiard",
+    "title": "Tracking Luyện Tập với Video Player",
+    "module": "Luyện tập",
+    "author": "Product Team",
+    "date": "20/04/2026",
+    "status": "Chờ phát triển",
+    "context": "Sau khi tạo bài tập (US-AR-014), người dùng cần một màn hình để thực hành bài tập đó với camera theo dõi real-time. Hệ thống cần tracking số lần thực hiện, điểm số, và cho phép xem lại kết quả trong session. Video player cần hỗ trợ landscape mode, controls show/hide như YouTube, và hiển thị hình mẫu overlay để người dùng so sánh.",
+    "userStory": {
+      "as": "Người dùng muốn luyện tập bài tập đã tạo",
+      "iWant": "Xem video RTSP trực tiếp, theo dõi số lần thực hiện real-time, xem hình mẫu, và xem lại kết quả",
+      "soThat": "Có thể luyện tập hiệu quả với feedback tức thì và so sánh với hình mẫu chuẩn"
+    },
+    "acceptanceCriteria": [
+      {
+        "id": "AC-01",
+        "title": "Chọn club và camera trước khi bắt đầu",
+        "given": "Người dùng ở màn hình chi tiết bài tập",
+        "when": "Nhấn nút 'Bắt đầu luyện tập'",
+        "then": "Hiển thị màn hình chọn club (dropdown) và camera (dropdown). Nút 'Bắt đầu' chỉ active khi đã chọn cả 2. Sau khi nhấn 'Bắt đầu', chuyển sang màn hình luyện tập."
+      },
+      {
+        "id": "AC-02",
+        "title": "Video player landscape fullscreen",
+        "given": "Vào màn hình luyện tập",
+        "when": "Màn hình load xong",
+        "then": "Tự động xoay sang landscape mode, video RTSP hiển thị fullscreen, VLC player kết nối và phát stream"
+      },
+      {
+        "id": "AC-03",
+        "title": "Controls show/hide khi tap",
+        "given": "Video đang phát",
+        "when": "Tap vào video",
+        "then": "Toggle show/hide controls (seekbar, play/pause, time). Controls tự động ẩn sau 3 giây không tương tác."
+      },
+      {
+        "id": "AC-04",
+        "title": "Hình mẫu overlay show/hide",
+        "given": "Đang ở màn hình luyện tập",
+        "when": "Hình mẫu hiển thị ở góc video",
+        "then": "Tap vào hình mẫu để toggle show/hide. Hình mẫu fetch từ API dựa vào drill ID."
+      },
+      {
+        "id": "AC-05",
+        "title": "Real-time tracking stats",
+        "given": "Đang luyện tập",
+        "when": "Có event mới từ backend (WebSocket hoặc polling)",
+        "then": "Hiển thị real-time: số lần thực hiện (counter), điểm số từng cú, feedback ('Tốt'/'Chưa tốt'/'Hoàn hảo'). Animation fade in khi có data mới."
+      },
+      {
+        "id": "AC-06",
+        "title": "Xem lại kết quả trong session",
+        "given": "Đang luyện tập",
+        "when": "Nhấn nút 'Xem lại kết quả'",
+        "then": "Mở modal/bottom sheet hiển thị danh sách các lần thực hiện: thời gian, điểm số, kết quả. Có thể scroll nếu danh sách dài."
+      },
+      {
+        "id": "AC-07",
+        "title": "Kết thúc và xem tổng kết",
+        "given": "Đang luyện tập",
+        "when": "Nhấn nút 'Kết thúc' và confirm",
+        "then": "Chuyển sang màn hình tổng kết hiển thị: tổng số lần thực hiện, điểm trung bình, thời gian luyện. Có nút 'Luyện tiếp', 'Xem chi tiết', 'Về trang chủ'."
+      }
+    ],
+    "flow": "[User]\n    |\n    ▼\nChi tiết bài tập\n    |\n    ▼\n[Bắt đầu luyện tập]\n    |\n    ▼\nChọn Club & Camera\n    |\n    ▼\nMàn hình luyện tập (Landscape)\n    ├─ Video RTSP (VLC)\n    ├─ Controls (show/hide)\n    ├─ Hình mẫu overlay\n    ├─ Real-time stats\n    └─ Action buttons\n    |\n    ▼\n[Kết thúc]\n    |\n    ▼\nMàn hình tổng kết",
+    "edgeCases": [
+      {
+        "case": "RTSP connection failed",
+        "handle": "Hiển thị lỗi 'Không thể kết nối camera' + nút 'Thử lại'. Retry tối đa 3 lần."
+      },
+      {
+        "case": "WebSocket disconnected",
+        "handle": "Hiển thị cảnh báo 'Mất kết nối real-time' + tự động reconnect. Nếu fail sau 5 lần, cho phép tiếp tục nhưng không có real-time stats."
+      },
+      {
+        "case": "Không có hình mẫu",
+        "handle": "Không hiển thị overlay hình mẫu, chỉ hiển thị video và stats."
+      },
+      {
+        "case": "App vào background",
+        "handle": "Pause video, dừng tracking. Resume khi quay lại foreground."
+      }
+    ],
+    "notes": [
+      "Sử dụng react-native-orientation-locker cho landscape mode",
+      "VLC player component đã có từ US-AR-014, tái sử dụng",
+      "Real-time tracking có thể dùng WebSocket hoặc polling API",
+      "Component architecture: tách riêng VideoPlayer, Controls, ReferenceImageOverlay, TrackingStatsOverlay",
+      "Keep screen awake trong khi luyện tập (react-native-keep-awake)"
+    ],
+    "sprintPlan": {
+      "startDate": "21/04/2026",
+      "endDate": "26/04/2026",
+      "days": [
+        {
+          "day": "Thứ 2",
+          "date": "21/04/2026",
+          "theme": "Chuẩn bị & Thống nhất",
+          "color": "purple",
+          "result": "US-AR-015 được duyệt, AC rõ ràng, test cases đầy đủ, team hiểu rõ flow",
+          "tasks": [
+            {
+              "text": "Review US-AR-015 với team, clarify AC và edge cases",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Tạo test cases đầy đủ (Happy Path, Edge Case, Error Case)",
+              "tags": [
+                "Claude"
+              ]
+            },
+            {
+              "text": "Setup branch feature/US-AR-015",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 3",
+          "date": "22/04/2026",
+          "theme": "Phân rã & Setup",
+          "color": "teal",
+          "result": "Components architecture rõ ràng, màn hình chọn club/camera hoàn thành",
+          "tasks": [
+            {
+              "text": "Tạo màn hình SelectClubCameraScreen với dropdown club và camera",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Tích hợp API GET /api/clubs và GET /api/cameras?clubId={id}",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Validate: nút 'Bắt đầu' chỉ active khi chọn cả 2",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Tạo component structure: PracticeScreen, PracticeVideoPlayer, VideoControls",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 4",
+          "date": "23/04/2026",
+          "theme": "Core Logic (1)",
+          "color": "blue",
+          "result": "Video player landscape hoạt động, controls show/hide, hình mẫu overlay",
+          "tasks": [
+            {
+              "text": "Implement landscape mode với react-native-orientation-locker",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Tích hợp VLC player hiển thị RTSP stream fullscreen",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement VideoControls: tap để show/hide, auto-hide sau 3s",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement ReferenceImageOverlay: fetch hình mẫu, tap để toggle",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Unit test cho show/hide logic",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 5",
+          "date": "24/04/2026",
+          "theme": "Core Logic (2) + QA",
+          "color": "blue",
+          "result": "Real-time tracking hoạt động, modal xem lại kết quả, màn hình tổng kết",
+          "tasks": [
+            {
+              "text": "Implement TrackingStatsOverlay: counter, score, feedback",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Tích hợp WebSocket hoặc polling API cho real-time data",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Implement PracticeResultsModal: danh sách kết quả trong session",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Tạo màn hình PracticeSummaryScreen: tổng kết session",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Chạy toàn bộ test cases (Happy Path, Edge Case, Error Case)",
+              "tags": [
+                "Dev",
+                "Claude"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 6",
+          "date": "25/04/2026",
+          "theme": "Review & Polish",
+          "color": "amber",
+          "result": "Code review pass, edge cases được handle, UX mượt mà",
+          "tasks": [
+            {
+              "text": "Handle edge cases: RTSP fail, WebSocket disconnect, app background",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Optimize performance: VLC buffer, animation smooth",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Code review chéo: kiểm tra component architecture, naming, comments",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Impact analysis: kiểm tra ảnh hưởng đến US-AR-014 và các màn hình khác",
+              "tags": [
+                "Dev"
+              ]
+            }
+          ]
+        },
+        {
+          "day": "Thứ 7",
+          "date": "26/04/2026",
+          "theme": "Merge & Deploy",
+          "color": "green",
+          "result": "US-AR-015 merge vào develop, deploy beta thành công",
+          "tasks": [
+            {
+              "text": "Pull latest develop, resolve conflicts (nếu có)",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            },
+            {
+              "text": "Merge feature/US-AR-015 vào develop",
+              "tags": [
+                "Dev",
+                "Git"
+              ]
+            },
+            {
+              "text": "Deploy beta environment",
+              "tags": [
+                "Dev"
+              ]
+            },
+            {
+              "text": "Smoke test trên beta: test toàn bộ flow end-to-end",
+              "tags": [
+                "Team"
+              ]
+            },
+            {
+              "text": "Update status US-AR-015 → 'Hoàn thành'",
+              "tags": [
+                "Claude"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "testcases": [
+      {
+        "ma_testcase": "TC_AR015_001",
+        "ten_testcase": "Chọn club và camera thành công",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã đăng nhập\n- Đang ở màn hình chi tiết bài tập\n- Backend có danh sách club và camera",
+        "buoc_thuc_hien": "1. Nhấn nút 'Bắt đầu luyện tập'\n2. Chọn club từ dropdown\n3. Chọn camera từ dropdown\n4. Nhấn nút 'Bắt đầu'",
+        "ket_qua_mong_doi": "- Bước 1: Màn hình chọn club/camera hiển thị\n- Bước 2: Dropdown camera load danh sách theo club\n- Bước 3: Nút 'Bắt đầu' active\n- Bước 4: Chuyển sang màn hình luyện tập landscape",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_AR015_002",
+        "ten_testcase": "Video player landscape fullscreen",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã chọn club và camera\n- RTSP stream sẵn sàng",
+        "buoc_thuc_hien": "1. Vào màn hình luyện tập\n2. Chờ video load",
+        "ket_qua_mong_doi": "- Màn hình tự động xoay sang landscape\n- Video RTSP hiển thị fullscreen\n- VLC player kết nối và phát stream\n- Loading indicator biến mất khi stream sẵn sàng",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_AR015_003",
+        "ten_testcase": "Controls show/hide khi tap",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Video đang phát",
+        "buoc_thuc_hien": "1. Tap vào video\n2. Chờ 3 giây không tương tác\n3. Tap lại vào video",
+        "ket_qua_mong_doi": "- Bước 1: Controls hiển thị (seekbar, play/pause, time)\n- Bước 2: Controls tự động ẩn\n- Bước 3: Controls hiển thị lại",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_AR015_004",
+        "ten_testcase": "Hình mẫu overlay toggle",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang ở màn hình luyện tập\n- Bài tập có hình mẫu",
+        "buoc_thuc_hien": "1. Xem hình mẫu ở góc video\n2. Tap vào hình mẫu\n3. Tap lại vào vị trí hình mẫu",
+        "ket_qua_mong_doi": "- Bước 1: Hình mẫu hiển thị rõ ràng\n- Bước 2: Hình mẫu ẩn đi\n- Bước 3: Hình mẫu hiển thị lại",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_AR015_005",
+        "ten_testcase": "Real-time tracking stats hiển thị",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang luyện tập\n- WebSocket/polling đang hoạt động",
+        "buoc_thuc_hien": "1. Thực hiện động tác\n2. Backend gửi event mới\n3. Xem stats overlay",
+        "ket_qua_mong_doi": "- Counter tăng lên\n- Điểm số hiển thị\n- Feedback hiển thị ('Tốt'/'Chưa tốt'/'Hoàn hảo')\n- Animation fade in mượt mà",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_AR015_006",
+        "ten_testcase": "Xem lại kết quả trong session",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã thực hiện ít nhất 3 lần",
+        "buoc_thuc_hien": "1. Nhấn nút 'Xem lại kết quả'\n2. Scroll danh sách\n3. Đóng modal",
+        "ket_qua_mong_doi": "- Bước 1: Modal hiển thị danh sách 3 kết quả: thời gian, điểm, feedback\n- Bước 2: Scroll mượt mà\n- Bước 3: Modal đóng, quay lại màn hình luyện tập",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_AR015_007",
+        "ten_testcase": "Kết thúc và xem tổng kết",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đã luyện tập ít nhất 5 phút",
+        "buoc_thuc_hien": "1. Nhấn nút 'Kết thúc'\n2. Confirm dialog\n3. Xem màn hình tổng kết",
+        "ket_qua_mong_doi": "- Bước 1: Dialog confirm hiển thị\n- Bước 2: Chuyển sang màn hình tổng kết\n- Bước 3: Hiển thị: tổng số lần, điểm TB, thời gian. Có nút 'Luyện tiếp', 'Xem chi tiết', 'Về trang chủ'",
+        "loai": "Happy Path"
+      },
+      {
+        "ma_testcase": "TC_AR015_008",
+        "ten_testcase": "Chưa chọn club hoặc camera",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang ở màn hình chọn club/camera",
+        "buoc_thuc_hien": "1. Chỉ chọn club, không chọn camera\n2. Nhấn nút 'Bắt đầu'",
+        "ket_qua_mong_doi": "- Nút 'Bắt đầu' disabled\n- Không thể nhấn",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_AR015_009",
+        "ten_testcase": "RTSP connection timeout",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Camera offline hoặc RTSP URL sai",
+        "buoc_thuc_hien": "1. Vào màn hình luyện tập\n2. Chờ 10 giây",
+        "ket_qua_mong_doi": "- Loading indicator hiển thị\n- Sau 10s: hiển thị lỗi 'Không thể kết nối camera'\n- Có nút 'Thử lại'",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_AR015_010",
+        "ten_testcase": "WebSocket disconnect giữa chừng",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang luyện tập\n- WebSocket đang hoạt động",
+        "buoc_thuc_hien": "1. Ngắt mạng\n2. Chờ 5 giây\n3. Bật lại mạng",
+        "ket_qua_mong_doi": "- Bước 1: Hiển thị cảnh báo 'Mất kết nối real-time'\n- Bước 2: Tự động reconnect\n- Bước 3: Kết nối lại thành công, cảnh báo biến mất",
+        "loai": "Error Case"
+      },
+      {
+        "ma_testcase": "TC_AR015_011",
+        "ten_testcase": "Không có hình mẫu",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Bài tập không có hình mẫu (API trả null)",
+        "buoc_thuc_hien": "1. Vào màn hình luyện tập",
+        "ket_qua_mong_doi": "- Không hiển thị overlay hình mẫu\n- Video và stats vẫn hoạt động bình thường",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_AR015_012",
+        "ten_testcase": "App vào background",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang luyện tập, video đang phát",
+        "buoc_thuc_hien": "1. Nhấn Home button (app vào background)\n2. Chờ 5 giây\n3. Mở lại app",
+        "ket_qua_mong_doi": "- Bước 1: Video pause, tracking dừng\n- Bước 3: Video resume, tracking tiếp tục",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_AR015_013",
+        "ten_testcase": "Xoay ngang nhiều lần",
+        "nhom": "Arena App",
+        "dieu_kien_tien_quyet": "- Đang ở màn hình luyện tập",
+        "buoc_thuc_hien": "1. Xoay điện thoại dọc\n2. Xoay lại ngang\n3. Lặp lại 3 lần",
+        "ket_qua_mong_doi": "- Màn hình luôn giữ landscape mode\n- Video không bị restart\n- UI không bị lỗi",
+        "loai": "Edge Case"
+      },
+      {
+        "ma_testcase": "TC_AR015_014",
+        "ten_testcase": "End-to-end: chọn club/camera → luyện tập → kết thúc",
+        "nhom": "End-to-end",
+        "dieu_kien_tien_quyet": "- Đã đăng nhập\n- Backend đang chạy\n- Camera sẵn sàng",
+        "buoc_thuc_hien": "1. Vào chi tiết bài tập\n2. Nhấn 'Bắt đầu luyện tập'\n3. Chọn club và camera\n4. Nhấn 'Bắt đầu'\n5. Xem video RTSP\n6. Tap để show/hide controls\n7. Tap hình mẫu để toggle\n8. Thực hiện 5 lần động tác\n9. Nhấn 'Xem lại kết quả'\n10. Nhấn 'Kết thúc'\n11. Xem màn hình tổng kết",
+        "ket_qua_mong_doi": "- Bước 3: Dropdown load đúng data\n- Bước 5: Video phát mượt mà\n- Bước 6: Controls show/hide đúng\n- Bước 7: Hình mẫu toggle đúng\n- Bước 8: Stats cập nhật real-time\n- Bước 9: Modal hiển thị 5 kết quả\n- Bước 11: Tổng kết hiển thị đúng số liệu\n- Toàn bộ flow không có lỗi",
         "loai": "Happy Path"
       }
     ]
